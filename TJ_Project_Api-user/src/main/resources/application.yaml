@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: TJ_Project_Api-user

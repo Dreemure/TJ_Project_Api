@@ -1,0 +1,294 @@
+services:
+  # ---------- MySQL 8.0（业务 + Nacos + Seata + Canal） ----------
+  tj-mysql:
+    image: mysql:8.0
+    container_name: TJ-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: TJ_Academy
+    ports:
+      - "3306:3306"
+    volumes:
+      - TJ-mysql-data:/var/lib/mysql
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../db/init.sql:/docker-entrypoint-initdb.d/02-init.sql:ro
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --binlog-format=ROW
+      - --log-bin=mysql-bin
+      - --server-id=1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tj-spring
+
+  # ---------- MySQL 8.0（PowerJob 专用） ----------
+  powerjob-mysql:
+    image: mysql:8.0
+    container_name: powerjob-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: No1Bug2Please3!
+      MYSQL_DATABASE: powerjob-daily
+      MYSQL_USER: powerjob
+      MYSQL_PASSWORD: No1Bug2Please3!
+    ports:
+      - "3307:3306"
+    volumes:
+      - powerjob-mysql-data:/var/lib/mysql
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pNo1Bug2Please3!"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tj-spring
+
+  # ---------- Redis ----------
+  tj-redis:
+    image: redis:7-alpine
+    container_name: TJ-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - TJ-redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - tj-spring
+
+  # ---------- Elasticsearch + IK ----------
+  tj-elasticsearch:
+    image: baosloan/elasticsearch-ik:7.17
+    container_name: TJ-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - TJ-es-data:/usr/share/elasticsearch/data
+    networks:
+      - tj-spring
+
+  # ---------- Nginx Proxy Manager ----------
+  tj-nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: TJ-nginx-proxy-manager
+    ports:
+      - "8080:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - TJ-npm-data:/data
+      - TJ-npm-letsencrypt:/etc/letsencrypt
+    networks:
+      - tj-spring
+
+  # ---------- Node 25（开发环境） ----------
+  tj-node25:
+    image: node:25-alpine
+    container_name: TJ-node25
+    command: sleep infinity
+    networks:
+      - tj-spring
+
+  # ---------- RabbitMQ ----------
+  tj-rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: TJ-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - TJ-rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - tj-spring
+
+  # ---------- PowerJob（调度中心）使用默认配置 ----------
+  tj-powerjob:
+    image: powerjob/powerjob-server:latest
+    container_name: TJ-powerjob
+    environment:
+      JVMOPTIONS: "-Xmx512m"
+    ports:
+      - "7700:7700"
+    depends_on:
+      powerjob-mysql:
+        condition: service_healthy
+    networks:
+      - tj-spring
+    volumes:
+      - TJ-powerjob-data:/root/powerjob/server/
+
+  # ---------- Canal Server ----------
+  tj-canal:
+    image: canal/canal-server:latest
+    container_name: TJ-canal
+    environment:
+      canal.instance.master.address: tj-mysql:3306
+      canal.instance.dbUsername: root
+      canal.instance.dbPassword: root
+      canal.instance.connectionCharset: UTF-8
+      canal.instance.tsdb.enable: true
+      canal.instance.gtidon: false
+      canal.instance.filter.regex: TJ_Academy\\..*
+      canal.destinations: example
+    ports:
+      - "11111:11111"
+    depends_on:
+      tj-mysql:
+        condition: service_healthy
+      tj-elasticsearch:
+        condition: service_started
+    networks:
+      - tj-spring
+    volumes:
+      - TJ-canal-data:/home/canal-server/conf
+      - TJ-canal-logs:/home/canal-server/logs
+
+  # ---------- Canal Adapter ----------
+  tj-canal-adapter:
+    image: docker.io/funnyzak/canal-adapter:1.1.7
+    container_name: TJ-canal-adapter
+    environment:
+      canal.adapter.admin.manager: tj-canal:11111
+      canal.adapter.elasticsearch.hosts: tj-elasticsearch:9200
+      canal.adapter.elasticsearch.cluster.name: elasticsearch
+      canal.adapter.elasticsearch.username: ""
+      canal.adapter.elasticsearch.password: ""
+    volumes:
+      - ./canal-adapter/application.yml:/opt/canal/adapter/conf/application.yml
+      - ./canal-adapter/es7/:/opt/canal/adapter/conf/es7/
+    depends_on:
+      - tj-canal
+    networks:
+      - tj-spring
+
+  # ---------- Nacos ----------
+  tj-nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: TJ-nacos
+    environment:
+      MODE: standalone
+      MYSQL_SERVICE_HOST: tj-mysql
+      MYSQL_SERVICE_DB_NAME: TJ_Academy
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_PARAM: "useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_TOKEN: "SecretKey0123456789012345678901234567890123456789"
+      NACOS_AUTH_IDENTITY_KEY: "nacos"
+      NACOS_AUTH_IDENTITY_VALUE: "nacos"
+    ports:
+      - "8848:8848"
+    depends_on:
+      tj-mysql:
+        condition: service_healthy
+    networks:
+      - tj-spring
+    volumes:
+      - TJ-nacos-data:/home/nacos/data
+      - TJ-nacos-logs:/home/nacos/logs
+
+  # ---------- Seata-Server 2.5.0（Apache 版本） ----------
+  tj-seata-server:
+    image: apache/seata-server:2.5.0
+    container_name: TJ-seata-server
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    volumes:
+      - ./seata/application.yml:/seata-server/conf/application.yml:ro
+      - TJ-seata-data:/seata-server/data
+    depends_on:
+      tj-mysql:
+        condition: service_healthy
+      tj-nacos:
+        condition: service_started
+    networks:
+      - tj-spring
+
+  # ---------- Sentinel Dashboard ----------
+  tj-sentinel:
+    image: bladex/sentinel-dashboard:1.8.6
+    container_name: TJ-sentinel
+    environment:
+      SENTINEL_DASHBOARD_USERNAME: sentinel
+      SENTINEL_DASHBOARD_PASSWORD: sentinel
+    ports:
+      - "8858:8858"
+    networks:
+      - tj-spring
+    volumes:
+      - TJ-sentinel-data:/var/log/sentinel-dashboard
+
+  # ---------- SkyWalking OAP Server ----------
+  tj-skywalking-oap:
+    image: apache/skywalking-oap-server:9.7.0
+    container_name: TJ-skywalking-oap
+    environment:
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: tj-elasticsearch:9200
+      SW_ES_USER: ""
+      SW_ES_PASSWORD: ""
+      SW_TELEMETRY: prometheus
+    ports:
+      - "11800:11800"
+      - "12800:12800"
+    extra_hosts:
+      - "tj-elasticsearch:172.19.0.5"   # 新项目需执行重新获取 docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" TJ-elasticsearch 172.19.0.5
+    depends_on:
+      tj-elasticsearch:
+        condition: service_started
+    networks:
+      - tj-spring
+    volumes:
+      - TJ-skywalking-oap-data:/skywalking/data
+
+  # ---------- SkyWalking UI ----------
+  tj-skywalking-ui:
+    image: apache/skywalking-ui:latest
+    container_name: TJ-skywalking-ui
+    environment:
+      SW_OAP_ADDRESS: tj-skywalking-oap:12800
+    ports:
+      - "8088:8080"
+    depends_on:
+      - tj-skywalking-oap
+    networks:
+      - tj-spring
+
+# ---------- 持久化卷 ----------
+volumes:
+  TJ-mysql-data:
+  powerjob-mysql-data:
+  TJ-redis-data:
+  TJ-es-data:
+  TJ-npm-data:
+  TJ-npm-letsencrypt:
+  TJ-rabbitmq-data:
+  TJ-powerjob-data:
+  TJ-canal-data:
+  TJ-canal-logs:
+  TJ-nacos-data:
+  TJ-nacos-logs:
+  TJ-seata-data:
+  TJ-sentinel-data:
+  TJ-skywalking-oap-data:
+
+# ---------- 网络 ----------
+networks:
+  tj-spring:
+    name: tj-spring

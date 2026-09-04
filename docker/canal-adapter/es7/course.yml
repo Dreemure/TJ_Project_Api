@@ -1,0 +1,34 @@
+dataSourceKey: defaultDS
+destination: example
+groupId: g1
+esMapping:
+  _index: tj_course_index
+  _id: id
+  upsert: true
+  sql: "SELECT 
+          id,
+          name,
+          course_type,
+          cover_url,
+          first_cate_id,
+          second_cate_id,
+          third_cate_id,
+          first_cate_name,
+          second_cate_name,
+          third_cate_name,
+          free,
+          price,
+          status,
+          purchase_start_time,
+          purchase_end_time,
+          score,
+          media_duration,
+          valid_duration,
+          section_num,
+          publish_time,
+          create_time,
+          update_time,
+          deleted
+        FROM course
+        WHERE deleted = 0"
+  commitBatch: 3000

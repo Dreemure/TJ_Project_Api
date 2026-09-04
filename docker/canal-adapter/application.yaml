@@ -1,0 +1,31 @@
+canal.conf:
+  mode: tcp
+  canalServerHost: tj-canal:11111
+  batchSize: 500
+  syncBatchSize: 1000
+  retries: 0
+  timeout:
+  accessKey:
+  secretKey:
+  consumerProperties:
+    canal.tcp.server.host: tj-canal:11111
+    canal.tcp.zookeeper.hosts:
+    canal.tcp.batch.size: 500
+    canal.tcp.username:
+    canal.tcp.password:
+  srcDataSources:
+    defaultDS:
+      url: jdbc:mysql://tj-mysql:3306/TJ_Academy?useUnicode=true&serverTimezone=Asia/Shanghai
+      username: root
+      password: root
+  canalAdapters:
+  - instance: example  # 对应 canal.destinations 配置
+    groups:
+    - groupId: g1
+      outerAdapters:
+      - name: es7
+        key: esKey
+        hosts: tj-elasticsearch:9200
+        properties:
+          mode: rest
+          cluster.name: elasticsearch

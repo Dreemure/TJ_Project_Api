@@ -1,0 +1,45 @@
+server:
+  port: 7091
+
+spring:
+  application:
+    name: seata-server
+
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: ${user.home}/logs/seata
+
+seata:
+  config:
+    type: file
+  registry:
+    type: nacos
+    nacos:
+      server-addr: tj-nacos:8848
+      namespace: public
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+  store:
+    mode: db
+    db:
+      datasource: druid
+      db-type: mysql
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://tj-mysql:3306/TJ_Academy?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      user: root
+      password: root
+      min-conn: 5
+      max-conn: 30
+      global-table: global_table
+      branch-table: branch_table
+      lock-table: lock_table
+      distributed-lock-table: distributed_lock
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+    default:
+      grouplist: 127.0.0.1:8091
+    enable-degrade: false
+    disable-global-transaction: false

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-course/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-data/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-learning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-media/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-message/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-pay/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-promotion/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-remark/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-search/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-trade/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TJ_Project_Api-xeam/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
