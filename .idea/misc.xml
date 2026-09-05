@@ -19,6 +19,17 @@
         <option value="$PROJECT_DIR$/TJ_Project_Api-trade/pom.xml" />
         <option value="$PROJECT_DIR$/TJ_Project_Api-user/pom.xml" />
         <option value="$PROJECT_DIR$/TJ_Project_Api-xeam/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-api/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-auth/auth-common/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-auth/auth-gateway-sdk/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-auth/auth-resource-sdk/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-auth/auth-service/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-message/message-api/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-message/message-domain/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-message/message-service/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-pay/pay-api/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-pay/pay-domain/pom.xml" />
+        <option value="$PROJECT_DIR$/TJ_Project_Api-pay/pay-service/pom.xml" />
       </list>
     </option>
   </component>

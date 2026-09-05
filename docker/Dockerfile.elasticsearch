@@ -1,0 +1,11 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+
+# 安装 IK 分词器（注意版本号必须与基础镜像完全一致）
+RUN elasticsearch-plugin install --batch https://release.infinilabs.com/analysis-ik/stable/elasticsearch-analysis-ik-8.11.0.zip
+
+#设置环境变量关闭安全认证（也可以在 docker-compose 中覆盖）
+ENV xpack.security.enabled=false
+ENV discovery.type=single-node
+
+# 暴露端口
+EXPOSE 9200 9300

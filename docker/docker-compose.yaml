@@ -63,9 +63,11 @@ services:
     networks:
       - tj-spring
 
-  # ---------- Elasticsearch + IK ----------
+  # ========== ES 9 + IK ==========
   tj-elasticsearch:
-    image: baosloan/elasticsearch-ik:7.17
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticsearch   # 指定 Dockerfile 文件名
     container_name: TJ-elasticsearch
     environment:
       - discovery.type=single-node
@@ -77,6 +79,7 @@ services:
       - TJ-es-data:/usr/share/elasticsearch/data
     networks:
       - tj-spring
+  # =====================================================
 
   # ---------- Nginx Proxy Manager ----------
   tj-nginx-proxy-manager:
@@ -202,7 +205,7 @@ services:
       - TJ-nacos-data:/home/nacos/data
       - TJ-nacos-logs:/home/nacos/logs
 
-  # ---------- Seata-Server 2.5.0（Apache 版本） ----------
+  # ---------- Seata-Server 2.5.0 ----------
   tj-seata-server:
     image: apache/seata-server:2.5.0
     container_name: TJ-seata-server
@@ -247,8 +250,6 @@ services:
     ports:
       - "11800:11800"
       - "12800:12800"
-    extra_hosts:
-      - "tj-elasticsearch:172.19.0.5"   # 新项目需执行重新获取 docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" TJ-elasticsearch 172.19.0.5
     depends_on:
       tj-elasticsearch:
         condition: service_started
@@ -256,6 +257,9 @@ services:
       - tj-spring
     volumes:
       - TJ-skywalking-oap-data:/skywalking/data
+    restart: on-failure
+    dns:
+      - 127.0.0.11        # 重要：确保使用 Docker DNS
 
   # ---------- SkyWalking UI ----------
   tj-skywalking-ui:

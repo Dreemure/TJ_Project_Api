@@ -11,7 +11,7 @@
     <artifactId>TJ_Project_Api-message</artifactId>
     <name>TJ_Project_Api-message</name>
     <description>TJ_Project_Api-message</description>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <url/>
     <licenses>
         <license/>

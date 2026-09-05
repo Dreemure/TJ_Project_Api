@@ -6,146 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-common" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-common" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-course" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
         <module name="TJ_Project_Api-course" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-data" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-data" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-gateway" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-gateway" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-learning" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
+        <module name="TJ_Project_Api-exam" />
+        <module name="pay-domain" />
+        <module name="pay-service" />
         <module name="TJ_Project_Api-learning" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-media" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
+        <module name="TJ_Project_Api-api" />
+        <module name="pay-api" />
+        <module name="TJ_Project_Api-data" />
+        <module name="auth-gateway-sdk" />
         <module name="TJ_Project_Api-media" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-message" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-message" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-pay" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-pay" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-promotion" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-promotion" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-remark" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-remark" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-search" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-search" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-trade" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-trade" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-user" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-user" />
-      </profile>
-      <profile name="Annotation profile for TJ_Project_Api-xeam" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="TJ_Project_Api-xeam" />
+        <module name="auth-service" />
+        <module name="auth-resource-sdk" />
+        <module name="auth-common" />
+        <module name="TJ_Project_Api-gateway" />
       </profile>
       <profile name="Annotation profile for TJ_Project_Api" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -154,28 +28,47 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
-        <module name="TJ_Project_Api-auth" />
+        <module name="message-domain" />
+        <module name="TJ_Project_Api-promotion" />
+        <module name="message-api" />
+        <module name="TJ_Project_Api-common" />
+        <module name="TJ_Project_Api-remark" />
+        <module name="TJ_Project_Api-user" />
+        <module name="TJ_Project_Api-trade" />
+        <module name="message-service" />
+        <module name="TJ_Project_Api-search" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="TJ_Project_Api" options="" />
-      <module name="TJ_Project_Api-auth" options="-parameters" />
+      <module name="TJ_Project_Api-api" options="-parameters" />
+      <module name="TJ_Project_Api-auth" options="" />
       <module name="TJ_Project_Api-common" options="-parameters" />
       <module name="TJ_Project_Api-course" options="-parameters" />
       <module name="TJ_Project_Api-data" options="-parameters" />
+      <module name="TJ_Project_Api-exam" options="-parameters" />
       <module name="TJ_Project_Api-gateway" options="-parameters" />
       <module name="TJ_Project_Api-learning" options="-parameters" />
       <module name="TJ_Project_Api-media" options="-parameters" />
       <module name="TJ_Project_Api-message" options="-parameters" />
-      <module name="TJ_Project_Api-pay" options="-parameters" />
+      <module name="TJ_Project_Api-pay" options="" />
       <module name="TJ_Project_Api-promotion" options="-parameters" />
       <module name="TJ_Project_Api-remark" options="-parameters" />
       <module name="TJ_Project_Api-search" options="-parameters" />
       <module name="TJ_Project_Api-trade" options="-parameters" />
       <module name="TJ_Project_Api-user" options="-parameters" />
-      <module name="TJ_Project_Api-xeam" options="-parameters" />
+      <module name="auth-common" options="-parameters" />
+      <module name="auth-gateway-sdk" options="-parameters" />
+      <module name="auth-resource-sdk" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="message-api" options="-parameters" />
+      <module name="message-domain" options="-parameters" />
+      <module name="message-service" options="-parameters" />
+      <module name="pay-api" options="-parameters" />
+      <module name="pay-domain" options="-parameters" />
+      <module name="pay-service" options="-parameters" />
     </option>
   </component>
 </project>
