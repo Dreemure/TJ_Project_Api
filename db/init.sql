@@ -2,6 +2,10 @@
 -- Seata 表
 -- ============================================================
 
+create DATABASE seata;
+
+use seata;
+
 -- Seata AT 模式 undo_log 表（必须与业务表在同一个库）
 CREATE TABLE IF NOT EXISTS `undo_log`
 (
@@ -92,6 +96,10 @@ INSERT INTO `distributed_lock` (lock_key, lock_value, expire) VALUES
 -- ============================================================
 -- Nacos 表
 -- ============================================================
+
+create DATABASE nacos;
+
+use nacos;
 
 -- Nacos 配置核心表
 CREATE TABLE `config_info` (

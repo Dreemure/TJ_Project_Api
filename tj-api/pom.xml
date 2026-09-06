@@ -43,6 +43,11 @@
             <artifactId>tj-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- 缓存库 -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

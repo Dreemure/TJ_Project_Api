@@ -61,6 +61,7 @@
 		<redisson.version>4.7.0</redisson.version>
 		<powerjob.version>5.1.2</powerjob.version>
 		<fastjson2.version>2.0.65</fastjson2.version>
+		<IJPay.version>2.8.4</IJPay.version>
 		<aliyun.oss-version>3.18.5</aliyun.oss-version>
 		<aliyun.dysmsap-version>4.0.11</aliyun.dysmsap-version>
 	</properties>

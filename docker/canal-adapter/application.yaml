@@ -15,7 +15,7 @@ canal.conf:
     canal.tcp.password:
   srcDataSources:
     defaultDS:
-      url: jdbc:mysql://tj-mysql:3306/TJ_Academy?useUnicode=true&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://tj-mysql:3306/tj_course?useUnicode=true&serverTimezone=Asia/Shanghai   #监听的数据库
       username: root
       password: root
   canalAdapters:

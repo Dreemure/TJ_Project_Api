@@ -1,0 +1,7 @@
+com.example.tj_project_apicommon.autoconfigure.mq.MqConfig
+com.example.tj_project_apicommon.autoconfigure.mvc.JsonConfig
+com.example.tj_project_apicommon.autoconfigure.mvc.MvcConfig
+com.example.tj_project_apicommon.autoconfigure.mvc.ParamCheckerConfig
+com.example.tj_project_apicommon.autoconfigure.mybatis.MybatisConfig
+com.example.tj_project_apicommon.autoconfigure.redisson.RedissonConfig
+com.example.tj_project_apicommon.autoconfigure.swagger.Knife4jConfiguration

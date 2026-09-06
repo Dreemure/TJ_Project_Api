@@ -1,3 +1,5 @@
+name: docker
+
 services:
   # ---------- MySQL 8.0（业务 + Nacos + Seata + Canal） ----------
   tj-mysql:
@@ -5,14 +7,14 @@ services:
     container_name: TJ-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: TJ_Academy
+      # MYSQL_DATABASE: TJ_Academy
     ports:
       - "3306:3306"
     volumes:
       - TJ-mysql-data:/var/lib/mysql
       - ../db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ../db/init.sql:/docker-entrypoint-initdb.d/02-init.sql:ro
-    command: 
+    command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --binlog-format=ROW
@@ -39,7 +41,7 @@ services:
       - "3307:3306"
     volumes:
       - powerjob-mysql-data:/var/lib/mysql
-    command: 
+    command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-authentication-plugin=mysql_native_password
@@ -139,26 +141,32 @@ services:
     image: canal/canal-server:latest
     container_name: TJ-canal
     environment:
-      canal.instance.master.address: tj-mysql:3306
-      canal.instance.dbUsername: root
-      canal.instance.dbPassword: root
+      canal.manager.admin.user: ""
+      canal.manager.admin.passwd: ""
+      canal.manager.admin.passwd.encrypt: false
+      canal.instance.master.address: tj-mysql:3306  #mysql容器名
+      canal.instance.dbUsername: root  #mysql账号
+      canal.instance.dbPassword: root  #mysql密码
       canal.instance.connectionCharset: UTF-8
       canal.instance.tsdb.enable: true
       canal.instance.gtidon: false
-      canal.instance.filter.regex: TJ_Academy\\..*
+      canal.instance.filter.regex: tj_course\\..*
       canal.destinations: example
     ports:
       - "11111:11111"
     depends_on:
       tj-mysql:
         condition: service_healthy
-      tj-elasticsearch:
-        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/11111'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     networks:
       - tj-spring
     volumes:
-      - TJ-canal-data:/home/canal-server/conf
-      - TJ-canal-logs:/home/canal-server/logs
+      - TJ-canal-logs:/home/admin/canal-server/logs
 
   # ---------- Canal Adapter ----------
   tj-canal-adapter:
@@ -171,12 +179,14 @@ services:
       canal.adapter.elasticsearch.username: ""
       canal.adapter.elasticsearch.password: ""
     volumes:
-      - ./canal-adapter/application.yml:/opt/canal/adapter/conf/application.yml
-      - ./canal-adapter/es7/:/opt/canal/adapter/conf/es7/
+      - ./canal-adapter/application.yaml:/opt/canal/canal-adapter/conf/application.yml:ro
+      - ./canal-adapter/es7/:/opt/canal/canal-adapter/conf/es7/:ro
     depends_on:
-      - tj-canal
+      tj-canal:
+        condition: service_healthy
     networks:
       - tj-spring
+    restart: on-failure
 
   # ---------- Nacos ----------
   tj-nacos:
@@ -274,6 +284,68 @@ services:
     networks:
       - tj-spring
 
+  # ---------- Graylog MongoDB ----------
+  tj-graylog-mongodb:
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/library/mongo:6.0
+    container_name: TJ-graylog-mongodb
+    restart: unless-stopped
+    volumes:
+      - TJ-graylog-mongo-data:/data/db
+    networks:
+      - tj-spring
+
+  # ---------- Graylog OpenSearch（替代 Elasticsearch 7.x） ----------
+  tj-graylog-opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: TJ-graylog-opensearch
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true    # 禁用安全插件（开发环境）
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1g
+    volumes:
+      - TJ-graylog-os-data:/usr/share/opensearch/data
+    networks:
+      - tj-spring
+
+  # ---------- Graylog Server ----------
+  tj-graylog:
+    image: graylog/graylog:5.2.0
+    container_name: TJ-graylog
+    environment:
+      # 必填：至少 16 字符的密码盐
+      GRAYLOG_PASSWORD_SECRET: somepasswordpepper
+      # 使用 SHA256 哈希的 root 密码（此处示例为 "admin" 的哈希）
+      GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      # 外部访问 URL（请根据实际 IP/域名修改）
+      GRAYLOG_HTTP_EXTERNAL_URI: http://localhost:9000/
+      # 连接 OpenSearch（环境变量名仍使用 ELASTICSEARCH，但指向 OpenSearch）
+      GRAYLOG_ELASTICSEARCH_HOSTS: http://tj-graylog-opensearch:9200
+      # 连接 MongoDB
+      GRAYLOG_MONGODB_URI: mongodb://tj-graylog-mongodb:27017/graylog
+      # 时区设置
+      TZ: Asia/Shanghai
+    ports:
+      # Web 管理界面
+      - "9000:9000"
+      # GELF UDP 输入（可选）
+      - "12201:12201/udp"
+      # Syslog UDP 输入（可选）
+      - "1514:1514/udp"
+    depends_on:
+      - tj-graylog-mongodb
+      - tj-graylog-opensearch
+    networks:
+      - tj-spring
+    volumes:
+      - TJ-graylog-data:/usr/share/graylog/data
+    restart: unless-stopped
+  # ================================================
+
 # ---------- 持久化卷 ----------
 volumes:
   TJ-mysql-data:
@@ -284,13 +356,15 @@ volumes:
   TJ-npm-letsencrypt:
   TJ-rabbitmq-data:
   TJ-powerjob-data:
-  TJ-canal-data:
   TJ-canal-logs:
   TJ-nacos-data:
   TJ-nacos-logs:
   TJ-seata-data:
   TJ-sentinel-data:
   TJ-skywalking-oap-data:
+  TJ-graylog-mongo-data:
+  TJ-graylog-os-data:
+  TJ-graylog-data:
 
 # ---------- 网络 ----------
 networks:
