@@ -30,6 +30,7 @@
         <option value="$PROJECT_DIR$/TJ_Project_Api-pay/pay-api/pom.xml" />
         <option value="$PROJECT_DIR$/TJ_Project_Api-pay/pay-domain/pom.xml" />
         <option value="$PROJECT_DIR$/TJ_Project_Api-pay/pay-service/pom.xml" />
+        <option value="$PROJECT_DIR$/tj-auth/pom.xml" />
       </list>
     </option>
   </component>

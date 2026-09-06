@@ -6,10 +6,10 @@
 
 - **后端框架**：.SpringCloudAlibaba
 - **数据库**：Mysql8.0(mybatis-plus)、Redis
-- **缓存与分布式锁**：Redisson(cache-cat)
+- **缓存与分布式锁**：Redisson
 - **搜索引擎**：Elasticsearch（用于新闻、公告的全文检索）
 - **日志**：Logback
-- **认证与安全**：JWT（管理端）、ECDSA 签名验证（管理端写操作）、SHA3-256 完整性校验（登录/登出）
+- **认证与安全**：sa-Token（管理端）、ECDSA 签名验证（管理端写操作）、SHA3-256 完整性校验（登录/登出）
 - **JSON流处理**：FastJson2
 
 ---

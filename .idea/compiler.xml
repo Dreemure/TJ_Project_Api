@@ -10,22 +10,19 @@
         <module name="pay-domain" />
         <module name="pay-service" />
         <module name="message-domain" />
+        <module name="tj-auth" />
         <module name="tj-user" />
         <module name="tj-course" />
         <module name="tj-exam" />
         <module name="pay-api" />
         <module name="message-service" />
         <module name="tj-search" />
-        <module name="auth-gateway-sdk" />
         <module name="tj-learning" />
-        <module name="auth-service" />
         <module name="tj-trade" />
         <module name="tj-remark" />
         <module name="message-api" />
-        <module name="auth-resource-sdk" />
         <module name="tj-promotion" />
         <module name="tj-media" />
-        <module name="auth-common" />
         <module name="tj-data" />
         <module name="tj-api" />
       </profile>
@@ -39,6 +36,12 @@
         <module name="tj-common" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="auth-common" target="25" />
+      <module name="auth-gateway-sdk" target="25" />
+      <module name="auth-resource-sdk" target="25" />
+      <module name="auth-service" target="25" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -54,7 +57,7 @@
       <module name="pay-domain" options="-parameters" />
       <module name="pay-service" options="-parameters" />
       <module name="tj-api" options="-parameters" />
-      <module name="tj-auth" options="" />
+      <module name="tj-auth" options="-parameters" />
       <module name="tj-common" options="-parameters" />
       <module name="tj-course" options="-parameters" />
       <module name="tj-data" options="-parameters" />

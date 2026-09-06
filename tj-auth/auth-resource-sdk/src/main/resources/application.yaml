@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: auth-resource-sdk
-
-  grpc:
-    server:
-      port: 9090
