@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: message-api
+
+  grpc:
+    server:
+      port: 9091

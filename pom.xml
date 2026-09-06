@@ -14,22 +14,22 @@
 	<description>TJ_Project_Api</description>
 	<packaging>pom</packaging>
 	<modules>
-		<module>TJ_Project_Api-api</module>
-		<module>TJ_Project_Api-auth</module>
-		<module>TJ_Project_Api-common</module>
-		<module>TJ_Project_Api-course</module>
-		<module>TJ_Project_Api-data</module>
-		<module>TJ_Project_Api-exam</module>
-		<module>TJ_Project_Api-gateway</module>
-		<module>TJ_Project_Api-learning</module>
-		<module>TJ_Project_Api-media</module>
-		<module>TJ_Project_Api-message</module>
-		<module>TJ_Project_Api-pay</module>
-		<module>TJ_Project_Api-promotion</module>
-		<module>TJ_Project_Api-remark</module>
-		<module>TJ_Project_Api-search</module>
-		<module>TJ_Project_Api-trade</module>
-		<module>TJ_Project_Api-user</module>
+		<module>tj-api</module>
+		<module>tj-auth</module>
+		<module>tj-common</module>
+		<module>tj-course</module>
+		<module>tj-data</module>
+		<module>tj-exam</module>
+		<module>tj-gateway</module>
+		<module>tj-learning</module>
+		<module>tj-media</module>
+		<module>tj-message</module>
+		<module>tj-pay</module>
+		<module>tj-promotion</module>
+		<module>tj-remark</module>
+		<module>tj-search</module>
+		<module>tj-trade</module>
+		<module>tj-user</module>
 	</modules>
 	<url/>
 	<licenses>
@@ -62,30 +62,28 @@
 		<powerjob.version>5.1.2</powerjob.version>
 		<fastjson2.version>2.0.65</fastjson2.version>
 		<aliyun.oss-version>3.18.5</aliyun.oss-version>
+		<aliyun.dysmsap-version>4.0.11</aliyun.dysmsap-version>
 	</properties>
 	<dependencies>
-<!--		<dependency>-->
-<!--			<groupId>co.elastic.clients</groupId>-->
-<!--			<artifactId>elasticsearch-java</artifactId>-->
-<!--			<version>${elasticsearch.version}</version>-->
-<!--		</dependency>-->
-		<dependency>
-			<groupId>com.alibaba.cloud</groupId>
-			<artifactId>spring-cloud-alibaba-dependencies</artifactId>
-			<version>${spring-cloud-alibaba.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>${spring-cloud.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
+			<!-- 公共依赖版本管理 -->
+			<dependency>
+				<groupId>com.alibaba.cloud</groupId>
+				<artifactId>spring-cloud-alibaba-dependencies</artifactId>
+				<version>${spring-cloud-alibaba.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
