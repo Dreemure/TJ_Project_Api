@@ -1,4 +1,4 @@
-name: docker
+name: tj_Project
 
 services:
   # ---------- MySQL 8.0（业务 + Nacos + Seata + Canal） ----------
@@ -7,7 +7,6 @@ services:
     container_name: TJ-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      # MYSQL_DATABASE: TJ_Academy
     ports:
       - "3306:3306"
     volumes:

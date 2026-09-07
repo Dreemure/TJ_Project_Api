@@ -1,0 +1,168 @@
+Table account_role [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	account_id bigint [ not null, note: '账户id' ]
+	role_id bigint [ not null, note: '角色id' ]
+}
+
+Table login_record [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	user_id bigint [ not null, note: '用户id' ]
+	cell_phone char(11) [ not null, unique, note: '手机号码' ]
+	login_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '登录时间' ]
+	logout_time datetime [ not null, note: '登出时间' ]
+	duration bigint [ default: 0, note: '登录时长，单位是秒' ]
+	ipv4 varchar(15) [ not null ]
+}
+
+Table menu [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	parent_id bigint [ not null, default: 0, note: '父菜单id，默认0代表没有父菜单' ]
+	has_children tinyint [ not null, default: 0, note: '是否有子菜单，默认false' ]
+	label varchar(16) [ not null, default: '""', note: '菜单文本' ]
+	path varchar(255) [ not null, default: '""', note: '菜单路径' ]
+	icon varchar(32) [ not null ]
+	priority tinyint [ not null, default: 127, note: '顺序，默认127' ]
+	create_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '创建时间' ]
+	update_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table privilege [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	menu_id bigint [ default: NULL, note: '菜单id' ]
+	intro varchar(255) [ not null, default: '""', note: '权限说明' ]
+	method varchar(16) [ not null, default: '""', note: 'API权限的请求方式' ]
+	uri varchar(255) [ not null, default: '""', note: 'API权限的请求路径' ]
+	internal tinyint [ not null, default: 0, note: '是否是内部接口权限，默认false' ]
+	create_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '创建时间' ]
+	update_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table role [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	code varchar(64) [ not null, note: '角色代号，例如：admin' ]
+	name varchar(255) [ not null, note: '角色名称' ]
+	type tinyint [ not null, default: 1, note: '角色类型：0-固定角色（不可选）1-自定义角色' ]
+	create_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '创建时间' ]
+	update_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table role_menu [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null ]
+	role_id bigint [ not null, note: '角色id' ]
+	menu_id bigint [ not null, note: '菜单id' ]
+}
+
+Table role_privilege [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	role_id bigint [ not null, note: '角色id' ]
+	privilege_id bigint [ not null, note: '权限id' ]
+}
+
+Table category [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程分类id' ]
+	name varchar(50) [ not null, note: '分类名称' ]
+	parent_id bigint [ not null, default: 0, note: '父分类id，一级分类父id为0' ]
+	level integer [ not null, note: '分类级别，1,2,3：代表一级分类，二级分类，三级分类' ]
+	priority integer [ not null, default: 1, note: '同级目录优先级，数字越小优先级越高，可以重复' ]
+	status tinyint [ not null, note: '课程分类状态，1：正常，2：禁用' ]
+	create_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '创建时间' ]
+	update_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者' ]
+	updater bigint [ not null, default: 0, note: '更新者' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table user [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	username varchar(32) [ not null, note: '用户名' ]
+	cell_phone varchar(11) [ not null, note: '手机号' ]
+	password varchar(255) [ not null, note: '密码' ]
+	type tinyint [ not null, default: 0, note: '用户类型：1-员工, 2-普通学员，3-老师' ]
+	status tinyint [ not null, default: 1, note: '账户状态：0-禁用 1-正常' ]
+	create_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '创建时间' ]
+	update_time datetime [ not null, default: CURRENT_TIMESTAMP, note: '更新时间' ]
+	creater bigint [ default: NULL, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+
+	indexes {
+		(username) [ name: 'username_idx', unique ]
+		(cell_phone, type) [ name: 'cell_idx', unique ]
+		(type) [ name: 'type_idx' ]
+	}
+}
+
+Table user_detail [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '关联用户id' ]
+	type tinyint [ not null, default: 2, note: '用户类型：1-员工, 2-普通学员，3-老师' ]
+	name varchar(64) [ not null ]
+	gender tinyint [ not null, note: '性别：0-男性，1-女性' ]
+	icon varchar(255) [ default: NULL, note: '头像地址' ]
+	email varchar(255) [ default: NULL, note: '邮箱' ]
+	qq varchar(18) [ default: NULL, note: 'QQ号码' ]
+	birthday date [ default: NULL, note: '生日' ]
+	job varchar(32) [ default: NULL, note: '岗位' ]
+	province varchar(32) [ default: NULL, note: '省' ]
+	city varchar(255) [ default: NULL, note: '市' ]
+	district varchar(32) [ default: NULL, note: '区' ]
+	intro varchar(512) [ default: NULL, note: '个人介绍' ]
+	photo varchar(255) [ default: NULL, note: '形象照地址' ]
+	role_id bigint [ default: NULL, note: '角色id' ]
+	course_amount smallint [ default: 0, note: '购买课程数量，学生才有该字段信息' ]
+	create_time datetime [ default: CURRENT_TIMESTAMP, note: '创建时间' ]
+	update_time datetime [ default: CURRENT_TIMESTAMP, note: '更新时间' ]
+	creater bigint [ default: NULL, note: '创建者id' ]
+	updater bigint [ default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+}
+
+Ref "用户角色映射-身份id" {
+	account_role.role_id > role.id [ delete: no action, update: no action ]
+}
+
+Ref "用户角色映射-非学员id" {
+	account_role.account_id > user_detail.id [ delete: no action, update: no action ]
+}
+
+Ref "用户角色映射-学员id" {
+	account_role.account_id > user.id [ delete: no action, update: no action ]
+}
+
+Ref "身份路径权限映射-身份id" {
+	role.id < role_privilege.role_id [ delete: no action, update: no action ]
+}
+
+Ref "身份菜单权限映射-身份id" {
+	role.id < role_menu.role_id [ delete: no action, update: no action ]
+}
+
+Ref "菜单路径映射-菜单与路径" {
+	menu.parent_id > privilege.id [ delete: no action, update: no action ]
+}
+
+Ref "身份路径映射-路径id" {
+	role_privilege.privilege_id > privilege.id [ delete: no action, update: no action ]
+}
+
+Ref "身份菜单映射-菜单id" {
+	role_menu.menu_id > menu.id [ delete: no action, update: no action ]
+}
+
+Ref "用户登录映射-学员id" {
+	user.id < login_record.user_id [ delete: no action, update: no action ]
+}
+
+Ref "用户登录映射-非学员id" {
+	user_detail.id < login_record.user_id [ delete: no action, update: no action ]
+}
