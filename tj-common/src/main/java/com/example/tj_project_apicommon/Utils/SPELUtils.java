@@ -28,7 +28,7 @@ public class SPELUtils {
      *      转换后结果 -> tj:1
      */
     public static String parse(String formatter, String[] paraNameArr, Object[] args) {
-        if (StrUtil.isNotBlank(formatter) && formatter.contains("#")) {
+        if (StringUtils.isNotBlank(formatter) && formatter.contains("#")) {
             //正则表达式 #{user.id},
             Pattern pattern = Pattern.compile("(#\\{([^}]*)})");
             Matcher matcher = pattern.matcher(formatter);

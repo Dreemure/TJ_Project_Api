@@ -27,7 +27,7 @@ public class AssertUtils {
     }
 
     public static void isNotBlank(String str, String ... message){
-        if (StrUtil.isBlank(str)) {
+        if (StringUtils.isBlank(str)) {
             handleException(message);
         }
     }

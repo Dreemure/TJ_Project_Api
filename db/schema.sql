@@ -288,6 +288,18 @@ DROP DATABASE IF EXISTS `tj_course`;
 CREATE DATABASE IF NOT EXISTS `tj_course` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `tj_course`;
 
+
+CREATE TABLE IF NOT EXISTS `undo_log` (
+   `branch_id` bigint NOT NULL COMMENT 'branch transaction id',
+   `xid` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT 'global transaction id',
+   `context` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT 'undo_log context,such as serialization',
+   `rollback_info` longblob NOT NULL COMMENT 'rollback info',
+    `log_status` int NOT NULL COMMENT '0:normal status,1:defense status',
+    `log_created` datetime(6) NOT NULL COMMENT 'create datetime',
+    `log_modified` datetime(6) NOT NULL COMMENT 'modify datetime',
+   UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPACT COMMENT='AT transaction mode undo table';
+
 -- 导出  表 tj_course.category 结构
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE IF NOT EXISTS `category` (
@@ -305,7 +317,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3656 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='课程分类';
 
--- 正在导出表  tj_course.category 的数据：~345 rows (大约)
+-- 正在导出表  tj_course.category 的数据：
 DELETE FROM `category`;
 INSERT INTO `category` (`id`, `name`, `parent_id`, `level`, `priority`, `status`, `create_time`, `update_time`, `creater`, `updater`, `deleted`) VALUES
 	(1001, 'IT·互联网', 0, 1, 1, 1, '2022-07-18 10:03:46', '2022-07-18 10:03:46', 0, 0, 0),
@@ -665,7 +677,7 @@ CREATE TABLE IF NOT EXISTS `course` (
   `second_cate_id` bigint NOT NULL DEFAULT '0' COMMENT '二级课程分类id',
   `third_cate_id` bigint NOT NULL DEFAULT '0' COMMENT '三级课程分类id',
   `free` tinyint NOT NULL DEFAULT '0' COMMENT '售卖方式0付费，1：免费',
-  `price` int NOT NULL COMMENT '课程价格，单位为分',
+  `price` int UNSIGNED NOT NULL COMMENT '课程价格，单位为分', -- 存分比存元更加稳妥，实体类使用Integer即可
   `template_type` tinyint NOT NULL DEFAULT '1' COMMENT '模板类型，1：固定模板，2：自定义模板',
   `template_url` varchar(255) NOT NULL DEFAULT '' COMMENT '自定义模板的连接',
   `status` tinyint NOT NULL COMMENT '课程状态，1：待上架，2：已上架，3：下架，4：已完结',
@@ -685,9 +697,9 @@ CREATE TABLE IF NOT EXISTS `course` (
   `updater` bigint NOT NULL COMMENT '更新人',
   `deleted` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='草稿课程';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='课程表';
 
--- 正在导出表  tj_course.course 的数据：~14 rows (大约)
+-- 正在导出表  tj_course.course 的数据：
 DELETE FROM `course`;
 INSERT INTO `course` (`id`, `name`, `course_type`, `cover_url`, `first_cate_id`, `second_cate_id`, `third_cate_id`, `free`, `price`, `template_type`, `template_url`, `status`, `purchase_start_time`, `purchase_end_time`, `step`, `score`, `media_duration`, `valid_duration`, `section_num`, `dep_id`, `publish_times`, `publish_time`, `create_time`, `update_time`, `creater`, `updater`, `deleted`) VALUES
 	(1, '课程1', 2, '/img-tx/default-cover-url.jpg', 1001, 2001, 3003, 0, 100, 1, '', 2, '2022-07-23 16:46:33', '2023-12-23 16:46:38', 5, 0, 0000000000, 12, 12, 0, 1, '2022-07-22 16:47:50', '2022-07-22 16:48:11', '2023-03-21 20:06:59', 1, 1, 0),
@@ -990,13 +1002,13 @@ INSERT INTO `course_catalogue_draft` (`id`, `name`, `trailer`, `course_id`, `typ
 DROP TABLE IF EXISTS `course_cata_subject_draft`;
 CREATE TABLE IF NOT EXISTS `course_cata_subject_draft` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '小节题目关系id',
-  `course_id` bigint DEFAULT NULL,
+  `course_id` bigint DEFAULT NULL comment '课程Id',
   `cata_id` bigint NOT NULL COMMENT '小节id',
   `subject_id` bigint NOT NULL COMMENT '题目id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='课程-题目关系表草稿';
 
--- 正在导出表  tj_course.course_cata_subject_draft 的数据：~4 rows (大约)
+-- 正在导出表  tj_course.course_cata_subject_draft 的数据：
 DELETE FROM `course_cata_subject_draft`;
 INSERT INTO `course_cata_subject_draft` (`id`, `course_id`, `cata_id`, `subject_id`) VALUES
 	(90, 9, 118, 1561505580659625985),
@@ -1020,7 +1032,7 @@ CREATE TABLE IF NOT EXISTS `course_content` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='课程内容，主要是一些大文本';
 
--- 正在导出表  tj_course.course_content 的数据：~14 rows (大约)
+-- 正在导出表  tj_course.course_content 的数据：
 DELETE FROM `course_content`;
 INSERT INTO `course_content` (`id`, `course_introduce`, `use_people`, `course_detail`, `dep_id`, `create_time`, `update_time`, `creater`, `updater`, `deleted`) VALUES
 	(1, '课程1是一个不错的课程', '全部人群', '简单、高效', 0, '2022-07-22 16:58:46', '2022-09-03 17:33:25', 0, 0, 0),
@@ -1084,7 +1096,7 @@ CREATE TABLE IF NOT EXISTS `course_draft` (
   `status` tinyint NOT NULL DEFAULT '0' COMMENT '课程状态，0：待上架，1：已上架，2：下架，3：已完结',
   `purchase_start_time` datetime DEFAULT NULL COMMENT '课程购买有效期开始时间',
   `purchase_end_time` datetime NOT NULL COMMENT '课程购买有效期结束时间',
-  `step` tinyint NOT NULL COMMENT '信息填写进度1：基本信息已经保存，2：课程目录已经保存，3：课程视频已保存，4：课程题目已保存，5：课程老师已经保存',
+  `step` tinyint NOT NULL COMMENT '信息填写进度,1：基本信息已经保存，2：课程目录已经保存，3：课程视频已保存，4：课程题目已保存，5：课程老师已经保存',
   `score` int DEFAULT '0' COMMENT '课程评价得分，45代表4.5星',
   `media_duration` int NOT NULL DEFAULT '0' COMMENT '视频总时长',
   `valid_duration` int NOT NULL DEFAULT '0' COMMENT '课程有效期，单位月',
@@ -1097,7 +1109,7 @@ CREATE TABLE IF NOT EXISTS `course_draft` (
   `creater` bigint NOT NULL DEFAULT '0' COMMENT '创建人',
   `updater` bigint NOT NULL DEFAULT '0' COMMENT '更新人',
   `deleted` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除',
-  `c_version` int DEFAULT '1',
+  `c_version` int DEFAULT '1' comment '版本控制',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='草稿课程';
 
@@ -1193,7 +1205,7 @@ CREATE TABLE IF NOT EXISTS `course_teacher_draft` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='课程老师关系表草稿';
 
--- 正在导出表  tj_course.course_teacher_draft 的数据：~5 rows (大约)
+-- 正在导出表  tj_course.course_teacher_draft 的数据：
 DELETE FROM `course_teacher_draft`;
 INSERT INTO `course_teacher_draft` (`id`, `course_id`, `teacher_id`, `is_show`, `c_index`, `dep_id`, `create_time`, `update_time`, `creater`, `updater`, `deleted`) VALUES
 	(123, 123, 123, 1, 123, 1, '2022-07-20 21:59:45', '2022-07-20 21:59:48', 1, 1, 0),
@@ -1231,7 +1243,7 @@ CREATE TABLE IF NOT EXISTS `subject` (
   `updater` bigint NOT NULL COMMENT '更新人',
   `deleted` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='题目';
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='视频课程中题目';
 
 -- 正在导出表  tj_course.subject 的数据：~63 rows (大约)
 DELETE FROM `subject`;
@@ -1607,7 +1619,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   `creater` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
   `updater` bigint NOT NULL DEFAULT '1' COMMENT '更新人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='题目';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='考试题目';
 
 -- 正在导出表  tj_exam.question 的数据：~6 rows (大约)
 DELETE FROM `question`;
@@ -1686,9 +1698,9 @@ CREATE TABLE IF NOT EXISTS `question_detail` (
   `answer` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '选择题正确答案1到10，如果有多个答案，中间使用逗号隔开，如果是判断题，1：代表正确，其他代表错误',
   `analysis` varchar(1024) NOT NULL COMMENT '答案解析',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='题目';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='考试题目映射表';
 
--- 正在导出表  tj_exam.question_detail 的数据：~6 rows (大约)
+-- 正在导出表  tj_exam.question_detail 的数据：
 DELETE FROM `question_detail`;
 INSERT INTO `question_detail` (`id`, `options`, `answer`, `analysis`) VALUES
 	(1561504460092592130, '["6", "7", "8", "9"]', '3', '分别是：byte short int long float double char boolean'),
@@ -1783,7 +1795,7 @@ CREATE TABLE IF NOT EXISTS `media` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='媒资表，主要是视频文件';
 
--- 正在导出表  tj_media.media 的数据：~152 rows (大约)
+-- 正在导出表  tj_media.media 的数据：
 DELETE FROM `media`;
 INSERT INTO `media` (`id`, `file_id`, `filename`, `media_url`, `cover_url`, `duration`, `size`, `request_id`, `status`, `create_time`, `update_time`, `creater`, `updater`, `dep_id`, `deleted`) VALUES
 	(1, '387702303569490399', '17.Redis网络模型-阻塞IO', 'http://1312394356.vod2.myqcloud.com/706ce94evodsh1312394356/61dd2e1c387702303569490399/2nIBvrHaqiQA.mp4', 'http://1312394356.vod2.myqcloud.com/4756d6f6vodtranssh1312394356/61dd2e1c387702303569490399/coverBySnapshot/coverBySnapshot_10_0.jpg', 264.359, 12527353, '', 3, '2022-07-20 22:45:28', '2022-09-03 18:45:05', 1, 0, 0, 0),
@@ -1989,7 +2001,7 @@ CREATE TABLE IF NOT EXISTS `notice_task` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='系统通告的任务表，可以延期或定期发送通告';
 
--- 正在导出表  tj_message.notice_task 的数据：~0 rows (大约)
+-- 正在导出表  tj_message.notice_task 的数据：
 DELETE FROM `notice_task`;
 
 -- 导出  表 tj_message.notice_task_target 结构
@@ -2000,7 +2012,7 @@ CREATE TABLE IF NOT EXISTS `notice_task_target` (
   PRIMARY KEY (`task_id`,`target_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='通知任务的目标用户信息';
 
--- 正在导出表  tj_message.notice_task_target 的数据：~0 rows (大约)
+-- 正在导出表  tj_message.notice_task_target 的数据：
 DELETE FROM `notice_task_target`;
 
 -- 导出  表 tj_message.notice_template 结构
@@ -2013,7 +2025,7 @@ CREATE TABLE IF NOT EXISTS `notice_template` (
   `status` tinyint NOT NULL DEFAULT '0' COMMENT '模板状态:  0-草稿，1-使用中，2-停用',
   `title` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8_general_ci DEFAULT NULL COMMENT '通知标题，短信模板可以不填',
   `content` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT '通知内容模板',
-  `is_sms_template` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否是短信模板，默认false',
+  `is_sms_template` tinyint NOT NULL DEFAULT 0 COMMENT '是否是短信模板，默认false',
   `creater` bigint NOT NULL COMMENT '创建人',
   `updater` bigint NOT NULL COMMENT '更新人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -2022,7 +2034,7 @@ CREATE TABLE IF NOT EXISTS `notice_template` (
   KEY `idx_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='通知模板';
 
--- 正在导出表  tj_message.notice_template 的数据：~1 rows (大约)
+-- 正在导出表  tj_message.notice_template 的数据：
 DELETE FROM `notice_template`;
 INSERT INTO `notice_template` (`id`, `name`, `code`, `type`, `status`, `title`, `content`, `is_sms_template`, `creater`, `updater`, `create_time`, `update_time`) VALUES
 	(1561895814668771330, '短信验证码', 'VERIFY_CODE', 4, 1, NULL, '您的验证码为xxx,验证码5分钟内有效，请勿泄露给他人！', b'1', 0, 0, '2022-08-23 01:59:16', '2022-09-24 11:31:08');
@@ -2033,13 +2045,13 @@ CREATE TABLE IF NOT EXISTS `public_notice` (
   `id` bigint NOT NULL COMMENT '公告id',
   `title` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT '公告标题',
   `content` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT '公告通知内容，可以存放公告消息模板',
-  `type` tinyint NOT NULL COMMENT '通知类型：0-系统通知，1-笔记通知，2-问答通知，3-其它通知',
+  `type` tinyint NOT NULL default 0 COMMENT '通知类型：0-系统通知，1-笔记通知，2-问答通知，3-其它通知',
   `push_time` datetime NOT NULL COMMENT '通知发布时间',
   `expire_time` datetime NOT NULL COMMENT '通知失效时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='公告消息模板';
 
--- 正在导出表  tj_message.public_notice 的数据：~0 rows (大约)
+-- 正在导出表  tj_message.public_notice 的数据：
 DELETE FROM `public_notice`;
 
 -- 导出  表 tj_message.sms_third_platform 结构
@@ -2055,7 +2067,7 @@ CREATE TABLE IF NOT EXISTS `sms_third_platform` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COMMENT='第三方云通讯平台';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COMMENT='第三方云通讯平台的短信表';
 
 -- 正在导出表  tj_message.sms_third_platform 的数据：~3 rows (大约)
 DELETE FROM `sms_third_platform`;
@@ -2072,7 +2084,7 @@ CREATE TABLE IF NOT EXISTS `user_inbox` (
   `type` tinyint DEFAULT '4' COMMENT '通知类型：0-系统通知，1-笔记通知，2-问答通知，3-其它通知，4-私信',
   `title` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8_general_ci DEFAULT '' COMMENT '通知标题',
   `content` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT '通知或私信内容',
-  `is_read` bit(1) NOT NULL DEFAULT b'0' COMMENT '公告是否已读',
+  `is_read` tinyint NOT NULL DEFAULT '0' COMMENT '公告是否已读',
   `publisher` bigint NOT NULL DEFAULT '0' COMMENT '通知的发送者id，0则代表是系统',
   `push_time` datetime NOT NULL COMMENT '创建时间',
   `expire_time` datetime NOT NULL COMMENT '过期时间，一旦过期用户端不在展示',
@@ -2081,7 +2093,7 @@ CREATE TABLE IF NOT EXISTS `user_inbox` (
   KEY `push_time` (`push_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='用户通知记录';
 
--- 正在导出表  tj_message.user_inbox 的数据：~0 rows (大约)
+-- 正在导出表  tj_message.user_inbox 的数据：
 DELETE FROM `user_inbox`;
 
 
@@ -2098,7 +2110,7 @@ CREATE TABLE IF NOT EXISTS `pay_channel` (
   `channel_code` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT '支付渠道编码，用于获取支付实现',
   `channel_priority` int NOT NULL COMMENT '渠道优先级，数字越小优先级越高',
   `channel_icon` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT '渠道图标',
-  `status` int NOT NULL DEFAULT '1' COMMENT '支付渠道状态，1：使用中，2：停用',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '支付渠道状态，1：使用中，2：停用',
   `creater` bigint NOT NULL COMMENT '创建人',
   `updater` bigint NOT NULL COMMENT '更新人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -2106,7 +2118,7 @@ CREATE TABLE IF NOT EXISTS `pay_channel` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COMMENT='支付渠道';
 
--- 正在导出表  tj_pay.pay_channel 的数据：~2 rows (大约)
+-- 正在导出表  tj_pay.pay_channel 的数据：
 DELETE FROM `pay_channel`;
 INSERT INTO `pay_channel` (`id`, `name`, `channel_code`, `channel_priority`, `channel_icon`, `status`, `creater`, `updater`, `create_time`, `update_time`) VALUES
 	(1, '微信', 'wxPay', 0, '/img-tx/icon_weixin.png', 1, 1, 1, '2022-06-30 03:17:30', '2022-09-05 17:59:59'),
@@ -2136,11 +2148,11 @@ CREATE TABLE IF NOT EXISTS `pay_order` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `creater` bigint NOT NULL DEFAULT '0' COMMENT '创建人',
   `updater` bigint NOT NULL DEFAULT '0' COMMENT '更新人',
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '逻辑删除',
+  `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `biz_order_no` (`biz_order_no`),
   UNIQUE KEY `pay_order_no` (`pay_order_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=1585168008500764674 DEFAULT CHARSET=utf8mb3 COMMENT='支付订单';
+) ENGINE=InnoDB AUTO_INCREMENT=1585168008500764674 DEFAULT CHARSET=utf8mb3 COMMENT='支付订单表';
 
 -- 正在导出表  tj_pay.pay_order 的数据：~17 rows (大约)
 DELETE FROM `pay_order`;
@@ -2173,26 +2185,26 @@ CREATE TABLE IF NOT EXISTS `refund_order` (
   `refund_order_no` bigint NOT NULL COMMENT '退款单号，每次退款的唯一标示',
   `refund_amount` int NOT NULL COMMENT '本次退款金额，单位分',
   `total_amount` int NOT NULL COMMENT '总金额，单位分',
-  `is_split` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否是拆单退款，默认false',
+  `is_split` tinyint NOT NULL DEFAULT '0' COMMENT '是否是拆单退款，默认false',
   `pay_channel_code` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '支付渠道编码',
   `result_code` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8_general_ci DEFAULT '' COMMENT '第三方交易编码',
   `result_msg` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci DEFAULT '' COMMENT '第三方交易信息',
-  `status` int NOT NULL DEFAULT '0' COMMENT '退款状态，0：未提交，1：退款中，2：退款失败，3：退款成功',
+  `status` tinyint NOT NULL DEFAULT '0' COMMENT '退款状态，0：未提交，1：退款中，2：退款失败，3：退款成功',
   `refund_channel` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci DEFAULT NULL COMMENT '退款渠道',
   `notify_failed_times` int NOT NULL DEFAULT '0' COMMENT '业务端退款通知失败次数',
-  `notify_status` int NOT NULL DEFAULT '0' COMMENT '退款接口通知状态，0：待通知，1：通知成功，2：通知中，3：通知失败',
+  `notify_status` tinyint NOT NULL DEFAULT '0' COMMENT '退款接口通知状态，0：待通知，1：通知成功，2：通知中，3：通知失败',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '退款单据创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '退款单据修改时间',
   `creater` bigint NOT NULL DEFAULT '0' COMMENT '单据创建人，一般手动对账产生的单据才有值',
   `updater` bigint NOT NULL DEFAULT '0' COMMENT '单据修改人，一般手动对账产生的单据才有值',
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '逻辑删除',
+  `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `index_biz_order_id` (`biz_refund_order_no`) USING BTREE,
   KEY `index_create_time` (`create_time`) USING BTREE,
   KEY `index_refund_order_id` (`refund_order_no`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1588164197026390019 DEFAULT CHARSET=utf8mb3 COMMENT='退款订单';
+) ENGINE=InnoDB AUTO_INCREMENT=1588164197026390019 DEFAULT CHARSET=utf8mb3 COMMENT='退款订单表';
 
--- 正在导出表  tj_pay.refund_order 的数据：~21 rows (大约)
+-- 正在导出表  tj_pay.refund_order 的数据：
 DELETE FROM `refund_order`;
 INSERT INTO `refund_order` (`id`, `biz_order_no`, `biz_refund_order_no`, `pay_order_no`, `refund_order_no`, `refund_amount`, `total_amount`, `is_split`, `pay_channel_code`, `result_code`, `result_msg`, `status`, `refund_channel`, `notify_failed_times`, `notify_status`, `create_time`, `update_time`, `creater`, `updater`, `deleted`) VALUES
 	(1563525304759173121, 202208271107001, 20220827110700101, 1563373004522557442, 1563525304750784514, 200, 200, b'0', 'aliPay', '40004', 'Business Failed', 2, 'ALIPAYACCOUNT', 0, 0, '2022-08-26 08:05:51', '2022-08-26 08:57:58', 0, 0, b'0'),
@@ -2233,7 +2245,7 @@ CREATE TABLE IF NOT EXISTS `interests` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户兴趣表，保存感兴趣的二级分类id';
 
--- 正在导出表  tj_search.interests 的数据：~2 rows (大约)
+-- 正在导出表  tj_search.interests 的数据：
 DELETE FROM `interests`;
 INSERT INTO `interests` (`id`, `interests`, `create_time`, `update_time`) VALUES
 	(2, '2002,2054,2001', '2022-07-22 16:29:22', '2022-12-10 10:34:47'),
@@ -2244,6 +2256,21 @@ INSERT INTO `interests` (`id`, `interests`, `create_time`, `update_time`) VALUES
 DROP DATABASE IF EXISTS `tj_trade`;
 CREATE DATABASE IF NOT EXISTS `tj_trade` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `tj_trade`;
+
+DROP TABLE IF EXISTS `undo_log`;
+CREATE TABLE IF NOT EXISTS `undo_log` (
+   `branch_id` bigint NOT NULL COMMENT 'branch transaction id',
+   `xid` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT 'global transaction id',
+   `context` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL COMMENT 'undo_log context,such as serialization',
+   `rollback_info` longblob NOT NULL COMMENT 'rollback info',
+   `log_status` int NOT NULL COMMENT '0:normal status,1:defense status',
+   `log_created` datetime(6) NOT NULL COMMENT 'create datetime',
+   `log_modified` datetime(6) NOT NULL COMMENT 'modify datetime',
+    UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPACT COMMENT='AT transaction mode undo table';
+
+-- 正在导出表  tj_trade.undo_log 的数据：
+DELETE FROM `undo_log`;
 
 -- 导出  表 tj_trade.cart 结构
 DROP TABLE IF EXISTS `cart`;
@@ -2257,9 +2284,9 @@ CREATE TABLE IF NOT EXISTS `cart` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='购物车条目信息，也就是购物车中的课程';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='购物车条目信息表，也就是购物车中的课程';
 
--- 正在导出表  tj_trade.cart 的数据：~1 rows (大约)
+-- 正在导出表  tj_trade.cart 的数据：
 DELETE FROM `cart`;
 INSERT INTO `cart` (`id`, `user_id`, `course_id`, `cover_url`, `course_name`, `price`, `create_time`, `update_time`) VALUES
 	(1638714274064904194, 2, 1552558707325374467, '/img-tx/d15c718da3a24343b57b06becd79a032.jpg', '前端工程师2022版12', 32900, '2023-03-23 09:28:25', '2023-03-23 09:28:25');
@@ -2321,7 +2348,7 @@ CREATE TABLE IF NOT EXISTS `order_detail` (
   `discount_amount` int NOT NULL DEFAULT '0' COMMENT '折扣金额',
   `real_pay_amount` int NOT NULL COMMENT '实付金额',
   `status` tinyint NOT NULL COMMENT '订单详情状态，1：待支付，2：已支付，3：已关闭，4：已完成，5：已报名',
-  `refund_status` tinyint DEFAULT NULL COMMENT '1：待审批，2：取消退款，3：同意退款，4：拒绝退款，5：退款成功，6：退款失败''',
+  `refund_status` tinyint DEFAULT NULL COMMENT '1：待审批，2：取消退款，3：同意退款，4：拒绝退款，5：退款成功，6：退款失败',
   `pay_channel` varchar(50) NOT NULL DEFAULT '' COMMENT '支付渠道名称',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -2332,9 +2359,9 @@ CREATE TABLE IF NOT EXISTS `order_detail` (
   KEY `idx_user_course` (`user_id`,`course_id`),
   KEY `idx_course_expire_time` (`course_expire_time`),
   KEY `idx_pay_channel` (`pay_channel`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单明细';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单明细表';
 
--- 正在导出表  tj_trade.order_detail 的数据：~20 rows (大约)
+-- 正在导出表  tj_trade.order_detail 的数据：
 DELETE FROM `order_detail`;
 INSERT INTO `order_detail` (`id`, `order_id`, `user_id`, `course_id`, `price`, `name`, `cover_url`, `valid_duration`, `course_expire_time`, `discount_amount`, `real_pay_amount`, `status`, `refund_status`, `pay_channel`, `create_time`, `update_time`, `creater`, `updater`) VALUES
 	(1564802575625117697, 1564802575146967041, 2, 2, 10000, '课程2', '/img-tx/default-cover-url.jpg', 12, '2023-08-31 15:01:46', 0, 10000, 3, 0, '', '2022-08-31 10:29:42', '2023-03-20 23:33:34', 2, 2),
@@ -2368,7 +2395,7 @@ CREATE TABLE IF NOT EXISTS `refund_apply` (
   `refund_order_no` bigint DEFAULT NULL COMMENT '流水退款单号',
   `user_id` bigint NOT NULL DEFAULT '0' COMMENT '订单所属用户id',
   `refund_amount` bigint NOT NULL COMMENT '退款金额',
-  `status` int NOT NULL DEFAULT '1' COMMENT '退款状态，1：待审批，2：取消退款，3：同意退款，4：拒绝退款，5：退款成功，6：退款失败',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '退款状态，1：待审批，2：取消退款，3：同意退款，4：拒绝退款，5：退款成功，6：退款失败',
   `refund_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '申请退款原因',
   `message` varchar(255) NOT NULL COMMENT '退款状态描述',
   `approver` bigint DEFAULT NULL COMMENT '审批人id',
@@ -2386,7 +2413,7 @@ CREATE TABLE IF NOT EXISTS `refund_apply` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='退款申请';
 
--- 正在导出表  tj_trade.refund_apply 的数据：~20 rows (大约)
+-- 正在导出表  tj_trade.refund_apply 的数据：
 DELETE FROM `refund_apply`;
 INSERT INTO `refund_apply` (`id`, `order_detail_id`, `order_id`, `pay_order_no`, `refund_order_no`, `user_id`, `refund_amount`, `status`, `refund_reason`, `message`, `approver`, `approve_opinion`, `remark`, `failed_reason`, `question_desc`, `refund_channel`, `create_time`, `approve_time`, `finish_time`, `update_time`, `creater`, `updater`) VALUES
 	(1564900201800413155, 1564890487339466754, 1564890487310106626, NULL, 1564905916325769217, 2, 100, 5, '不想学了', '退款成功', 1, '同意', '尚未学习', NULL, NULL, 'ALIPAYACCOUNT', '2022-08-31 18:09:44', '2022-08-31 18:12:21', '2022-08-31 18:15:26', '2022-08-31 18:32:52', 2, 1),

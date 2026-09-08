@@ -1,0 +1,871 @@
+Table account_role [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	account_id bigint [ not null, note: '账户id' ]
+	role_id bigint [ not null, note: '角色id' ]
+}
+
+Table login_record [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	user_id bigint [ not null, note: '用户id' ]
+	cell_phone char(11) [ not null, unique, note: '手机号码' ]
+	login_time datetime [ not null, note: '登录时间' ]
+	logout_time datetime [ not null, note: '登出时间' ]
+	duration bigint [ default: 0, note: '登录时长，单位是秒' ]
+	ipv4 varchar(15) [ not null ]
+}
+
+Table menu [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	parent_id bigint [ not null, default: 0, note: '父菜单id，默认0代表没有父菜单' ]
+	has_children tinyint [ not null, default: 0, note: '是否有子菜单，默认false' ]
+	label varchar(16) [ not null, default: '""', note: '菜单文本' ]
+	path varchar(255) [ not null, default: '""', note: '菜单路径' ]
+	icon varchar(32) [ not null ]
+	priority tinyint [ not null, default: 127, note: '顺序，默认127' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table privilege [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	menu_id bigint [ default: NULL, note: '菜单id' ]
+	intro varchar(255) [ not null, default: '""', note: '权限说明' ]
+	method varchar(16) [ not null, default: '""', note: 'API权限的请求方式' ]
+	uri varchar(255) [ not null, default: '""', note: 'API权限的请求路径' ]
+	internal tinyint [ not null, default: 0, note: '是否是内部接口权限，默认false' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table role [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	code varchar(64) [ not null, note: '角色代号，例如：admin' ]
+	name varchar(255) [ not null, note: '角色名称' ]
+	type tinyint [ not null, default: 1, note: '角色类型：0-固定角色（不可选）1-自定义角色' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table role_menu [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null ]
+	role_id bigint [ not null, note: '角色id' ]
+	menu_id bigint [ not null, note: '菜单id' ]
+}
+
+Table role_privilege [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	role_id bigint [ not null, note: '角色id' ]
+	privilege_id bigint [ not null, note: '权限id' ]
+}
+
+Table category [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程分类id' ]
+	name varchar(50) [ not null, note: '分类名称' ]
+	parent_id bigint [ not null, default: 0, note: '父分类id，一级分类父id为0' ]
+	level integer [ not null, note: '分类级别，1,2,3：代表一级分类，二级分类，三级分类' ]
+	priority integer [ not null, default: 1, note: '同级目录优先级，数字越小优先级越高，可以重复' ]
+	status tinyint [ not null, note: '课程分类状态，1：正常，2：禁用' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建者' ]
+	updater bigint [ not null, default: 0, note: '更新者' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table user [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	username varchar(32) [ not null, note: '用户名' ]
+	cell_phone varchar(11) [ not null, note: '手机号' ]
+	password varchar(255) [ not null, note: '密码' ]
+	type tinyint [ not null, default: 0, note: '用户类型：1-员工, 2-普通学员，3-老师' ]
+	status tinyint [ not null, default: 1, note: '账户状态：0-禁用 1-正常' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ default: NULL, note: '创建者id' ]
+	updater bigint [ not null, default: 0, note: '更新者id' ]
+
+	indexes {
+		(username) [ name: 'username_idx', unique ]
+		(cell_phone, type) [ name: 'cell_idx', unique ]
+		(type) [ name: 'type_idx' ]
+	}
+}
+
+Table user_detail [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '关联用户id' ]
+	type tinyint [ not null, default: 2, note: '用户类型：1-员工, 2-普通学员，3-老师' ]
+	name varchar(64) [ not null ]
+	gender tinyint [ not null, note: '性别：0-男性，1-女性' ]
+	icon varchar(255) [ default: NULL, note: '头像地址' ]
+	email varchar(255) [ default: NULL, note: '邮箱' ]
+	qq varchar(18) [ default: NULL, note: 'QQ号码' ]
+	birthday date [ default: NULL, note: '生日' ]
+	job varchar(32) [ default: NULL, note: '岗位' ]
+	province varchar(32) [ default: NULL, note: '省' ]
+	city varchar(255) [ default: NULL, note: '市' ]
+	district varchar(32) [ default: NULL, note: '区' ]
+	intro varchar(512) [ default: NULL, note: '个人介绍' ]
+	photo varchar(255) [ default: NULL, note: '形象照地址' ]
+	role_id bigint [ default: NULL, note: '角色id' ]
+	course_amount smallint [ default: 0, note: '购买课程数量，学生才有该字段信息' ]
+	create_time datetime [ note: '创建时间' ]
+	update_time datetime [ note: '更新时间' ]
+	creater bigint [ default: NULL, note: '创建者id' ]
+	updater bigint [ default: 0, note: '更新者id' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+}
+
+Table course [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程草稿id，对应正式草稿id' ]
+	name varchar(80) [ not null, note: '课程名称' ]
+	course_type tinyint [ not null, default: 2, note: '课程类型，1：直播课，2：录播课' ]
+	cover_url varchar(255) [ not null, note: '封面链接' ]
+	first_cate_id bigint [ not null, note: '一级课程分类id' ]
+	second_cate_id bigint [ not null, note: '二级课程分类id' ]
+	third_cate_id bigint [ not null, note: '三级课程分类id' ]
+	free tinyint [ not null, default: 0, note: '售卖方式0付费，1：免费' ]
+	price integer [ not null, note: '课程价格，单位为分' ]
+	template_type tinyint [ not null, default: 1, note: '模板类型，1：固定模板，2：自定义模板' ]
+	template_url varchar(255) [ not null, default: '""', note: '自定义模板的连接' ]
+	status tinyint [ not null, note: '课程状态，1：待上架，2：已上架，3：下架，4：已完结' ]
+	purchase_start_time datetime [ not null, note: '课程购买有效期开始时间' ]
+	purchase_end_time datetime [ not null, note: '课程购买有效期结束时间' ]
+	step tinyint [ not null, note: '信息填写进度' ]
+	score integer [ not null, default: 0, note: '课程评价得分，45代表4.5星' ]
+	media_duration integer [ default: NULL, note: '课程总时长' ]
+	valid_duration integer [ not null, note: '课程有效期，单位月' ]
+	section_num integer [ not null, note: '课程总节数，包括练习' ]
+	dep_id bigint [ not null, note: '部门id' ]
+	publish_times integer [ not null, default: 1, note: '发布次数' ]
+	publish_time datetime [ default: NULL, note: '最近一次发布时间' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table course_catalogue [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程目录id' ]
+	name varchar(255) [ not null, note: '目录名称' ]
+	trailer tinyint [ not null, default: 0, note: '是否支持试看' ]
+	course_id bigint [ not null, note: '课程id' ]
+	type tinyint [ not null, note: '目录类型1：章，2：节，3：测试' ]
+	parent_catalogue_id bigint [ not null, note: '所属章id，只有小节和测试有该值，章没有，章默认为0' ]
+	media_id bigint [ not null, default: 0, note: '媒资id' ]
+	video_id bigint [ not null, note: '视频id' ]
+	video_name varchar(255) [ not null, default: '""', note: '视频名称' ]
+	living_start_time datetime [ default: NULL, note: '直播开始时间' ]
+	living_end_time datetime [ default: NULL, note: '直播结束时间' ]
+	play_back tinyint [ not null, default: 0, note: '是否支持回放' ]
+	media_duration integer [ not null, default: 0, note: '视频时长，以秒为单位' ]
+	c_index integer [ not null, default: 0, note: '用于章节排序' ]
+	dep_id bigint [ not null, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	deleted bigint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table course_cata_subject_draft [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '小节题目关系id' ]
+	course_id bigint [ default: NULL, note: '课程Id' ]
+	cata_id bigint [ not null, note: '小节id' ]
+	subject_id bigint [ not null, note: '题目id' ]
+}
+
+Table course_content [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程内容id' ]
+	course_introduce varchar(512) [ not null, note: '课程介绍' ]
+	use_people varchar(255) [ not null, note: '适用人群' ]
+	course_detail varchar(1024) [ not null, note: '课程详情' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table course_draft [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程草稿id，对应正式草稿id' ]
+	name varchar(80) [ not null, note: '课程名称' ]
+	course_type tinyint [ not null, default: 2, note: '课程类型，1：直播课，2：录播课' ]
+	cover_url varchar(255) [ not null, note: '封面链接' ]
+	first_cate_id bigint [ not null, note: '一级课程分类id' ]
+	second_cate_id bigint [ not null, default: 0, note: '二级课程分类id' ]
+	third_cate_id bigint [ not null, default: 0, note: '三级课程分类id' ]
+	free tinyint [ not null, default: 0, note: '售卖方式0付费，1：免费' ]
+	price integer [ not null, note: '课程价格，单位为分' ]
+	template_type tinyint [ not null, default: 1, note: '模板类型，1：固定模板，2：自定义模板' ]
+	template_url varchar(255) [ not null, note: '自定义模板的连接' ]
+	status tinyint [ not null, default: 0, note: '课程状态，0：待上架，1：已上架，2：下架，3：已完结' ]
+	purchase_start_time datetime [ default: NULL, note: '课程购买有效期开始时间' ]
+	purchase_end_time datetime [ default: NULL, note: '课程购买有效期结束时间' ]
+	step tinyint [ not null, note: '信息填写进度，1：基本信息已经保存，2：课程目录已经保存，3：课程视频已保存，4：课程题目已保存，5：课程老师已经保存' ]
+	score integer [ not null, default: 0, note: '课程评价得分，45代表4.5星' ]
+	media_duration integer [ not null, default: 0, note: '视频总时长' ]
+	valid_duration integer [ not null, default: 0, note: '课程有效期，单位月' ]
+	section_num integer [ not null, default: 0, note: '课程总节数' ]
+	can_update tinyint [ not null, default: 1, note: '是否可以更新' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	publish_time datetime [ default: NULL, note: '最近一次发布时间' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+	c_version integer [ default: 1, note: '版本控制' ]
+}
+
+Table course_subject [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '课程题目关系列表' ]
+	course_id bigint [ not null, note: '课程Id' ]
+	subject_id bigint [ not null, note: '题目id' ]
+}
+
+Table course_teacher [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	course_id bigint [ not null, note: '课程id' ]
+	teacher_id bigint [ not null, note: '教师id' ]
+	is_show tinyint [ not null, default: 0, note: '用户端是否展示' ]
+	c_index integer [ not null, note: '序号' ]
+	dep_id bigint [ not null, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	deleted tinyint [ not null, note: '逻辑删除' ]
+}
+
+Table subject [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, unique, note: '题目id' ]
+	name varchar(512) [ not null, note: '题干' ]
+	subject_type tinyint [ not null, note: '题目类型，1：单选题，2：多选题，3：不定向选择题，4：判断题，5：主观题' ]
+	difficulty tinyint [ not null, note: '难易度，1：简单，2：中等，3：困难' ]
+	option1 varchar(512) [ not null, default: '""', note: '选择题答案1' ]
+	option2 varchar(512) [ not null, default: '""', note: '选择题答案2' ]
+	option3 varchar(512) [ not null, default: '""', note: '选择题答案2' ]
+	option4 varchar(512) [ not null, default: '""', note: '选择题答案4' ]
+	option5 varchar(512) [ not null, default: '""', note: '选择题答案5' ]
+	option6 varchar(512) [ not null, default: '""', note: '选择题答案6' ]
+	option7 varchar(512) [ not null, note: '选择题答案7' ]
+	option8 varchar(512) [ not null, note: '选择题答案8' ]
+	option9 varchar(512) [ not null, note: '选择题答案9' ]
+	option10 varchar(512) [ not null, note: '选择题答案10' ]
+	answer varchar(80) [ not null, note: '选择题正确答案1到10，如果有多个答案，中间使用逗号隔开，如果是判断题，1：代表正确，其他代表错误' ]
+	analysis varchar(1024) [ not null, default: '""', note: '答案解析' ]
+	use_times integer [ not null, default: 0, note: '引用次数' ]
+	answer_times integer [ not null, default: 0, note: '回答次数' ]
+	score integer [ not null, note: '分值' ]
+	dep_id bigint [ default: NULL, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table subject_category [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	subject_id bigint [ not null, note: '题目Id' ]
+	first_cate_id bigint [ not null, note: '一级课程分类id' ]
+	second_cate_id bigint [ default: NULL, note: '二级课程分类id' ]
+	third_cate_id bigint [ default: NULL, note: '三级课程分类id' ]
+}
+
+Table question [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	name varchar(512) [ not null, note: '题干' ]
+	type tinyint [ not null, note: '题目类型，1：单选题，2：多选题，3：不定向选择题，4：判断题，5：主观题' ]
+	cate_id1 bigint [ not null, note: '1级课程分类id' ]
+	cate_id2 bigint [ not null, note: '2级课程分类id' ]
+	cate_id3 bigint [ not null, note: '3级课程分类id' ]
+	difficulty tinyint [ not null, note: '难易度，1：简单，2：中等，3：困难' ]
+	answer_times integer [ not null, default: 0, note: '回答次数' ]
+	correct_times integer [ not null, default: 0, note: '回答正确次数' ]
+	score integer [ not null, note: '分值' ]
+	dep_id bigint [ default: NULL, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 1, note: '创建人' ]
+	updater bigint [ not null, default: 1, note: '更新人' ]
+}
+
+Table question_biz [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	biz_id bigint [ default: NULL, note: '业务id，要关联问题的某业务id，例如小节id' ]
+	question_id bigint [ default: NULL, note: '问题id' ]
+
+	indexes {
+		(biz_id, question_id) [ name: 'biz_id' ]
+	}
+}
+
+Table question_detail [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '题目id' ]
+	options json [ note: '选择题选项，json数组格式' ]
+	answer varchar(40) [ not null, note: '选择题正确答案1到10，如果有多个答案，中间使用逗号隔开，如果是判断题，1：代表正确，其他代表错误' ]
+	analysis varchar(1024) [ not null, note: '答案解析' ]
+}
+
+Table file [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键，文件id' ]
+	key varchar(255) [ not null, note: '文件在云端的唯一标示，例如：aaa.jpg' ]
+	filename varchar(255) [ not null, note: '文件上传时的名称' ]
+	request_id varchar(64) [ default: NULL, note: '请求id' ]
+	status tinyint [ not null, note: '状态：1-待上传 2-已上传,未使用 3-已使用' ]
+	platform tinyint [ not null, default: 1, note: '平台：1-腾讯，2-阿里' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '创建时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table media [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	file_id varchar(32) [ not null, note: '文件在云端的唯一标示，例如：387702302659783576' ]
+	filename varchar(255) [ not null, default: '""' ]
+	media_url varchar(255) [ not null, default: '""', note: '媒体播放地址' ]
+	cover_url varchar(255) [ not null, default: '""', note: '媒体封面地址' ]
+	duration double [ not null, default: 0, note: '视频时长，单位秒' ]
+	size bigint [ not null, default: 0, note: '视频大小，单位是字节' ]
+	request_id varchar(32) [ not null, default: '""', note: '请求id' ]
+	status tinyint [ not null, default: 1, note: '状态：1-上传中，2-已上传' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	uodate_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 1, note: '创建人' ]
+	updater bigint [ not null, default: 1, note: '更新人' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
+}
+
+Table tj_message_template [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, note: '短信发送模板id' ]
+	name varchar(50) [ not null, note: '模板名称' ]
+	platform_code varchar(50) [ not null, note: '第三方短信平台代号' ]
+	sign_name varchar(50) [ not null, note: '签名' ]
+	third_template_code varchar(50) [ not null, note: '第三方短信模板code' ]
+	content varchar(255) [ not null, note: '第三方短信模板内容预览' ]
+	template_id bigint [ not null, note: '通知模板id' ]
+	status tinyint [ not null, default: 0, note: '模板状态:  0-禁用，1-启用' ]
+	creater bigint [ not null, note: '创建者' ]
+	updater bigint [ not null, note: '更新者' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+
+	indexes {
+		(template_id) [ name: 'idx_template_id' ]
+	}
+}
+
+Table notice_task [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '公告任务id' ]
+	template_id bigint [ not null, note: '任务对应的通知模板id' ]
+	name varchar(128) [ not null, note: '任务名称' ]
+	partiat bit(1) [ not null, default: 0, note: '否是部分人的通告，默认false' ]
+	push_time datetime [ default: NULL, note: '任务预期执行时间' ]
+	interval integer [ default: NULL, note: '务延迟执行时间间隔，单位是分钟' ]
+	expire_time datetime [ default: NULL, note: '任务失效时间' ]
+	max_times integer [ default: 1, note: '任务重复执行次数上限，1则只发一次' ]
+	finished bit(1) [ default: 0, note: '任务是否完成，默认false' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table notice_task_target [headercolor: #175e7a] {
+	id bigint [ not null, note: '任务id' ]
+	target_id bigint [ not null, note: '目标用户id' ]
+
+	indexes {
+		(id, target_id) [ pk, name: 'pk_notice_task_target' ]
+	}
+}
+
+Table notice_template [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '通知模板id' ]
+	name varchar(50) [ not null, note: '通知模板名称' ]
+	code varchar(50) [ not null, note: '模板代号，例如：verify-code' ]
+	type tinyint [ not null, note: '通知类型：0-系统通知，1-笔记通知，2-问答通知，3-其它通知' ]
+	status tinyint [ not null, default: 0, note: '模板状态:  0-草稿，1-使用中，2-停用' ]
+	title varchar(50) [ default: NULL, note: '通知标题，短信模板可以不填' ]
+	content varchar(255) [ not null, note: '通知内容模板' ]
+	is_sms_template tinyint [ not null, default: 0, note: '是否是短信模板，默认false' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+
+	indexes {
+		(code) [ name: 'idx_code' ]
+	}
+}
+
+Table public_notice [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '通知公告' ]
+	title varchar(50) [ not null, note: '公告标题' ]
+	content varchar(255) [ not null, note: '公告通知内容，可以存放公告消息模板' ]
+	type tinyint [ not null, default: 0, note: '通知类型：0-系统通知，1-笔记通知，2-问答通知，3-其它通知' ]
+	push_time datetime [ not null, note: '通知发布时间' ]
+	expire_time datetime [ not null, note: '通知失效时间' ]
+}
+
+Table sms_third_platform [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique ]
+	name varchar(6) [ not null, note: '短信平台名称' ]
+	code varchar(255) [ not null, note: '短信平台代码，例如：ali' ]
+	priority integer [ not null, default: 0, note: '数字越小优先级越高，最小为0' ]
+	status integer [ not null, default: 1, note: '短信平台状态：0-禁用，1-启用' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table user_inbox [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '用户通知id' ]
+	user_id bigint [ not null, note: '用户id' ]
+	type tinyint [ default: 4, note: '通知类型：0-系统通知，1-笔记通知，2-问答通知，3-其它通知，4-私信' ]
+	title varchar(64) [ default: '""', note: '通知标题' ]
+	content varchar(255) [ not null, note: '通知或私信内容' ]
+	is_read tinyint [ not null, default: 0, note: '公告是否已读' ]
+	publisher bigint [ not null, default: 0, note: '通知的发送者id，0则代表是系统' ]
+	push_time datetime [ not null, note: '创建时间' ]
+	expire_time datetime [ not null, note: '过期时间，一旦过期用户端不在展示' ]
+
+	indexes {
+		(user_id) [ name: 'user_id' ]
+		(push_time) [ name: 'push_time' ]
+	}
+}
+
+Table pay_channel [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '支付渠道id' ]
+	name varchar(50) [ not null, note: '支付渠道名称' ]
+	channel_code varchar(30) [ not null, note: '支付渠道编码，用于获取支付实现' ]
+	channel_priority integer [ not null, note: '渠道优先级，数字越小优先级越高' ]
+	channel_icon varchar(255) [ not null, note: '渠道图标' ]
+	status tinyint [ not null, default: 1, note: '支付渠道状态，1：使用中，2：停用' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table refund_order [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键' ]
+	biz_order_no bigint [ not null, note: '业务端已支付的订单id' ]
+	biz_refund_order_no bigint [ not null, note: '业务端要退款的订单id，也就是子订单id' ]
+	pay_order_no bigint [ not null, note: '付款时传入的支付单号' ]
+	refund_order_no bigint [ not null, note: '退款单号，每次退款的唯一标示' ]
+	refund_amount integer [ not null, note: '本次退款金额，单位分' ]
+	total_amount integer [ not null, note: '总金额，单位分' ]
+	is_split tinyint [ not null, default: 0, note: '是否是拆单退款，默认false' ]
+	pay_channel_code varchar(30) [ not null, default: '0', note: '支付渠道编码' ]
+	result_code varchar(64) [ default: '""', note: '第三方交易编码' ]
+	result_msg varchar(255) [ default: '""', note: '第三方交易信息' ]
+	status tinyint [ not null, note: '退款状态，0：未提交，1：退款中，2：退款失败，3：退款成功' ]
+	refund_channel varchar(255) [ default: NULL, note: '退款渠道' ]
+	notify_failed_times integer [ not null, default: 0, note: '业务端退款通知失败次数' ]
+	notify_status tinyint [ not null, default: 0, note: '退款接口通知状态，0：待通知，1：通知成功，2：通知中，3：通知失败' ]
+	create_time datetime [ not null, note: '退款单据创建时间' ]
+	update_time datetime [ not null, note: '退款单据修改时间' ]
+	creater bigint [ not null, default: 0, note: '单据创建人，一般手动对账产生的单据才有值' ]
+	updater bigint [ not null, default: 0, note: '单据修改人，一般手动对账产生的单据才有值' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+
+	indexes {
+		(biz_refund_order_no) [ name: 'index_biz_order_id' ]
+		(create_time) [ name: 'index_create_time' ]
+		(refund_order_no) [ name: 'index_refund_order_id' ]
+	}
+}
+
+Table pay_order [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, unique, note: '主键' ]
+	biz_order_no bigint [ not null, note: '业务订单号' ]
+	pay_order_no bigint [ not null, default: 0, note: '支付单号' ]
+	biz_user_id bigint [ not null, note: '支付用户id' ]
+	pay_channel_code varchar(30) [ not null, default: '0', note: '支付渠道编码' ]
+	amount integer [ not null, note: '支付金额，单位位分' ]
+	pay_type tinyint [ not null, default: 4, note: '支付类型，1：h5,2:小程序，3：公众号，4：扫码' ]
+	status tinyint [ not null, default: 0, note: '支付状态，0：待提交，1:待支付，2：支付超时或取消，3：支付成功' ]
+	expand_json varchar(1024) [ not null, default: '""', note: '拓展字段，用于传递不同渠道单独处理的字段' ]
+	notify_url varchar(255) [ default: '""', note: '业务端回调接口' ]
+	notify_times integer [ not null, default: 0, note: '业务端回调次数' ]
+	"`notify_status" integer [ not null, default: 0, note: '回调状态，0：待回调，1：回调成功，2：回调失败' ]
+	result_code varchar(20) [ not null, default: '""', note: '第三方返回业务码' ]
+	result_msg varchar(50) [ not null, default: '""', note: '第三方返回提示信息' ]
+	pay_success_time datetime [ note: '支付成功时间' ]
+	pay_over_time datetime [ not null, note: '支付超时时间' ]
+	qr_code_url varchar(255) [ default: NULL, note: '支付二维码链接' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+
+	indexes {
+		(biz_order_no) [ name: 'biz_order_no' ]
+		(pay_order_no) [ name: 'pay_order_no' ]
+	}
+}
+
+Table interests [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '主键，对应用户id' ]
+	interests varchar(255) [ default: NULL, note: '感兴趣的二级分类id，以逗号分隔，例如：120,220,330' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table cart [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '购物车条目id' ]
+	user_id bigint [ not null, note: '用户id' ]
+	course_id bigint [ not null, note: '课程id' ]
+	cover_url varchar(255) [ not null, note: '课程封面路径' ]
+	course_name varchar(255) [ not null, note: '课程名称' ]
+	price integer [ not null, note: '单价' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table order [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '订单id' ]
+	user_id bigint [ not null, note: '用户id' ]
+	pay_order_no bigint [ default: NULL, note: '交易流水支付单号' ]
+	status tinyint [ not null, default: 1, note: '订单状态，1：待支付，2：已支付，3：已关闭，4：已完成，5：已报名，6：已申请退款' ]
+	message varchar(255) [ not null, default: '""', note: '状态备注' ]
+	total_amount integer [ not null, note: '订单总金额，单位分' ]
+	real_amount integer [ not null, note: '实付金额，单位分' ]
+	discount_amount integer [ not null, default: 0, note: '优惠金额，单位分' ]
+	pay_channel varchar(20) [ default: '""', note: '支付渠道' ]
+	coupon_ids json [ note: '优惠券id' ]
+	create_time datetime [ not null, note: '创建订单时间' ]
+	pay_timed datetime [ default: NULL, note: '支付时间' ]
+	close_time datetime [ default: NULL, note: '订单关闭时间' ]
+	finish_time datetime [ default: NULL, note: '订单完成时间，支付后30天' ]
+	refund_time datetime [ default: NULL, note: '申请退款时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table order_detail [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '订单明细id' ]
+	order_id bigint [ not null, note: '订单id' ]
+	user_id bigint [ not null, note: '用户id' ]
+	course_id bigint [ not null, note: '课程id' ]
+	price integer [ not null, note: '课程价格' ]
+	name varchar(128) [ not null, note: '课程名称' ]
+	cover_url varchar(255) [ not null, note: '封面地址' ]
+	valid_duration integer [ default: NULL, note: '课程学习有效期，单位月。空则代表永久有效' ]
+	course_expire_time datetime [ default: NULL, note: '课程学习的过期时间，支付成功开始计时' ]
+	discount_amount integer [ not null, note: '折扣金额' ]
+	real_pay_amount integer [ not null, note: '实付金额' ]
+	status tinyint [ not null, note: '订单详情状态，1：待支付，2：已支付，3：已关闭，4：已完成，5：已报名' ]
+	refund_status tinyint [ default: NULL, note: '1：待审批，2：取消退款，3：同意退款，4：拒绝退款，5：退款成功，6：退款失败' ]
+	pay_channel varchar(50) [ not null, default: '""', note: '支付渠道名称' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+
+	indexes {
+		(order_id) [ name: 'idx_order' ]
+		(user_id, course_id) [ name: 'idx_user_course' ]
+		(course_expire_time) [ name: 'idx_course_expire_time' ]
+		(pay_channel) [ name: 'idx_pay_channel' ]
+	}
+}
+
+Table refund_apply [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, unique, note: '退款id' ]
+	order_detail_id bigint [ not null, note: '订单明细id' ]
+	order_id bigint [ not null, note: '订单id' ]
+	pay_order_no bigint [ default: NULL, note: '流水支付单号' ]
+	refund_order_no bigint [ default: NULL, note: '流水退款单号' ]
+	user_id bigint [ not null, default: 0, note: '订单所属用户id' ]
+	refund_amount bigint [ not null, note: '退款金额' ]
+	status tinyint [ not null, default: 1, note: '退款状态，1：待审批，2：取消退款，3：同意退款，4：拒绝退款，5：退款成功，6：退款失败' ]
+	refund_reason varchar(255) [ not null, note: '申请退款原因' ]
+	message varchar(255) [ not null, note: '退款状态描述' ]
+	approver bigint [ default: NULL, note: '审批人id' ]
+	approve_opinion varchar(255) [ default: NULL, note: '审批意见' ]
+	remark varchar(255) [ default: NULL, note: '审批备注' ]
+	failed_reason varchar(255) [ default: NULL, note: '退款失败原因' ]
+	question_desc varchar(255) [ default: NULL, note: '退款问题说明' ]
+	refund_channel varchar(80) [ default: NULL, note: '退款渠道' ]
+	create_time datetime [ not null, note: '创建退款申请时间' ]
+	approve_time datetime [ not null, note: '审批时间' ]
+	finish_time datetime [ note: '退款完成时间（成功或失败）' ]
+	update_time datetime [ note: '更新时间' ]
+	creater bigint [ not null, note: '创建人' ]
+	updater bigint [ not null, note: '更新人' ]
+}
+
+// ===================== 用户与权限 =====================
+Ref "用户详情扩展用户" {
+  user_detail.id - user.id
+}
+
+Ref "用户详情默认角色" {
+  user_detail.role_id > role.id
+}
+
+Ref "账户角色-账户" {
+  account_role.account_id > user.id
+}
+
+Ref "账户角色-角色" {
+  account_role.role_id > role.id
+}
+
+Ref "登录记录-用户" {
+  login_record.user_id > user.id
+}
+
+Ref "菜单父级自关联" {
+  menu.parent_id > menu.id
+}
+
+Ref "权限关联菜单" {
+  privilege.menu_id > menu.id
+}
+
+Ref "角色菜单-角色" {
+  role_menu.role_id > role.id
+}
+
+Ref "角色菜单-菜单" {
+  role_menu.menu_id > menu.id
+}
+
+Ref "角色权限-角色" {
+  role_privilege.role_id > role.id
+}
+
+Ref "角色权限-权限" {
+  role_privilege.privilege_id > privilege.id
+}
+
+Ref "分类父级自关联" {
+  category.parent_id > category.id
+}
+
+Ref "课程-一级分类" {
+  course.first_cate_id > category.id
+}
+
+Ref "课程-二级分类" {
+  course.second_cate_id > category.id
+}
+
+Ref "课程-三级分类" {
+  course.third_cate_id > category.id
+}
+
+Ref "课程草稿-一级分类" {
+  course_draft.first_cate_id > category.id
+}
+
+Ref "课程草稿-二级分类" {
+  course_draft.second_cate_id > category.id
+}
+
+Ref "课程草稿-三级分类" {
+  course_draft.third_cate_id > category.id
+}
+
+Ref "课程内容-课程" {
+  course_content.id - course.id
+}
+
+Ref "课程目录-课程" {
+  course_catalogue.course_id > course.id
+}
+
+Ref "课程目录父级自关联" {
+  course_catalogue.parent_catalogue_id > course_catalogue.id
+}
+
+Ref "课程目录-媒资" {
+  course_catalogue.media_id > media.id
+}
+
+Ref "草稿小节题目-草稿课程" {
+  course_cata_subject_draft.course_id > course_draft.id
+}
+
+Ref "草稿小节题目-目录小节" {
+  course_cata_subject_draft.cata_id > course_catalogue.id
+}
+
+Ref "草稿小节题目-题目" {
+  course_cata_subject_draft.subject_id > subject.id
+}
+
+Ref "课程题目-课程" {
+  course_subject.course_id > course.id
+}
+
+Ref "课程题目-题目" {
+  course_subject.subject_id > subject.id
+}
+
+Ref "课程教师-课程" {
+  course_teacher.course_id > course.id
+}
+
+Ref "课程教师-教师" {
+  course_teacher.teacher_id > user_detail.id
+}
+
+Ref "题目分类-题目" {
+  subject_category.subject_id > subject.id
+}
+
+Ref "题目分类-一级分类" {
+  subject_category.first_cate_id > category.id
+}
+
+Ref "题目分类-二级分类" {
+  subject_category.second_cate_id > category.id
+}
+
+Ref "题目分类-三级分类" {
+  subject_category.third_cate_id > category.id
+}
+
+Ref "题目-一级分类" {
+  question.cate_id1 > category.id
+}
+
+Ref "题目-二级分类" {
+  question.cate_id2 > category.id
+}
+
+Ref "题目-三级分类" {
+  question.cate_id3 > category.id
+}
+
+Ref "题目详情-题目" {
+  question_detail.id - question.id
+}
+
+Ref "业务题目关联-题目" {
+  question_biz.question_id > question.id
+}
+
+Ref "短信模板-通知模板" {
+  tj_message_template.template_id > notice_template.id
+}
+
+Ref "通知任务-通知模板" {
+  notice_task.template_id > notice_template.id
+}
+
+Ref "通知任务目标-通知任务" {
+  notice_task_target.id > notice_task.id
+}
+
+Ref "通知任务目标-用户" {
+  notice_task_target.target_id > user.id
+}
+
+Ref "用户收件箱-用户" {
+  user_inbox.user_id > user.id
+}
+
+Ref "用户收件箱-发送者" {
+  user_inbox.publisher > user.id
+}
+
+Ref "支付订单-用户" {
+  pay_order.biz_user_id > user.id
+}
+
+Ref "支付订单-业务订单" {
+  pay_order.biz_order_no > order.id
+}
+
+Ref "订单-用户" {
+  order.user_id > user.id
+}
+
+Ref "订单明细-订单" {
+  order_detail.order_id > order.id
+}
+
+Ref "订单明细-用户" {
+  order_detail.user_id > user.id
+}
+
+Ref "订单明细-课程" {
+  order_detail.course_id > course.id
+}
+
+Ref "退款申请-订单明细" {
+  refund_apply.order_detail_id > order_detail.id
+}
+
+Ref "退款申请-订单" {
+  refund_apply.order_id > order.id
+}
+
+Ref "退款申请-用户" {
+  refund_apply.user_id > user.id
+}
+
+Ref "退款申请-审批人" {
+  refund_apply.approver > user_detail.id
+}
+
+Ref "退款申请-支付单" {
+  refund_apply.pay_order_no > pay_order.pay_order_no
+}
+
+Ref "退款申请-退款流水单" {
+  refund_apply.refund_order_no > refund_order.refund_order_no
+}
+
+Ref "退款流水-业务订单" {
+  refund_order.biz_order_no > order.id
+}
+
+Ref "退款流水-业务子订单" {
+  refund_order.biz_refund_order_no > order_detail.id
+}
+
+Ref "退款流水-支付单" {
+  refund_order.pay_order_no > pay_order.pay_order_no
+}
+
+Ref "购物车-用户" {
+  cart.user_id > user.id
+}
+
+Ref "购物车-课程" {
+  cart.course_id > course.id
+}
+
+Ref "用户兴趣-用户" {
+  interests.id - user.id
+}
