@@ -62,7 +62,7 @@ https://www.drawdb.app/
 
 ### Docker 本地依赖环境
 
-本项目通过 Docker Compose 在本地开发环境中运行所有依赖服务（SQL Server、Redis、Elasticsearch）以及后端 API（Admin/User 服务）。
+本项目通过 Docker Compose 在本地开发环境中运行所有依赖服务（Mysql、Redis、Elasticsearch、...）以及各个模块服务。
 
 #### 前置条件
 
@@ -74,6 +74,7 @@ https://www.drawdb.app/
 #### 部署基础设施
 
 1.克隆项目，进入项目根目录/docker
+
 2.一键启动所有服务：
 
 ```bash
