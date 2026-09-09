@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
  * 继承自 hutool 的BeanUtil，增加了bean转换时自定义转换器的功能
  */
 public class BeanUtils extends BeanUtil {
+
+    private BeanUtils(){}
+
     /**
      * 将原对象转换成目标对象，对于字段不匹配的字段可以使用转换器处理
      *

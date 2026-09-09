@@ -10,6 +10,8 @@ import java.math.BigDecimal;
  **/
 public class ObjectUtils extends ObjectUtil {
 
+    private ObjectUtils(){}
+
     /**
      * 为object设置默认值，对target中的基本类型进行默认值初始化,
      * 为null的对象不操作

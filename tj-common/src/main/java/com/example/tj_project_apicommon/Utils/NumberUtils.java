@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 public class NumberUtils extends NumberUtil {
 
+    private NumberUtils(){}
 
     /**
      * 如果number为空，将number转换为0，否则原数字返回

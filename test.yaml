@@ -6,12 +6,12 @@ spring:
 server:
   port: 8080
 
-# ========== 本地开发环境 (激活 local) ==========
+# ========== 开发环境 ==========
 ---
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: dev
   # 数据源示例：直连本机 127.0.0.1
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/mydb?useSSL=false&serverTimezone=Asia/Shanghai
@@ -23,12 +23,12 @@ spring:
       host: 127.0.0.1
       port: 6379
 
-# ========== Docker/容器环境 (激活 docker) ==========
+# ========== 部署环境 ==========
 ---
 spring:
   config:
     activate:
-      on-profile: docker
+      on-profile: local
   # 数据源示例：连 docker-compose 中的 mysql 服务（服务名即网络域名）
   datasource:
     url: jdbc:mysql://mysql-service:3306/mydb?useSSL=false&serverTimezone=Asia/Shanghai

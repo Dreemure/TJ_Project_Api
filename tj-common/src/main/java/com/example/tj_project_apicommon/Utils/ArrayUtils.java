@@ -6,11 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
+/*
  * 数组工具类
- * &#064;ClassName  ArrayUtils
- **/
+ */
 public class ArrayUtils extends ArrayUtil {
+    private ArrayUtils(){}
+
     /**
      * 将源数组转换成指定类型的列表
      *

@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
  * 继承自 hutool 的集合工具类
  */
 public class CollUtils extends CollectionUtil {
+
+    private CollUtils(){}
+
     public static <T> List<T> emptyList() {
         return Collections.emptyList();
     }

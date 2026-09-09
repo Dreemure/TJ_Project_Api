@@ -1,5 +1,12 @@
 package com.example.tj_project_apicommon.Constants;
 
+/*
+ * 错误信息常量接口。
+ * 职责：集中管理业务错误码（Code）和错误消息（Msg），统一全局异常及 API 响应的提示文案。
+ * 内容分类：Code（状态码：200成功/0失败）、Msg（各类业务提示信息，如用户不存在、参数非法、操作频繁等）。
+ * 使用：通过静态导入（import static ...ErrorInfo.*），在异常处理和响应构建中引用。
+ * 注意：Msg 和 Code 采用嵌套接口方式隔离职责，便于分类管理。
+ */
 public interface ErrorInfo {
 
     interface Msg {
