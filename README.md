@@ -7,16 +7,16 @@
 - **后端框架**：.SpringCloudAlibaba
 - **数据库**：Mysql8.0(mybatis-plus)、cancl(实现数据库与搜索引擎同步)、Redis、MongoDB
 - **缓存与分布式锁**：caffeine、Redisson
-- **搜索引擎**：Elasticsearch（用于新闻、公告的全文检索）
-- **全局日志**：GrayLog2
+- **搜索引擎**：Elasticsearch
+- **全局日志**：GrayLog2与Logback + SLF4J
 - **链路追踪**：SykWalking
-- **认证与安全**：sa-Token（管理端）、ECDSA 签名验证（管理端写操作）、SHA3-256 完整性校验（登录/登出）
+- **认证与安全**：sa-Token、ECDSA 签名验证、SHA3-256 完整性校验
 - **JSON流处理**：FastJson2
 - **聚合支付(微信、支付宝)**：IJPay
 ---
 
 ## 模块介绍
-- tj-api：约定服务(存放DTO等)
+- tj-api：约定模块
 - tj-auth：权限服务(使用sa-token鉴权)
 - tj-common：通用工程
 - tj-message：消息中心
