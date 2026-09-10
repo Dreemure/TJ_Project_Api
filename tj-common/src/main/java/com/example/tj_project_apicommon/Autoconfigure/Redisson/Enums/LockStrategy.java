@@ -1,8 +1,9 @@
 package com.example.tj_project_apicommon.Autoconfigure.Redisson.Enums;
 
+import com.example.tj_project_apicommon.Autoconfigure.Redisson.Annotations.Lock;
+import com.example.tj_project_apicommon.Exceptions.BizIllegalException;
 import org.redisson.api.RLock;
 
-import java.util.concurrent.locks.Lock;
 
 public enum LockStrategy {
     /**

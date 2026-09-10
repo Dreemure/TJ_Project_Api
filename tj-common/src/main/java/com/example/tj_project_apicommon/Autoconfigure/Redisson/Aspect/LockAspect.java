@@ -18,10 +18,14 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.TypedValue;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
+/*
+ * 分布式锁切面。
+ * 职责：拦截标注 @Lock 注解的方法，通过 Redisson 实现加锁/解锁，支持 SpEL 动态锁名、锁类型与等待策略配置。
+ * 使用：方法上标注 @Lock(name = "order:#{orderId}")，切面自动获取锁后执行业务，finally 中按 autoUnlock 释放锁。
+ */
 @Aspect
 @Component
 public class LockAspect {
@@ -32,7 +36,7 @@ public class LockAspect {
         this.redissonClient = redissonClient;
     }
 
-    /**
+    /*
      * 环绕通知：加锁 → 执行方法 → 释放锁。
      */
     @Around("@annotation(properties)")
@@ -46,7 +50,7 @@ public class LockAspect {
         // 3. 获取锁对象
         RLock rLock = properties.lockType().getLock(redissonClient, name);
         // 4. 尝试加锁
-        boolean success = properties.lockStrategy().tryLock(rLock, (java.util.concurrent.locks.Lock) properties);
+        boolean success = properties.lockStrategy().tryLock(rLock, properties);
         if (!success) {
             return null;
         }
