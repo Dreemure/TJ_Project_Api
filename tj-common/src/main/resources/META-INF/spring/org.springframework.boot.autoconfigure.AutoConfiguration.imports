@@ -3,5 +3,4 @@ com.example.tj_project_apicommon.autoconfigure.mvc.Fastjson2Config
 com.example.tj_project_apicommon.autoconfigure.mvc.MvcConfig
 com.example.tj_project_apicommon.autoconfigure.mvc.ParamCheckerConfig
 com.example.tj_project_apicommon.autoconfigure.mybatis.MybatisPlusConfig
-com.example.tj_project_apicommon.autoconfigure.redisson.RedissonConfig
 com.example.tj_project_apicommon.autoconfigure.swagger.Knife4jConfiguration

@@ -1,4 +1,4 @@
-package com.example.tj_project_apiapi.Model;
+package com.example.tj_project_apiapi.Model.Dto;
 
 import com.example.tj_project_apicommon.Utils.CollUtils;
 import lombok.AllArgsConstructor;

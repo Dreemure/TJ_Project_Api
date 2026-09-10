@@ -17,8 +17,6 @@ import java.io.IOException;
  * 使用：通过 @WebFilter 自动注册，需配合 @ServletComponentScan 或通过 @Component 显式注册。
  * 注意：使用 @Order(HIGHEST_PRECEDENCE) 确保最先执行，保证后续日志能获取到 traceId。
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@WebFilter(filterName = "requestIdFilter", urlPatterns = "/**")
 public class RequestIdFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

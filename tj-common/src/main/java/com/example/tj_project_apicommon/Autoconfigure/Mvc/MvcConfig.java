@@ -9,8 +9,10 @@ import com.example.tj_project_apicommon.Autoconfigure.Mvc.Converter.WrapperRespo
 import com.example.tj_project_apicommon.Filters.RequestIdFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,18 +27,31 @@ import jakarta.servlet.Filter;
 @ConditionalOnClass({CommonExceptionAdvice.class, Filter.class})
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
+
+    /**
+     * 全局异常处理器。
+     */
     @Bean
     public CommonExceptionAdvice commonExceptionAdvice() {
         return new CommonExceptionAdvice();
     }
 
+    /**
+     * 请求ID过滤器（使用 FilterRegistrationBean 控制顺序，避免与 @WebFilter 重复注册）。
+     * 注意：请确保 RequestIdFilter 类上不再标注 @WebFilter 和 @Order。
+     */
     @Bean
-    public RequestIdFilter requestIdFilter() {
-        return new RequestIdFilter();
+    public FilterRegistrationBean<RequestIdFilter> requestIdFilter() {
+        FilterRegistrationBean<RequestIdFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new RequestIdFilter());
+        bean.setName("requestIdFilter");
+        bean.addUrlPatterns("/*");
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);   // 最高优先级，保证最先执行
+        return bean;
     }
 
     /**
-     * Fastjson2 消息转换器
+     * Fastjson2 消息转换器。
      */
     @Bean
     public FastJsonHttpMessageConverter fastJsonHttpMessageConverter() {
@@ -56,14 +71,20 @@ public class MvcConfig implements WebMvcConfigurer {
         return converter;
     }
 
+    /**
+     * 响应包装消息转换器（仅在非网关环境下生效）。
+     */
     @Bean
     @ConditionalOnMissingClass("org.springframework.cloud.gateway.filter.GlobalFilter")
     public WrapperResponseMessageConverter wrapperResponseMessageConverter(
-            FastJsonHttpMessageConverter fastJsonHttpMessageConverter   // 注入 Fastjson2 转换器
+            FastJsonHttpMessageConverter fastJsonHttpMessageConverter
     ) {
         return new WrapperResponseMessageConverter(fastJsonHttpMessageConverter);
     }
 
+    /**
+     * 响应体统一包装增强器。
+     */
     @Bean
     public WrapperResponseBodyAdvice wrapperResponseBodyAdvice() {
         return new WrapperResponseBodyAdvice();

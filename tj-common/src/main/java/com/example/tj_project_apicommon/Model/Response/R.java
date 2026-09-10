@@ -1,8 +1,7 @@
-package com.example.tj_project_apicommon.Model;
+package com.example.tj_project_apicommon.Model.Response;
 
 import com.example.tj_project_apicommon.Constants.Constant;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.slf4j.MDC;
 
@@ -19,19 +18,23 @@ import static com.example.tj_project_apicommon.Constants.ErrorInfo.Msg.OK;
  * 注意：依赖 RequestIdFilter 提前将 requestId 注入 MDC；无参构造供序列化框架（如 Fastjson2）使用。
  */
 @Data
-@ApiModel(description = "通用响应结果")
+@Schema(description = "通用响应结果")
 public class R<T> {
-    @ApiModelProperty(value = "业务状态码，200-成功，其它-失败")
+
+    @Schema(description = "业务状态码，200-成功，其它-失败", example = "200")
     private int code;
-    @ApiModelProperty(value = "响应消息", example = "OK")
+
+    @Schema(description = "响应消息", example = "OK")
     private String msg;
-    @ApiModelProperty(value = "响应数据")
+
+    @Schema(description = "响应数据")
     private T data;
-    @ApiModelProperty(value = "请求id", example = "1af123c11412e")
+
+    @Schema(description = "请求id", example = "1af123c11412e")
     private String requestId;
 
     public static R<Void> ok() {
-        return new R<Void>(SUCCESS, OK, null);
+        return new R<>(SUCCESS, OK, null);
     }
 
     public static <T> R<T> ok(T data) {
@@ -56,7 +59,7 @@ public class R<T> {
         this.requestId = MDC.get(Constant.REQUEST_ID_HEADER);
     }
 
-    public boolean success(){
+    public boolean success() {
         return code == SUCCESS;
     }
 

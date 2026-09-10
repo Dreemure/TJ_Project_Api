@@ -1,7 +1,7 @@
 package com.example.tj_project_apicommon.Autoconfigure.Mvc.Advice;
 
 import com.example.tj_project_apicommon.Constants.Constant;
-import com.example.tj_project_apicommon.Model.R;
+import com.example.tj_project_apicommon.Model.Response.R;
 import com.example.tj_project_apicommon.Exceptions.CommonException;
 import com.example.tj_project_apicommon.Utils.WebUtils;
 import io.grpc.StatusRuntimeException;

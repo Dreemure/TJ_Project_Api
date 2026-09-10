@@ -39,3 +39,401 @@ spring:
     redis:
       host: redis-service
       port: 6379
+
+
+## ====================================================================
+## TJ Project 微服务配置文件（Spring Boot 4 + JDK 25 + Spring Cloud Stream）
+## ====================================================================
+## 【使用前自查清单】
+##   ☐ spring.cloud.function.definition    → 按当前服务实际使用的 Consumer Bean 名称裁剪
+##   ☐ PowerJobProperties 字段名            → 确认 maxHeavyweightTaskNum / maxHeavyTaskNum 与 YAML 键名一致
+##   ☐ springdoc.packages-to-scan          → 与 tj.swagger.packagePath 保持一致
+##   ☐ Redisson 独有配置                    → 若需集群/哨兵模式，改用 spring.data.redis.cluster.* 或自定义 RedissonConfig
+##   ☐ spring.cloud.stream.bindings.*      → 每个微服务只保留自己用到的绑定，其余整体删除
+##   ☐ server.port / spring.application.name → 每个服务必须独立
+##   ☐ spring.datasource.url               → 每个服务使用自己的数据库
+##   ☐ tj.powerjob.worker.app-name         → 需在 PowerJob 控制台注册的应用名
+## ====================================================================
+#
+#server:
+#  port: 8080
+#  shutdown: graceful                          # 优雅停机
+#  servlet:
+#    encoding:
+#      charset: UTF-8
+#      enabled: true
+#      force: true
+#  tomcat:
+#    threads:
+#      max: 200
+#      min-spare: 10
+#    accept-count: 100
+#    max-connections: 8192
+#    connection-timeout: 20000
+#
+#spring:
+#  application:
+#    name: your-service-name                   # 【自查】微服务名称，用于消费者组/错误队列命名
+#
+#  profiles:
+#    active: dev
+#
+#  # ==================== 虚拟线程配置 ====================
+#  threads:
+#    virtual:
+#      enabled: true                           # 启用虚拟线程处理 Web 请求（JDK 21+）
+#
+#  # ==================== RabbitMQ 连接配置 ====================
+#  rabbitmq:
+#    host: 192.168.150.101
+#    port: 5672
+#    username: tjxt
+#    password: 123321
+#    virtual-host: /tjxt
+#    connection-timeout: 5000ms
+#    listener:
+#      simple:
+#        acknowledge-mode: auto                # 自动 ack（SCSt 默认）
+#        concurrency: 1
+#        prefetch: 1
+#        retry:
+#          enabled: true
+#          initial-interval: 1000ms
+#          multiplier: 1.0
+#          max-attempts: 3
+#          stateless: true
+#
+#  # ==================== 数据源配置 ====================
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    # 【自查】每个微服务使用自己的数据库
+#    url: jdbc:mysql://192.168.150.101:3306/tj_project?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+#    username: root
+#    password: 123
+#    hikari:
+#      pool-name: TjHikariPool
+#      minimum-idle: 5
+#      maximum-pool-size: 20
+#      idle-timeout: 600000
+#      max-lifetime: 1800000
+#      connection-timeout: 30000
+#      connection-test-query: SELECT 1
+#
+#  # ==================== Redis 配置 ====================
+#  # 【自查】Redisson Starter 会自动读取 spring.data.redis.* 创建 RedissonClient
+#  #         若需集群/哨兵模式，改用 spring.data.redis.cluster.* 或自定义 RedissonConfig
+#  data:
+#    redis:
+#      host: 192.168.150.101
+#      port: 6379
+#      password: 123321
+#      database: 0
+#      timeout: 3000ms
+#      lettuce:
+#        pool:
+#          max-active: 8
+#          max-idle: 8
+#          min-idle: 1
+#          max-wait: 300ms
+#          time-between-eviction-runs: 60s
+#
+#  # ==================== Spring Cloud Stream 配置 ====================
+#  cloud:
+#    stream:
+#      default:
+#        content-type: application/json        # 默认 JSON 序列化（Jackson 自动生效）
+#      default-binder: rabbit
+#      # ---------- 函数式编程定义 ----------
+#      # 【自查】按当前服务实际使用的 Consumer/Function Bean 名称裁剪，逗号分隔
+#      function:
+#        definition: orderPay;learning;sms;error
+#      # ---------- RabbitMQ Binder 全局配置 ----------
+#      rabbit:
+#        binder:
+#          delayed-exchange: true              # 开启延迟交换机支持（x-delay）
+#        default:
+#          consumer:
+#            auto-bind-dlq: true               # 默认开启 DLQ
+#            republish-to-dlq: true
+#      # -------------------- 绑定配置 --------------------
+#      # 【自查】每个微服务只保留自己用到的绑定，其余整体删除
+#      bindings:
+#        # ==================== 生产者（Out） ====================
+#        # ---------- 课程服务 ----------
+#        courseNew-out-0:
+#          destination: course.topic
+#          producer:
+#            routing-key-expression: '''course.new'''
+#        courseUp-out-0:
+#          destination: course.topic
+#          producer:
+#            routing-key-expression: '''course.up'''
+#        courseDown-out-0:
+#          destination: course.topic
+#          producer:
+#            routing-key-expression: '''course.down'''
+#        courseExpire-out-0:
+#          destination: course.topic
+#          producer:
+#            routing-key-expression: '''course.expire'''
+#        courseDelete-out-0:
+#          destination: course.topic
+#          producer:
+#            routing-key-expression: '''course.delete'''
+#
+#        # ---------- 订单服务 ----------
+#        orderPay-out-0:
+#          destination: order.topic
+#          producer:
+#            routing-key-expression: '''order.pay'''
+#        orderRefund-out-0:
+#          destination: order.topic
+#          producer:
+#            routing-key-expression: '''order.refund'''
+#        orderDelay-out-0:
+#          destination: trade.delay.topic
+#          producer:
+#            routing-key-expression: '''delay.order.query'''
+#            rabbit:
+#              delayed-exchange: true
+#
+#        # ---------- 短信服务 ----------
+#        sms-out-0:
+#          destination: sms.direct
+#          producer:
+#            routing-key-expression: '''sms.message'''
+#
+#        # ---------- 异常消息 ----------
+#        error-out-0:
+#          destination: error.topic
+#          producer:
+#            routing-key-expression: '''error.#'''
+#
+#        # ---------- 支付服务 ----------
+#        paySuccess-out-0:
+#          destination: pay.topic
+#          producer:
+#            routing-key-expression: '''pay.success'''
+#        refundChange-out-0:
+#          destination: pay.topic
+#          producer:
+#            routing-key-expression: '''refund.status.change'''
+#
+#        # ---------- 点赞服务 ----------
+#        likeRecord-out-0:
+#          destination: like.record.topic
+#          producer:
+#            routing-key-expression: '''NOTE.times.changed'''
+#
+#        # ---------- 优惠券 ----------
+#        couponReceive-out-0:
+#          destination: promotion.topic
+#          producer:
+#            routing-key-expression: '''coupon.receive'''
+#
+#        # ---------- 积分服务 ----------
+#        writeReply-out-0:
+#          destination: learning.topic
+#          producer:
+#            routing-key-expression: '''reply.new'''
+#        signIn-out-0:
+#          destination: learning.topic
+#          producer:
+#            routing-key-expression: '''sign.in'''
+#        learnSection-out-0:
+#          destination: learning.topic
+#          producer:
+#            routing-key-expression: '''section.learned'''
+#        writeNote-out-0:
+#          destination: learning.topic
+#          producer:
+#            routing-key-expression: '''note.new'''
+#        noteGathered-out-0:
+#          destination: learning.topic
+#          producer:
+#            routing-key-expression: '''note.gathered'''
+#
+#        # ==================== 消费者（In） ====================
+#        # ---------- 订单消费者 ----------
+#        orderPay-in-0:
+#          destination: order.topic
+#          group: order-service-group
+#          consumer:
+#            max-attempts: 3
+#            back-off-initial-interval: 1000
+#            back-off-multiplier: 2.0
+#          rabbit:
+#            consumer:
+#              auto-bind-dlq: true
+#              republish-to-dlq: true
+#              acknowledge-mode: auto
+#
+#        # ---------- 学习服务消费者 ----------
+#        learning-in-0:
+#          destination: learning.topic
+#          group: learning-service-group
+#          consumer:
+#            max-attempts: 3
+#            back-off-initial-interval: 1000
+#          rabbit:
+#            consumer:
+#              auto-bind-dlq: true
+#
+#        # ---------- 异常消息消费者 ----------
+#        error-in-0:
+#          destination: error.topic
+#          group: error-service-group
+#          consumer:
+#            max-attempts: 1                   # 错误消息不再重试
+#          rabbit:
+#            consumer:
+#              auto-bind-dlq: false
+#
+#        # ---------- 短信消费者 ----------
+#        sms-in-0:
+#          destination: sms.direct
+#          group: sms-service-group
+#          rabbit:
+#            consumer:
+#              auto-bind-dlq: true
+#
+#  # ==================== Jackson 配置（默认消息转换器） ====================
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: GMT+8
+#    default-property-inclusion: non_null
+#    serialization:
+#      write-dates-as-timestamps: false
+#
+#  # ==================== MVC 配置 ====================
+#  mvc:
+#    throw-exception-if-no-handler-found: true
+#    pathmatch:
+#      matching-strategy: path_pattern_parser
+#  web:
+#    resources:
+#      add-mappings: false                     # 关闭静态资源默认映射
+#
+#  # ==================== 生命周期 ====================
+#  lifecycle:
+#    timeout-per-shutdown-phase: 30s
+#
+#  # ==================== 允许 Bean 覆盖 ====================
+#  main:
+#    allow-bean-definition-overriding: true    # 便于公共模块提供默认 Bean 被业务覆盖
+#    banner-mode: off
+#
+## ====================================================================
+## MyBatis-Plus 配置
+## ====================================================================
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/**/*.xml
+#  type-aliases-package: com.example.**.entity
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    cache-enabled: false
+#    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+#  global-config:
+#    banner: false
+#    db-config:
+#      id-type: assign_id                      # 雪花算法
+#      table-underline: true
+#      logic-delete-field: deleted             # 逻辑删除字段名
+#      logic-delete-value: 1
+#      logic-not-delete-value: 0
+#
+## ====================================================================
+## springdoc / Knife4j 配置
+## ====================================================================
+#springdoc:
+#  api-docs:
+#    enabled: true
+#    path: /v3/api-docs
+#  swagger-ui:
+#    enabled: true
+#    path: /swagger-ui.html
+#    tags-sorter: alpha
+#    operations-sorter: alpha
+#  default-produces-media-type: application/json
+#  override-with-generic-response: false       # 避免自动包装，由自定义插件处理
+#  # 【自查】与 tj.swagger.packagePath 保持一致
+#  packages-to-scan: com.example.**.controller
+#
+#knife4j:
+#  enable: true
+#  setting:
+#    language: zh_cn
+#    enable-footer: false
+#    enable-open-api: true
+#
+## ====================================================================
+## 项目自定义配置
+## ====================================================================
+#tj:
+#  # ---------- Swagger / Knife4j ----------
+#  swagger:
+#    enable: true
+#    enableResponseWrap: true
+#    # 【自查】改为你的 Controller 包路径，与 springdoc.packages-to-scan 保持一致
+#    packagePath: com.example.**.controller
+#    title: TJ Project API 文档
+#    description: 微服务接口文档
+#    contactName: your-name
+#    contactUrl: https://example.com
+#    contactEmail: your@email.com
+#    version: 1.0.0
+#
+#  # ---------- PowerJob 任务调度 ----------
+#  # 【自查】app-name 需在 PowerJob 控制台注册；字段名需与 PowerJobProperties 保持一致
+#  powerjob:
+#    worker:
+#      enabled: true
+#      app-name: your-service-name             # 需在 PowerJob 控制台注册
+#      server-address: 127.0.0.1:7700          # PowerJob Server 地址，多个用逗号分隔
+#      port: 27777
+#      protocol: http                          # 推荐 http
+#      store-strategy: disk
+#      max-result-length: 8192
+#      max-appended-wf-context-length: 8192
+#      max-lightweight-task-num: 1024
+#      max-heavyweight-task-num: 64
+#      allow-lazy-connect-server: false
+#
+## ====================================================================
+## 日志配置
+## ====================================================================
+#logging:
+#  level:
+#    root: info
+#    com.example: debug
+#    org.springframework.cloud.stream: info
+#    org.springframework.amqp: warn
+#    com.baomidou.mybatisplus: info
+#    tech.powerjob: info
+#    org.springdoc: info
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{requestId}] %-5level %logger{36} - %msg%n"
+#    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{requestId}] %-5level %logger{36} - %msg%n"
+#  file:
+#    name: logs/${spring.application.name}.log
+#    max-size: 100MB
+#    max-history: 30
+#    total-size-cap: 3GB
+#  charset:
+#    console: UTF-8
+#    file: UTF-8
+#
+## ====================================================================
+## 管理端点（Actuator）
+## ====================================================================
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,metrics,prometheus
+#  endpoint:
+#    health:
+#      show-details: when_authorized
+#  metrics:
+#    tags:
+#      application: ${spring.application.name}
