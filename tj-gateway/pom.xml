@@ -6,7 +6,7 @@
         <groupId>com.example</groupId>
         <artifactId>TJ_Project_Api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>tj-gateway</artifactId>
     <name>TJ_Project_Api-gateway</name>

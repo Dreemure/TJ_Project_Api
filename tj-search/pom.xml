@@ -6,7 +6,7 @@
         <groupId>com.example</groupId>
         <artifactId>TJ_Project_Api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>tj-search</artifactId>
     <name>TJ_Project_Api-search</name>
@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>tj-api</artifactId>
+            <artifactId>tj-microservice-sdk</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

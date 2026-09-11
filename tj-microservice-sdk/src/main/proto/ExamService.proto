@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "ExamProto";
+
+// ==================== 服务定义 ====================
+service ExamService {
+
+  // 批量保存题目与业务的关联信息
+  rpc SaveQuestionBizInfoBatch (SaveQuestionBizInfoBatchRequest) returns (google.protobuf.Empty);
+
+  // 根据业务id列表查询题目id列表
+  rpc QueryQuestionIdsByBizIds (QueryQuestionIdsByBizIdsRequest) returns (QuestionBizList);
+
+  // 根据业务id列表查询题目总分（bizId → score）
+  rpc QueryQuestionScoresByBizIds (QueryQuestionScoresByBizIdsRequest) returns (QueryQuestionScoresByBizIdsResponse);
+
+  // 根据题目id列表查询题目详情
+  rpc QueryQuestionByIds (QueryQuestionByIdsRequest) returns (QuestionList);
+
+  // 查询题目分数（单条或多条，具体语义以业务为准）
+  rpc QueryQuestionScores (QueryQuestionScoresRequest) returns (QueryQuestionScoresResponse);
+}
+
+// ==================== 通用消息 ====================
+
+
+// ==================== 业务消息 ====================
+message QuestionBizDTO {
+  int64 bizId = 1;        // 业务id（如小节id）
+  int64 questionId = 2;   // 题目id
+}
+
+message QuestionDTO {
+  int64 id = 1;                  // 题目id
+  string name = 2;               // 题干
+  string type = 3;               // 题目类型
+  int32 difficulty = 4;          // 难易度：1-简单，2-中等，3-困难
+  int32 score = 5;               // 分值
+  repeated string options = 6;   // 选择题选项
+  string answer = 7;             // 答案
+  string analysis = 8;           // 解析
+}
+
+// ==================== 请求体 ====================
+message SaveQuestionBizInfoBatchRequest {
+  repeated QuestionBizDTO questionBizInfos = 1;
+}
+
+message QueryQuestionIdsByBizIdsRequest {
+  repeated int64 bizIds = 1;
+}
+
+message QueryQuestionScoresByBizIdsRequest {
+  repeated int64 bizIds = 1;
+}
+
+message QueryQuestionByIdsRequest {
+  repeated int64 ids = 1;
+}
+
+message QueryQuestionScoresRequest {
+  int64 id = 1;
+}
+
+// ==================== 响应体 ====================
+message QuestionBizList {
+  repeated QuestionBizDTO questionBizInfos = 1;
+}
+
+message QueryQuestionScoresByBizIdsResponse {
+  map<int64, int32> scores = 1;   // bizId → 题目总分
+}
+
+message QuestionList {
+  repeated QuestionDTO questions = 1;
+}
+
+message QueryQuestionScoresResponse {
+  map<int64, int32> scores = 1;   // id → 分数
+}

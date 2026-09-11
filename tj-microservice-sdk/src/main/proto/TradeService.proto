@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto"; //空类型
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "UserService";
+
+// ==================== 服务定义 ====================
+service UserService {
+
+}
+
+// ==================== 通用消息 ====================
+
+
+// ==================== 请求体 ====================
+
+
+// ==================== 响应体 ====================

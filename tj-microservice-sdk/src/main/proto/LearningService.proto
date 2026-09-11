@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "LearningProto";
+
+// ==================== 服务定义 ====================
+service LearningService {
+
+  // 统计课程的学习课表数量
+  rpc CountLearningLessonByCourse (CountLearningLessonByCourseRequest) returns (CountLearningLessonByCourseResponse);
+
+  // 判断课程学习是否有效
+  rpc IsLessonValid (IsLessonValidRequest) returns (IsLessonValidResponse);
+
+  // 根据课程id查询学习记录
+  rpc QueryLearningRecordByCourse (QueryLearningRecordByCourseRequest) returns (LearningLessonDTO);
+}
+
+// ==================== 通用消息 ====================
+
+
+// ==================== 业务消息 ====================
+message LearningRecordDTO {
+  int64 sectionId = 1;       // 小节id
+  int32 moment = 2;          // 当前观看时长（秒）
+  bool finished = 3;         // 是否完成学习
+}
+
+message LearningLessonDTO {
+  int64 id = 1;                    // 课表id
+  int64 latestSectionId = 2;       // 最近学习的小节id
+  repeated LearningRecordDTO records = 3;  // 学习记录列表
+}
+
+// ==================== 请求体 ====================
+message CountLearningLessonByCourseRequest {
+  int64 courseId = 1;        // 课程id
+}
+
+message IsLessonValidRequest {
+  int64 courseId = 1;        // 课程id
+}
+
+message QueryLearningRecordByCourseRequest {
+  int64 courseId = 1;        // 课程id
+}
+
+// ==================== 响应体 ====================
+message CountLearningLessonByCourseResponse {
+  int32 count = 1;           // 学习课表数量
+}
+
+message IsLessonValidResponse {
+  int64 lessonId = 1;        // 有效的课表id
+}

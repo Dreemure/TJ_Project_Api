@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto"; // 空类型
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "AuthProto";
+
+// ==================== 服务定义 ====================
+service AuthService {
+
+  // 根据角色id查询角色信息
+  rpc QueryRoleById (QueryRoleByIdRequest) returns (RoleDTO);
+
+  // 查询所有角色列表
+  rpc ListAllRoles (google.protobuf.Empty) returns (ListRolesResponse);
+}
+
+// ==================== 通用消息 ====================
+
+
+// ==================== 请求体 ====================
+message QueryRoleByIdRequest {
+  int64 id = 1;        // 角色id
+}
+
+// ==================== 响应体 ====================
+message RoleDTO {
+  int64 id = 1;        // 角色id
+  string code = 2;     // 角色代号，例如：admin
+  string name = 3;     // 角色名称
+}
+
+message ListRolesResponse {
+  repeated RoleDTO roles = 1;   // 角色列表
+}

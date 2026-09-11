@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // 指定生成的 Java 类的包名
-option java_package = "com.example.auth.proto";
+option java_package = "com.example.AuthService.proto";
 option java_multiple_files = true;
 
 // 定义服务

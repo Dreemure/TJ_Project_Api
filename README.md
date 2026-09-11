@@ -16,7 +16,7 @@
 ---
 
 ## 模块介绍
-- tj-api：约定模块
+- tj-microservice-sdk：共享契约模块
 - tj-auth：权限服务(使用sa-token鉴权)
 - tj-common：通用工程
 - tj-message：消息中心

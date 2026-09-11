@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto"; //空类型
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "Promotion";
+
+// ==================== 服务定义 ====================
+service PromotionService {
+  rpc FindDiscountSolution (CouponDiscountDTO) returns (OrderCourseDTO);
+}
+
+// ==================== 通用消息 ====================
+
+
+// ==================== 请求体 ====================
+
+message CouponDiscountDTO {
+  repeated int64 ids = 1;
+
+  repeated string rules = 2;
+
+  int32 discountAmount = 3;
+
+  map<int64,int32> discountDetail = 4;
+}
+
+// ==================== 响应体 ====================
+
+message OrderCourseDTO {
+  int64 id = 1;
+
+  int64 cateId = 2;
+
+  int32 price = 3;
+}

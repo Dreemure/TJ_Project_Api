@@ -1,0 +1,179 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "CourseProto";
+
+// ==================== 服务定义 ====================
+service CourseService {
+
+  // 根据目录id列表查询目录信息
+  rpc BatchQueryCatalogue (BatchQueryCatalogueRequest) returns (CataSimpleInfoList);
+
+  // 获取所有课程及课程分类
+  rpc GetAllOfOneLevel (google.protobuf.Empty) returns (CategoryBasicResponse);
+
+  // 根据老师id列表获取老师出题数据和讲课数据
+  rpc InfoByTeacherIds (InfoByTeacherIdsRequest) returns (SubNumAndCourseNumList);
+
+  // 根据小节id获取小节对应的mediaId和课程id
+  rpc SectionInfo (SectionInfoRequest) returns (SectionInfoDTO);
+
+  // 根据媒资Id列表查询媒资被引用的次数
+  rpc MediaUserInfo (MediaUserInfoRequest) returns (MediaQuoteList);
+
+  // 根据课程id查询索引库需要的数据
+  rpc GetSearchInfo (GetSearchInfoRequest) returns (CourseSearchDTO);
+
+  // 根据课程id，获取课程、目录、教师信息
+  rpc GetCourseInfoById (GetCourseInfoByIdRequest) returns (CourseFullInfoDTO);
+
+  // 根据题目id列表查询题目信息
+  rpc QueryByIds (QueryByIdsRequest) returns (SubjectList);
+}
+
+// ==================== 通用消息 ====================
+
+
+// ==================== 请求体 ====================
+message BatchQueryCatalogueRequest {
+  repeated int64 ids = 1;          // 目录id列表
+}
+
+message InfoByTeacherIdsRequest {
+  repeated int64 teacherIds = 1;   // 老师id列表
+}
+
+message SectionInfoRequest {
+  int64 sectionId = 1;             // 小节id
+}
+
+message MediaUserInfoRequest {
+  repeated int64 mediaIds = 1;     // 媒资id列表
+}
+
+message GetSearchInfoRequest {
+  int64 id = 1;                    // 课程id
+}
+
+message GetCourseInfoByIdRequest {
+  int64 id = 1;                    // 课程id
+  bool withCatalogue = 2;          // 是否包含目录
+  bool withTeachers = 3;           // 是否包含教师信息
+}
+
+message QueryByIdsRequest {
+  repeated int64 ids = 1;          // 题目id列表
+}
+
+// ==================== 响应体 ====================
+message CataSimpleInfoDTO {
+  int64 id = 1;                    // 目录id
+  string name = 2;                 // 目录名称
+  int32 cIndex = 3;                // 数字序号（不包含章序号）
+}
+
+message CataSimpleInfoList {
+  repeated CataSimpleInfoDTO cataSimpleInfos = 1;
+}
+
+message CategoryBasicDTO {
+  int64 id = 1;                    // 分类id
+  string name = 2;                 // 分类名称
+  int64 parentId = 3;              // 父分类id
+}
+
+message CategoryBasicResponse {
+  repeated CataSimpleInfoDTO cataSimpleInfos = 1;   // 注：按原 proto 保留，如需分类应改为 CategoryBasicDTO
+}
+
+message SubNumAndCourseNumDTO {
+  int64 teacherId = 1;             // 老师id
+  int32 courseNum = 2;             // 老师负责的课程数
+  int32 subjectNum = 3;            // 老师出题数
+}
+
+message SubNumAndCourseNumList {
+  repeated SubNumAndCourseNumDTO subNumAndCourse = 1;
+}
+
+message SectionInfoDTO {
+  int64 courseId = 1;              // 课程id
+  int64 mediaId = 2;               // 媒资id
+  bool trailer = 3;                // 是否支持免费试看
+  int32 freeDuration = 4;          // 免费时长（分钟）
+}
+
+message MediaQuoteDTO {
+  int64 mediaId = 1;               // 媒资id
+  int32 quoteNum = 2;              // 引用数
+}
+
+message MediaQuoteList {
+  repeated MediaQuoteDTO mediaQuotes = 1;
+}
+
+message CourseSearchDTO {
+  int64 id = 1;                    // 课程id
+  string name = 2;                 // 课程名称
+  int64 categoryIdLv1 = 3;         // 一级分类id（修正拼写）
+  int64 categoryIdLv2 = 4;         // 二级分类id
+  int64 categoryIdLv3 = 5;         // 三级分类id
+  string coverUrl = 6;             // 封面链接（修正拼写）
+  int32 price = 7;                 // 价格
+  bool free = 8;                   // 是否免费
+  google.protobuf.Timestamp publishTime = 9;  // 发布时间
+  int32 sections = 10;             // 章节数
+  int32 duration = 11;             // 课程时长
+  int64 teacher = 12;              // 老师id
+  int32 courseType = 13;           // 课程类型：1-直播，2-录播
+  int32 sold = 14;                 // 报名人数（销量）
+  int32 score = 15;                // 评价得分（45代表4.5星）
+}
+
+message CatalogueDTO {
+  int64 id = 1;                    // 章、节、练习id
+  int32 index = 2;                 // 序号
+  string name = 3;                 // 章节练习名称
+  int32 mediaDuration = 4;         // 课程总时长（秒）
+  bool trailer = 5;                // 是否支持免费试看
+  string mediaName = 6;            // 媒资名称
+  int64 mediaId = 7;               // 媒资id
+  int32 type = 8;                  // 目录类型：1-章，2-节，3-测试
+  int32 subjectNum = 9;            // 题目数量
+  int32 totalScore = 10;           // 题目总分
+  bool canUpdate = 11;             // 是否可以修改
+  repeated CatalogueDTO sections = 12;  // 该章的所有小节和练习
+}
+
+message CourseFullInfoDTO {
+  int64 id = 1;                    // 课程id
+  string name = 2;                 // 课程名称
+  string coverUrl = 3;             // 封面链接
+  int32 price = 4;                 // 价格
+  int64 firstCateId = 5;           // 一级分类id
+  int64 secondCateId = 6;          // 二级分类id
+  int64 thirdCateId = 7;           // 三级分类id
+  int32 sectionNum = 8;            // 课程总节数
+  google.protobuf.Timestamp purchaseEndTime = 9;  // 购买有效期结束时间
+  int32 validDuration = 10;        // 学习有效期
+  repeated int64 teacherIds = 11;  // 老师id列表（修正类型）
+}
+
+message SubjectDTO {
+  int64 id = 1;                    // 题目id
+  string name = 2;                 // 题干
+  repeated string options = 3;     // 选择题选项
+  int32 score = 4;                 // 分值
+  int32 subjectType = 5;           // 题目类型：1-单选，2-多选，3-不定向，4-判断，5-主观
+  int32 difficulty = 6;            // 难易度：1-简单，2-中等，3-困难
+  string analysis = 7;             // 解析
+  repeated int32 answers = 8;      // 答案（0对应A，1对应B，可多个）
+}
+
+message SubjectList {
+  repeated SubjectDTO subjects = 1;   // 题目列表（字段名改为复数）
+}
