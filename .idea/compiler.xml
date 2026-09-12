@@ -15,13 +15,13 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
-        <module name="tj-gateway" />
         <module name="tj-microservice-sdk" />
         <module name="tj-auth" />
         <module name="message-domain" />
         <module name="pay-domain" />
         <module name="pay-service" />
         <module name="tj-user" />
+        <module name="tj-course" />
         <module name="tj-exam" />
         <module name="pay-api" />
         <module name="message-service" />
@@ -34,6 +34,16 @@
         <module name="tj-promotion" />
         <module name="tj-media" />
         <module name="tj-data" />
+      </profile>
+      <profile name="Annotation profile for tj-gateway" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="tj-gateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

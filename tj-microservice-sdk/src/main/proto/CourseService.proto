@@ -87,7 +87,7 @@ message CategoryBasicDTO {
 }
 
 message CategoryBasicResponse {
-  repeated CataSimpleInfoDTO cataSimpleInfos = 1;   // 注：按原 proto 保留，如需分类应改为 CategoryBasicDTO
+  repeated CategoryBasicDTO categories = 1;
 }
 
 message SubNumAndCourseNumDTO {

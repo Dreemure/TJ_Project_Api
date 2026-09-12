@@ -1,37 +1,72 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto"; //空类型
+import "google/protobuf/empty.proto";
 
 option java_package = "com.example.tj_project_apimicroservice.proto";
 option java_multiple_files = true;
-option java_outer_classname = "Promotion";
+option java_outer_classname = "PromotionProto";
 
 // ==================== 服务定义 ====================
 service PromotionService {
-  rpc FindDiscountSolution (CouponDiscountDTO) returns (OrderCourseDTO);
+
+  // 查找最优优惠方案
+  rpc FindDiscountSolution (FindDiscountSolutionRequest) returns (FindDiscountSolutionResponse);
+
+  // 查询订单的优惠明细
+  rpc QueryDiscountDetailByOrder (QueryDiscountDetailByOrderRequest) returns (QueryDiscountDetailByOrderResponse);
+
+  // 核销优惠券
+  rpc WriteOffCoupon (WriteOffCouponRequest) returns (google.protobuf.Empty);
+
+  // 退还优惠券
+  rpc RefundCoupon (RefundCouponRequest) returns (google.protobuf.Empty);
+
+  // 查询优惠券规则
+  rpc QueryDiscountRules (QueryDiscountRulesRequest) returns (QueryDiscountRulesResponse);
 }
 
-// ==================== 通用消息 ====================
-
-
 // ==================== 请求体 ====================
+message FindDiscountSolutionRequest {
+  repeated int64 userCouponIds = 1;   // 用户优惠券id列表
+  repeated string rules = 2;          // 优惠券规则
+}
 
-message CouponDiscountDTO {
-  repeated int64 ids = 1;
+message QueryDiscountDetailByOrderRequest {
+  repeated int64 userCouponIds = 1;   // 用户优惠券id列表
+  repeated string rules = 2;          // 优惠券规则
+}
 
-  repeated string rules = 2;
+message WriteOffCouponRequest {
+  repeated int64 userCouponIds = 1;   // 待核销的优惠券id列表
+}
 
-  int32 discountAmount = 3;
+message RefundCouponRequest {
+  repeated int64 userCouponIds = 1;   // 待退还的优惠券id列表
+}
 
-  map<int64,int32> discountDetail = 4;
+message QueryDiscountRulesRequest {
+  repeated int64 userCouponIds = 1;   // 用户优惠券id列表
 }
 
 // ==================== 响应体 ====================
-
 message OrderCourseDTO {
-  int64 id = 1;
+  int64 id = 1;                       // 课程id
+  int64 cateId = 2;                   // 课程的三级分类id
+  int32 price = 3;                    // 课程价格
+}
 
-  int64 cateId = 2;
+message FindDiscountSolutionResponse {
+  int32 discountAmount = 1;                 // 本订单最大优惠金额
+  map<int64, int32> discountDetail = 2;     // 优惠明细：key=课程id，value=课程优惠金额
+  repeated OrderCourseDTO courses = 3;      // 订单中的课程列表
+}
 
-  int32 price = 3;
+message QueryDiscountDetailByOrderResponse {
+  int32 discountAmount = 1;                 // 本订单最大优惠金额
+  map<int64, int32> discountDetail = 2;     // 优惠明细：key=课程id，value=课程优惠金额
+  repeated OrderCourseDTO courses = 3;      // 订单中的课程列表
+}
+
+message QueryDiscountRulesResponse {
+  repeated string coupons = 1;              // 优惠券规则列表
 }

@@ -1,20 +1,57 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto"; //空类型
-
 option java_package = "com.example.tj_project_apimicroservice.proto";
 option java_multiple_files = true;
-option java_outer_classname = "UserService";
+option java_outer_classname = "TradeProto";
 
 // ==================== 服务定义 ====================
-service UserService {
+service TradeService {
 
+  // 批量统计课程的报名人数
+  rpc CountEnrollNumOfCourse (CountEnrollNumOfCourseRequest) returns (CountEnrollNumOfCourseResponse);
+
+  // 批量统计学生报名的课程数量
+  rpc CountEnrollCourseOfStudent (CountEnrollCourseOfStudentRequest) returns (CountEnrollCourseOfStudentResponse);
+
+  // 判断当前用户是否已购买指定课程
+  rpc CheckMyLesson (CheckMyLessonRequest) returns (CheckMyLessonResponse);
+
+  // 获取课程的购买统计信息
+  rpc GetPurchaseInfoOfCourse (GetPurchaseInfoOfCourseRequest) returns (CoursePurchaseInfoDTO);
 }
 
-// ==================== 通用消息 ====================
-
-
 // ==================== 请求体 ====================
+message CountEnrollNumOfCourseRequest {
+  repeated int64 courseIdList = 1;   // 课程id列表
+}
 
+message CountEnrollCourseOfStudentRequest {
+  repeated int64 studentIds = 1;     // 学生id列表
+}
+
+message CheckMyLessonRequest {
+  int64 id = 1;                      // 课程id
+}
+
+message GetPurchaseInfoOfCourseRequest {
+  int64 courseId = 1;                // 课程id
+}
 
 // ==================== 响应体 ====================
+message CountEnrollNumOfCourseResponse {
+  map<int64, int32> enrollNum = 1;   // 课程id → 报名人数
+}
+
+message CountEnrollCourseOfStudentResponse {
+  map<int64, int32> enrollCourse = 1;  // 学生id → 报名课程数
+}
+
+message CheckMyLessonResponse {
+  bool valid = 1;                    // 是否已购买（true：已购买；false：未购买）
+}
+
+message CoursePurchaseInfoDTO {
+  int32 enrollNum = 1;               // 报名人数
+  int32 refundNum = 2;               // 退款人数
+  int32 realPayAmount = 3;           // 实付总金额
+}

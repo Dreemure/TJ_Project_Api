@@ -3,6 +3,7 @@ package com.example.tj_project_apimicroservice.Model.Dto.Course;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * 老师课程数与出题数统计 DTO。
@@ -10,6 +11,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "老师id和老师对应的课程数，出题数")
 public class SubNumAndCourseNumDTO {
 
@@ -21,4 +23,5 @@ public class SubNumAndCourseNumDTO {
 
     @Schema(description = "老师出题数")
     private Integer subjectNum;
+
 }

@@ -1,20 +1,23 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto"; //空类型
-
 option java_package = "com.example.tj_project_apimicroservice.proto";
 option java_multiple_files = true;
-option java_outer_classname = "RemarkService";
+option java_outer_classname = "RemarkProto";
 
 // ==================== 服务定义 ====================
 service RemarkService {
 
+  // 批量判断业务对象是否被当前用户点赞
+  rpc IsBizLiked (IsBizLikedRequest) returns (IsBizLikedResponse);
 }
 
-// ==================== 通用消息 ====================
-
-
 // ==================== 请求体 ====================
-
+message IsBizLikedRequest {
+  repeated int64 bizIds = 1;   // 待判断的业务id列表（如小节id、课程id、笔记id等）
+}
 
 // ==================== 响应体 ====================
+message IsBizLikedResponse {
+  // 已点赞的业务id列表（不包含未点赞的）
+  repeated int64 likedBizIds = 1;
+}

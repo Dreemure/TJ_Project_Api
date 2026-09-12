@@ -4,11 +4,11 @@ import "google/protobuf/empty.proto"; //空类型
 
 option java_package = "com.example.tj_project_apimicroservice.proto";
 option java_multiple_files = true;
-option java_outer_classname = "SearchService";
+option java_outer_classname = "SearchProto";
 
 // ==================== 服务定义 ====================
 service SearchService {
-
+  rpc QueryCoursesIdByName (QueryCoursesIdByNameRequest) returns (QueryCoursesIdByNameResponse);
 }
 
 // ==================== 通用消息 ====================
@@ -16,5 +16,12 @@ service SearchService {
 
 // ==================== 请求体 ====================
 
+message QueryCoursesIdByNameRequest {
+  string keyword = 1;
+}
 
 // ==================== 响应体 ====================
+
+message QueryCoursesIdByNameResponse {
+  repeated int64 CoursesId = 1;
+}

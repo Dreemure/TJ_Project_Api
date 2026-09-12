@@ -1,3 +1,14 @@
 spring:
   application:
     name: tj-gateway
+
+#spring:
+#  cloud:
+#    gateway:
+#      server:
+#        webflux:
+#          routes:
+#            - id: your-route
+#              uri: http://localhost:8081
+#              predicates:
+#                - Path=/api/**

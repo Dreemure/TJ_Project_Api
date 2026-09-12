@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+option java_package = "com.example.tj_project_apimicroservice.proto";
+option java_multiple_files = true;
+option java_outer_classname = "UserProto";
+
+// ==================== 服务定义 ====================
+service UserService {
+
+  // 根据手机号查询用户id
+  rpc ExchangeUserIdWithPhone (ExchangeUserIdWithPhoneRequest) returns (ExchangeUserIdWithPhoneResponse);
+
+  // 登录接口
+  rpc QueryUserDetail (QueryUserDetailRequest) returns (LoginUserDTO);
+
+  // 查询用户类型
+  rpc QueryUserType (QueryUserTypeRequest) returns (QueryUserTypeResponse);
+
+  // 根据id批量查询用户信息
+  rpc QueryUserByIds (QueryUserByIdsRequest) returns (UserListResponse);
+
+  // 根据id查询单个用户信息
+  rpc QueryUserById (QueryUserByIdRequest) returns (UserDTO);
+}
+
+// ==================== 请求体 ====================
+message ExchangeUserIdWithPhoneRequest {
+  string phone = 1;                  // 手机号
+}
+
+message QueryUserDetailRequest {
+  LoginFormDTO loginDTO = 1;         // 登录表单
+  bool isStaff = 2;                  // 是否是员工
+}
+
+message QueryUserTypeRequest {
+  int64 id = 1;                      // 用户id
+}
+
+message QueryUserByIdsRequest {
+  repeated int64 ids = 1;            // 用户id列表
+}
+
+message QueryUserByIdRequest {
+  int64 id = 1;                      // 用户id
+}
+
+// ==================== 响应体 ====================
+message ExchangeUserIdWithPhoneResponse {
+  int64 userId = 1;                  // 用户id
+}
+
+message QueryUserTypeResponse {
+  int32 type = 1;                    // 用户类型：0-普通学员，1-老师，2-其他员工
+}
+
+message UserListResponse {
+  repeated UserDTO users = 1;        // 用户列表
+}
+
+// ==================== 业务消息 ====================
+message LoginFormDTO {
+  int32 type = 1;                    // 登录方式：1-密码登录；2-验证码登录
+  string username = 2;               // 用户名
+  string cellPhone = 3;              // 手机号
+  string password = 4;               // 密码
+  bool rememberMe = 5;               // 7天免密登录
+}
+
+message LoginUserDTO {
+  int64 userId = 1;                  // 用户id
+  int64 roleId = 2;                  // 角色id
+  bool rememberMe = 3;               // 是否记住我
+}
+
+message UserDTO {
+  int64 id = 1;                      // 用户id
+  string cellPhone = 2;              // 手机号
+  string name = 3;                   // 用户名称/昵称
+  int32 type = 4;                    // 用户类型：1-其他员工，2-普通学员，3-老师
+  int64 roleId = 5;                  // 角色id
+  string icon = 6;                   // 头像
+  string job = 7;                    // 岗位
+  string intro = 8;                  // 个人介绍
+  string photo = 9;                  // 形象照地址
+  string username = 10;              // 用户名
+  string email = 11;                 // 邮箱
+  string qq = 12;                    // QQ号码
+  string province = 13;              // 省
+  string city = 14;                  // 市
+  string district = 15;              // 区
+  int32 gender = 16;                 // 性别：0-男性，1-女性
+}
