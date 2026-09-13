@@ -1,6 +1,9 @@
 spring:
   application:
     name: message-api
+  threads:
+    virtual:
+      enabled: true
 
   grpc:
     server:

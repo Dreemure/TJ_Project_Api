@@ -1,0 +1,18 @@
+server:
+  port: 10016
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        writeReply-out-0: { destination: learning.topic, producer: { routing-key-expression: "'reply.new'" } }
+        signIn-out-0: { destination: learning.topic, producer: { routing-key-expression: "'sign.in'" } }
+        learnSection-out-0: { destination: learning.topic, producer: { routing-key-expression: "'section.learned'" } }
+        writeNote-out-0: { destination: learning.topic, producer: { routing-key-expression: "'note.new'" } }
+        noteGathered-out-0: { destination: learning.topic, producer: { routing-key-expression: "'note.gathered'" } }
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: learning-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}

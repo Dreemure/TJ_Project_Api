@@ -1,3 +1,6 @@
 spring:
   application:
     name: pay-domain
+  threads:
+    virtual:
+      enabled: true

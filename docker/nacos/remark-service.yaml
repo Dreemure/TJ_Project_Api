@@ -1,0 +1,8 @@
+server:
+  port: 10022
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        likeRecord-out-0: { destination: like.record.topic, producer: { routing-key-expression: "'NOTE.times.changed'" } }

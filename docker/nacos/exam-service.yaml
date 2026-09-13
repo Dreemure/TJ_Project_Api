@@ -1,0 +1,30 @@
+server:
+  port: 10015
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_exam?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${TJ_MYSQL_USERNAME:root}
+    password: ${TJ_MYSQL_PASSWORD:root}
+
+seata:
+  enabled: true
+  tx-service-group: default_tx_group
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.server-addr}
+      namespace: public
+      group: SEATA_GROUP
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: exam-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}

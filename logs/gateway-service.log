@@ -1,0 +1,83 @@
+2026-09-13T11:44:04.571+08:00  INFO 39700 --- [gateway-service] [main] ProbeApp                                 : Starting ProbeApp using Java 25 with PID 39700 (C:\Users\Administrator\AppData\Local\Temp\yamlaudit started by Administrator in C:\Users\Administrator\Desktop\TJ_Project\TJ_Project_Api)
+2026-09-13T11:44:04.571+08:00  INFO 39700 --- [gateway-service] [main] ProbeApp                                 : No active profile set, falling back to 1 default profile: "default"
+2026-09-13T11:44:04.604+08:00  INFO 39700 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=gateway-service.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:44:04.605+08:00  INFO 39700 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=gateway-service.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:44:04.605+08:00  INFO 39700 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-logs.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:44:04.605+08:00  INFO 39700 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-redis.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:44:04.606+08:00  INFO 39700 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-spring.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:44:04.613+08:00  WARN 39700 --- [gateway-service] [main] ionWarningsApplicationContextInitializer : 
+
+** WARNING ** : Your ApplicationContext is unlikely to start due to a @ComponentScan of the default package.
+
+
+2026-09-13T11:44:07.150+08:00  WARN 39700 --- [gateway-service] [main] s.c.a.AnnotationConfigApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [org.springframework.cloud.commons.security.ResourceServerTokenRelayAutoConfiguration$ResourceServerTokenRelayRegistrationAutoConfiguration]
+2026-09-13T11:44:07.161+08:00  INFO 39700 --- [gateway-service] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-13T11:44:07.177+08:00 ERROR 39700 --- [gateway-service] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [org.springframework.cloud.commons.security.ResourceServerTokenRelayAutoConfiguration$ResourceServerTokenRelayRegistrationAutoConfiguration]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:290) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:220) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:357) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:285) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:206) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:174) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:452) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:316) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:795) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:603) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756) ~[spring-boot-4.1.1.jar:4.1.1]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445) ~[spring-boot-4.1.1.jar:4.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321) ~[spring-boot-4.1.1.jar:4.1.1]
+	at ProbeApp.main(ProbeApp.java:17) ~[yamlaudit/:na]
+Caused by: java.io.FileNotFoundException: class path resource [org/springframework/web/servlet/config/annotation/WebMvcConfigurer.class] cannot be opened because it does not exist
+	at org.springframework.core.io.ClassPathResource.getInputStream(ClassPathResource.java:212) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.core.type.classreading.ClassFileMetadataReader.parseClassModel(ClassFileMetadataReader.java:49) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.core.type.classreading.ClassFileMetadataReader.<init>(ClassFileMetadataReader.java:45) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.core.type.classreading.ClassFileMetadataReaderFactory.getMetadataReader(ClassFileMetadataReaderFactory.java:62) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.core.type.classreading.CachingMetadataReaderFactory.getMetadataReader(CachingMetadataReaderFactory.java:127) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.core.type.classreading.AbstractMetadataReaderFactory.getMetadataReader(AbstractMetadataReaderFactory.java:62) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.core.type.classreading.CachingMetadataReaderFactory.getMetadataReader(CachingMetadataReaderFactory.java:40) ~[spring-core-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.asSourceClass(ConfigurationClassParser.java:730) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser$SourceClass.getInterfaces(ConfigurationClassParser.java:1076) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.collectImports(ConfigurationClassParser.java:568) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.getImports(ConfigurationClassParser.java:543) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:364) ~[spring-context-7.0.9.jar:7.0.9]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:285) ~[spring-context-7.0.9.jar:7.0.9]
+	... 15 common frames omitted
+
+2026-09-13T11:44:07.182+08:00  INFO 39700 --- [gateway-service] [Thread-9] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+2026-09-13T11:44:07.182+08:00  INFO 39700 --- [gateway-service] [Thread-7] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+2026-09-13T11:44:07.182+08:00  INFO 39700 --- [gateway-service] [Thread-9] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Completed destruction of Publisher
+2026-09-13T11:44:07.182+08:00  INFO 39700 --- [gateway-service] [Thread-1] c.a.n.common.executor.ThreadPoolManager  : [ThreadPoolManager] Start destroying ThreadPool
+2026-09-13T11:44:07.183+08:00  INFO 39700 --- [gateway-service] [Thread-7] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Completed destruction of HttpClient
+2026-09-13T11:44:07.183+08:00  INFO 39700 --- [gateway-service] [Thread-1] c.a.n.common.executor.ThreadPoolManager  : [ThreadPoolManager] Completed destruction of ThreadPool
+2026-09-13T11:55:53.966+08:00  INFO 21084 --- [gateway-service] [main] probe.MiniProbe                          : Starting MiniProbe using Java 25 with PID 21084 (C:\Users\Administrator\Desktop\TJ_Project\TJ_Project_Api\target\yamlcheck started by Administrator in C:\Users\Administrator\Desktop\TJ_Project\TJ_Project_Api)
+2026-09-13T11:55:53.968+08:00  INFO 21084 --- [gateway-service] [main] probe.MiniProbe                          : No active profile set, falling back to 1 default profile: "default"
+2026-09-13T11:55:53.986+08:00  INFO 21084 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=gateway-service.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:55:53.987+08:00  INFO 21084 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=gateway-service.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:55:53.987+08:00  INFO 21084 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-logs.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:55:53.987+08:00  INFO 21084 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-redis.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:55:53.987+08:00  INFO 21084 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-spring.yaml, group=DEFAULT_GROUP] success
+2026-09-13T11:55:54.057+08:00  INFO 21084 --- [gateway-service] [main] probe.MiniProbe                          : Started MiniProbe in 2.246 seconds (process running for 2.585)
+2026-09-13T11:55:54.128+08:00  INFO 21084 --- [gateway-service] [Thread-1] c.a.n.common.executor.ThreadPoolManager  : [ThreadPoolManager] Start destroying ThreadPool
+2026-09-13T11:55:54.128+08:00  INFO 21084 --- [gateway-service] [Thread-7] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+2026-09-13T11:55:54.128+08:00  INFO 21084 --- [gateway-service] [Thread-9] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+2026-09-13T11:55:54.128+08:00  INFO 21084 --- [gateway-service] [Thread-9] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Completed destruction of Publisher
+2026-09-13T11:55:54.129+08:00  INFO 21084 --- [gateway-service] [Thread-1] c.a.n.common.executor.ThreadPoolManager  : [ThreadPoolManager] Completed destruction of ThreadPool
+2026-09-13T11:55:54.129+08:00  INFO 21084 --- [gateway-service] [Thread-7] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Completed destruction of HttpClient
+2026-09-13T12:00:47.717+08:00  INFO 45848 --- [gateway-service] [main] probe.MiniProbe                          : Starting MiniProbe using Java 25 with PID 45848 (C:\Users\Administrator\Desktop\TJ_Project\TJ_Project_Api\target\yamlcheck started by Administrator in C:\Users\Administrator\Desktop\TJ_Project\TJ_Project_Api)
+2026-09-13T12:00:47.717+08:00  INFO 45848 --- [gateway-service] [main] probe.MiniProbe                          : No active profile set, falling back to 1 default profile: "default"
+2026-09-13T12:00:47.734+08:00  INFO 45848 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=gateway-service.yaml, group=DEFAULT_GROUP] success
+2026-09-13T12:00:47.734+08:00  INFO 45848 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-logs.yaml, group=DEFAULT_GROUP] success
+2026-09-13T12:00:47.734+08:00  INFO 45848 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-redis.yaml, group=DEFAULT_GROUP] success
+2026-09-13T12:00:47.734+08:00  INFO 45848 --- [gateway-service] [main] c.a.c.n.c.NacosConfigDataLoader          : [Nacos Config] Load config[dataId=shared-spring.yaml, group=DEFAULT_GROUP] success
+2026-09-13T12:00:47.810+08:00  INFO 45848 --- [gateway-service] [main] probe.MiniProbe                          : Started MiniProbe in 2.157 seconds (process running for 2.507)
+2026-09-13T12:00:47.881+08:00  INFO 45848 --- [gateway-service] [Thread-1] c.a.n.common.executor.ThreadPoolManager  : [ThreadPoolManager] Start destroying ThreadPool
+2026-09-13T12:00:47.881+08:00  INFO 45848 --- [gateway-service] [Thread-9] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+2026-09-13T12:00:47.881+08:00  INFO 45848 --- [gateway-service] [Thread-7] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+2026-09-13T12:00:47.881+08:00  INFO 45848 --- [gateway-service] [Thread-9] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Completed destruction of Publisher
+2026-09-13T12:00:47.881+08:00  INFO 45848 --- [gateway-service] [Thread-1] c.a.n.common.executor.ThreadPoolManager  : [ThreadPoolManager] Completed destruction of ThreadPool

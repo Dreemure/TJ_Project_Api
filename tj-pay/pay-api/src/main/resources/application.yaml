@@ -1,3 +1,6 @@
 spring:
   application:
     name: pay-api
+  threads:
+    virtual:
+      enabled: true

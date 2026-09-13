@@ -1,0 +1,8 @@
+server:
+  port: 10014
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: data-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}

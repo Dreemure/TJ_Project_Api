@@ -107,7 +107,7 @@ docker-compose ps -a
 - Elasticsearch：`localhost:9200`
 - skywalking-oap：`localhost:11800`、web：`localhost:12800`
 - skywalking-ui：`localhost:8088`
-- nacos：`localhost:8848`
+- nacos：`localhost:8848`（OpenAPI）、控制台 `localhost:8849`、gRPC `9848`/`9849`
 - seata-server：`8091`、web：`localhost:7091`
 - sentinel：`localhost:8858`
 - rabbitmq：`localhost:5672`、web：`localhost:15672`

@@ -1,0 +1,76 @@
+server:
+  port: 10010
+
+spring:
+  cloud:
+    # 网关是唯一消费 lb:// 的服务，需显式启用 Nacos 负载均衡器
+    # （ConditionalOnProperty 未设 matchIfMissing，不配置即不生效）
+    loadbalancer:
+      nacos:
+        enabled: true
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: media
+              uri: lb://media-service
+              predicates: [ Path=/media/** ]
+            - id: auth
+              uri: lb://auth-service
+              predicates: [ Path=/auth/** ]
+              filters: [ PreserveHostHeader ]
+            - id: data
+              uri: lb://data-service
+              predicates: [ Path=/data/** ]
+            - id: message
+              uri: lb://message-service
+              predicates: [ Path=/message/** ]
+            - id: user
+              uri: lb://user-service
+              predicates: [ Path=/user/** ]
+            - id: course
+              uri: lb://course-service
+              predicates: [ Path=/course/** ]
+            - id: order
+              uri: lb://trade-service
+              predicates: [ Path=/order/** ]
+            - id: search
+              uri: lb://search-service
+              predicates: [ Path=/search/** ]
+            - id: learning
+              uri: lb://learning-service
+              predicates: [ Path=/learning/** ]
+            - id: pay
+              uri: lb://pay-service
+              predicates: [ Path=/pay/** ]
+            - id: trade
+              uri: lb://trade-service
+              predicates: [ Path=/trade/** ]
+            - id: exam
+              uri: lb://exam-service
+              predicates: [ Path=/exam/** ]
+            - id: remark
+              uri: lb://remark-service
+              predicates: [ Path=/remark/** ]
+            - id: promotion
+              uri: lb://promotion-service
+              predicates: [ Path=/promotion/** ]
+          default-filters: [ StripPrefix=1 ]
+          globalcors:
+            add-to-simple-url-handler-mapping: true
+            cors-configurations:
+              '[/**]':
+                allowed-origin-patterns: [ "*" ]
+                allowed-methods: [ GET, POST, DELETE, PUT, OPTIONS ]
+                allowed-headers: "*"
+                allow-credentials: true
+                max-age: 360000
+
+knife4j:
+  gateway:
+    enabled: true
+    strategy: discover
+    discover:
+      enabled: true
+      version: openapi3
+      excluded-services: [ gateway-service ]

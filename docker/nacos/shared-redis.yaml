@@ -1,0 +1,13 @@
+spring:
+  data:
+    redis:
+      host: ${TJ_REDIS_HOST:127.0.0.1}
+      port: ${TJ_REDIS_PORT:6379}
+      database: 0
+      timeout: 3s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 1
+          max-wait: 300ms

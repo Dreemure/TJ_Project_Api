@@ -1,0 +1,24 @@
+server:
+  port: 10020
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_trade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${TJ_MYSQL_USERNAME:root}
+    password: ${TJ_MYSQL_PASSWORD:root}
+  cloud:
+    stream:
+      bindings:
+        orderPay-out-0: { destination: order.topic, producer: { routing-key-expression: "'order.pay'" } }
+        orderRefund-out-0: { destination: order.topic, producer: { routing-key-expression: "'order.refund'" } }
+        orderDelay-out-0:
+          destination: trade.delay.topic
+          producer:
+            routing-key-expression: "'delay.order.query'"
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: trade-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}

@@ -1,0 +1,38 @@
+server:
+  port: 10013
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_course?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${TJ_MYSQL_USERNAME:root}
+    password: ${TJ_MYSQL_PASSWORD:root}
+  cloud:
+    stream:
+      bindings:
+        courseNew-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.new'" } }
+        courseUp-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.up'" } }
+        courseDown-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.down'" } }
+        courseExpire-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.expire'" } }
+        courseDelete-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.delete'" } }
+
+seata:
+  enabled: true
+  tx-service-group: default_tx_group
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.server-addr}
+      namespace: public
+      group: SEATA_GROUP
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: course-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}

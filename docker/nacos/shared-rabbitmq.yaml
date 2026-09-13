@@ -1,0 +1,20 @@
+spring:
+  rabbitmq:
+    host: ${TJ_RABBITMQ_HOST:127.0.0.1}
+    port: ${TJ_RABBITMQ_PORT:5672}
+    username: ${TJ_RABBITMQ_USERNAME:admin}
+    password: ${TJ_RABBITMQ_PASSWORD:admin123}
+    virtual-host: /
+    connection-timeout: 5s
+  cloud:
+    stream:
+      default:
+        content-type: application/json
+      default-binder: rabbit
+      rabbit:
+        binder:
+          delayed-exchange: true
+        default:
+          consumer:
+            auto-bind-dlq: true
+            republish-to-dlq: true

@@ -1,0 +1,14 @@
+server:
+  port: 10023
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        couponReceive-out-0: { destination: promotion.topic, producer: { routing-key-expression: "'coupon.receive'" } }
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: promotion-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}

@@ -1,0 +1,26 @@
+server:
+  port: 10019
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_pay?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${TJ_MYSQL_USERNAME:root}
+    password: ${TJ_MYSQL_PASSWORD:root}
+  cloud:
+    stream:
+      bindings:
+        paySuccess-out-0: { destination: pay.topic, producer: { routing-key-expression: "'pay.success'" } }
+        refundChange-out-0: { destination: pay.topic, producer: { routing-key-expression: "'refund.status.change'" } }
+
+tj:
+  pay:
+    alipay-app-id: ${ALIPAY_APP_ID:}
+    wechat-app-id: ${WECHAT_PAY_APP_ID:}
+    wechat-mch-id: ${WECHAT_PAY_MCH_ID:}
+
+powerjob:
+  worker:
+    enabled: true
+    app-name: pay-service
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
