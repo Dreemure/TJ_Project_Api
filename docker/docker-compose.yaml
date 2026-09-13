@@ -68,7 +68,7 @@ services:
   tj-elasticsearch:
     build:
       context: .
-      dockerfile: Dockerfile.elasticsearch   # 指定 Dockerfile 文件名
+      dockerfile: Dockerfile.elasticsearch
     container_name: TJ-elasticsearch
     environment:
       - discovery.type=single-node
@@ -119,7 +119,7 @@ services:
     networks:
       - tj-spring
 
-  # ---------- PowerJob（调度中心）使用默认配置 ----------
+  # ---------- PowerJob（调度中心） ----------
   tj-powerjob:
     image: powerjob/powerjob-server:latest
     container_name: TJ-powerjob
@@ -143,9 +143,9 @@ services:
       canal.manager.admin.user: ""
       canal.manager.admin.passwd: ""
       canal.manager.admin.passwd.encrypt: false
-      canal.instance.master.address: tj-mysql:3306  #mysql容器名
-      canal.instance.dbUsername: root  #mysql账号
-      canal.instance.dbPassword: root  #mysql密码
+      canal.instance.master.address: tj-mysql:3306
+      canal.instance.dbUsername: root
+      canal.instance.dbPassword: root
       canal.instance.connectionCharset: UTF-8
       canal.instance.tsdb.enable: true
       canal.instance.gtidon: false
@@ -187,30 +187,29 @@ services:
       - tj-spring
     restart: on-failure
 
-  # ---------- Nacos 3.1.1（须与 spring-cloud-alibaba 2025.1.0.0 的 nacos-client 3.1.1 匹配） ----------
+  # ---------- Nacos 3.1.1 ----------
   tj-nacos:
     image: nacos/nacos-server:v3.1.1
     container_name: TJ-nacos
     environment:
       MODE: standalone
       SPRING_DATASOURCE_PLATFORM: mysql
-      MYSQL_SERVICE_HOST: tj-mysql # 连接的数据库
-      MYSQL_SERVICE_DB_NAME: nacos # database名称
+      MYSQL_SERVICE_HOST: tj-mysql
+      MYSQL_SERVICE_DB_NAME: nacos
       MYSQL_SERVICE_USER: root
       MYSQL_SERVICE_PASSWORD: root
       MYSQL_SERVICE_PORT: 3306
       MYSQL_SERVICE_DB_PARAM: "useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
       NACOS_AUTH_ENABLE: "true"
-      # 3.x 要求该值必须是 Base64 字符串（解码后不少于 32 字节），否则启动即退出
       NACOS_AUTH_TOKEN: "fFmnDGQ5iePts0yJcBP6CgAK8DYoWm/tYw5rB6F3qOPYLlF7DXX8a+5IkfOGgV+L"
       NACOS_AUTH_IDENTITY_KEY: "nacos"
       NACOS_AUTH_IDENTITY_VALUE: "nacos"
       NACOS_CONSOLE_PORT: "8080"
     ports:
-      - "8848:8848"   # HTTP OpenAPI
-      - "9848:9848"   # gRPC 客户端端口（nacos-client 2.x/3.x 必需，宿主进程访问必须暴露）
-      - "9849:9849"   # gRPC 服务端端口（集群内 server 互通用）
-      - "8849:8080"   # 3.x 控制台独立端口（8080 已被 nginx-proxy-manager 占用）
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+      - "8849:8080"
     depends_on:
       tj-mysql:
         condition: service_healthy
@@ -219,6 +218,36 @@ services:
     volumes:
       - TJ-nacos-data:/home/nacos/data
       - TJ-nacos-logs:/home/nacos/logs
+
+  # ---------- Nacos 配置自动发布（一次性任务） ----------
+  tj-nacos-init:
+    image: mcr.microsoft.com/powershell:7.4-ubuntu-22.04
+    container_name: TJ-nacos-init
+    depends_on:
+      tj-nacos:
+        condition: service_started
+    volumes:
+      - ./nacos:/nacos:ro
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "==========================================="
+        echo "   开始发布 Nacos 共享配置"
+        echo "==========================================="
+        pwsh -File /nacos/import-nacos.ps1 \
+          -Server http://tj-nacos:8848 \
+          -Username nacos \
+          -Password nacos \
+          -Namespace public \
+          -Group DEFAULT_GROUP
+        echo ""
+        echo "==========================================="
+        echo "   配置发布完成"
+        echo "==========================================="
+    networks:
+      - tj-spring
+    restart: "no"
 
   # ---------- Seata-Server 2.5.0 ----------
   tj-seata-server:
@@ -274,7 +303,7 @@ services:
       - TJ-skywalking-oap-data:/skywalking/data
     restart: on-failure
     dns:
-      - 127.0.0.11        # 重要：确保使用 Docker DNS
+      - 127.0.0.11
 
   # ---------- SkyWalking UI ----------
   tj-skywalking-ui:
@@ -299,13 +328,13 @@ services:
     networks:
       - tj-spring
 
-  # ---------- Graylog OpenSearch（替代 Elasticsearch 7.x） ----------
+  # ---------- Graylog OpenSearch ----------
   tj-graylog-opensearch:
     image: opensearchproject/opensearch:2.11.0
     container_name: TJ-graylog-opensearch
     environment:
       - discovery.type=single-node
-      - plugins.security.disabled=true    # 禁用安全插件（开发环境）
+      - plugins.security.disabled=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -322,24 +351,15 @@ services:
     image: graylog/graylog:5.2.0
     container_name: TJ-graylog
     environment:
-      # 必填：至少 16 字符的密码盐
       GRAYLOG_PASSWORD_SECRET: somepasswordpepper
-      # 使用 SHA256 哈希的 root 密码（此处示例为 "admin" 的哈希）
       GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      # 外部访问 URL（请根据实际 IP/域名修改）
       GRAYLOG_HTTP_EXTERNAL_URI: http://localhost:9000/
-      # 连接 OpenSearch（环境变量名仍使用 ELASTICSEARCH，但指向 OpenSearch）
       GRAYLOG_ELASTICSEARCH_HOSTS: http://tj-graylog-opensearch:9200
-      # 连接 MongoDB
       GRAYLOG_MONGODB_URI: mongodb://tj-graylog-mongodb:27017/graylog
-      # 时区设置
       TZ: Asia/Shanghai
     ports:
-      # Web 管理界面
       - "9000:9000"
-      # GELF UDP 输入（可选）
       - "12201:12201/udp"
-      # Syslog UDP 输入（可选）
       - "1514:1514/udp"
     depends_on:
       - tj-graylog-mongodb
@@ -349,7 +369,6 @@ services:
     volumes:
       - TJ-graylog-data:/usr/share/graylog/data
     restart: unless-stopped
-  # ================================================
 
 # ---------- 持久化卷 ----------
 volumes:

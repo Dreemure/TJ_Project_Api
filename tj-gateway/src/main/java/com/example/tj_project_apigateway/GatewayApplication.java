@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 
 @SpringBootApplication
 @Slf4j
-@EnableScheduling
+@EnableScheduling // 开启定时任务
 @EnableDiscoveryClient
 public class GatewayApplication {
     public static void main(String[] args) throws UnknownHostException {
@@ -23,6 +23,7 @@ public class GatewayApplication {
         if (env.getProperty("server.ssl.key-store") != null) {
             protocol = "https";
         }
+        // log.info 使用的是 SLF4J 的占位符语法，{} 会按顺序被后面的参数替换
         log.info("""
                         --/
                         ---------------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ public class GatewayApplication {
                         \t\
                         Profile(s): \t{}
                         ---------------------------------------------------------------------------------------""",
-                env.getProperty("spring.application.name"),
+                env.getProperty("spring.application.name"), // 读取配置
                 protocol,
                 env.getProperty("server.port"),
                 protocol,
