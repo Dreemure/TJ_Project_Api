@@ -119,6 +119,13 @@ docker-compose ps -a
 
 #### 重新初始化数据库
 
+数据库结构由 `db/` 下的两个脚本初始化，且**仅在数据卷为空（首次启动）时执行一次**：
+
+- `db/schema.sql`：各业务库（tj_auth、tj_course …），其中 tj_course / tj_exam / tj_trade 含 Seata 的 `undo_log` 表
+- `db/nacos-seata.sql`：`nacos`（Nacos 3.1.1 官方 schema + 默认管理员 nacos/nacos）与 `seata`（4 张事务表 + distributed_lock 种子数据）
+
+注意：这两个脚本只在数据卷为空时执行。若表结构有变更，需要在运行中的 MySQL 里手动补 DDL，改完 SQL 文件不会自动生效。
+
 如需重置数据库，可删除数据卷并重启：
 
 ```bash

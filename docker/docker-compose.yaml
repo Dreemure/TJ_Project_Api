@@ -219,7 +219,6 @@ services:
     volumes:
       - TJ-nacos-data:/home/nacos/data
       - TJ-nacos-logs:/home/nacos/logs
-      - ./nacos:/home/nacos/config-repository:ro
 
   # ---------- Seata-Server 2.5.0 ----------
   tj-seata-server:
