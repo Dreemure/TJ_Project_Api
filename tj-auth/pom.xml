@@ -12,23 +12,18 @@
     <name>tj-auth</name>
     <description>tj-auth</description>
     <packaging>jar</packaging>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>25</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
     </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>tj-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -67,11 +62,6 @@
             <artifactId>spring-boot-starter-grpc-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>tj-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
             <version>${mybatis-plus.version}</version>
@@ -95,15 +85,14 @@
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
         </dependency>
-        <!-- 服务发现 -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-commons</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-           <groupId>cn.dev33</groupId>
-           <artifactId>sa-token-spring-boot4-starter</artifactId>
-           <version>${sa-token.version}</version>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${java-jwt.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

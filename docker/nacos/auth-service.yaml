@@ -1,5 +1,6 @@
 server:
   port: 10011
+  shutdown: graceful
 
 spring:
   datasource:
@@ -7,14 +8,61 @@ spring:
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_auth?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: ${TJ_MYSQL_USERNAME:root}
     password: ${TJ_MYSQL_PASSWORD:root}
+    hikari:
+      pool-name: AuthHikariPool
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
   grpc:
     server:
       port: 9090
 
-sa-token:
-  token-name: Authorization
-  timeout: 2592000
-  is-concurrent: true
-  is-share: true
-  token-style: uuid
-  is-log: false
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.example.tjauth.Entity
+  global-config:
+    banner: false
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+knife4j:
+  enable: false
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: false
+  packages-to-scan: com.example.tjauth.Controller
+
+tj:
+  auth:
+    jwt:
+      secret: ${TJ_JWT_SECRET:your-very-long-and-secure-256-bit-secret-key-for-hs256-algorithm}
+      token-ttl: 30m
+      refresh-ttl: 7d
+      issuer: tj-auth
+    headers:
+      authorization: Authorization
+      refresh: Refresh
+    exclude-path:
+      - /error/**
+      - /accounts/login
+      - /accounts/admin/login
+      - /accounts/refresh
+      - /jwks
+      - /v3/api-docs/**

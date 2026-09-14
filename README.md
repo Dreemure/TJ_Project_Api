@@ -10,7 +10,7 @@
 - **搜索引擎**：Elasticsearch
 - **全局日志**：GrayLog2与Logback + SLF4J
 - **链路追踪**：SykWalking
-- **认证与安全**：sa-Token、ECDSA 签名验证、SHA3-256 完整性校验
+- **认证与安全**：springSecurity、ECDSA 签名验证、SHA3-256 完整性校验
 - **JSON流处理**：FastJson2
 - **聚合支付(微信、支付宝)**：IJPay
 ---

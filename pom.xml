@@ -55,7 +55,7 @@
 		<seata.version>2.5.0</seata.version>
 		<swagger.version>5.4.0</swagger.version>
 		<mybatis-plus.version>3.5.17</mybatis-plus.version>
-		<sa-token.version>1.46.0</sa-token.version>
+		<java-jwt.version>4.5.0</java-jwt.version>
 		<hutool.version>5.8.46</hutool.version>
 		<elasticsearch.version>8.11.4</elasticsearch.version>
 		<redisson.version>4.7.0</redisson.version>

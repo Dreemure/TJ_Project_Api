@@ -68,9 +68,9 @@ spring:
 
 knife4j:
   gateway:
-    enabled: true
-    strategy: discover
+    enabled: true # 开启网关聚合稳定
+    strategy: discover # 使用服务发现自动聚合
     discover:
-      enabled: true
-      version: openapi3
-      excluded-services: [ gateway-service ]
+      enabled: true # 开启服务发现模式
+      version: openapi3 # 使用OpenApi3规范
+      excluded-services: [ gateway-service  # 排除不需要聚合的服务(网关自己)

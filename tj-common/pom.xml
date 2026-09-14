@@ -57,6 +57,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -73,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>com.baizhukui</groupId>
-            <artifactId>knife4j-openapi3-boot4-spring-boot-starter</artifactId> <!-- 社区增强分支 -->
+            <artifactId>knife4j-openapi3-boot4-spring-boot-starter</artifactId> <!-- 社区增强分支，业务接口文档用于每个服务 -->
             <version>${swagger.version}</version>
         </dependency>
         <dependency>
@@ -120,6 +121,7 @@
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-worker-spring-boot-starter</artifactId>
             <version>${powerjob.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
