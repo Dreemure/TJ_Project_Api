@@ -66,3 +66,9 @@ tj:
       - /accounts/refresh
       - /jwks
       - /v3/api-docs/**
+
+#部署时docker compose内： (关联secret)
+# services:
+#  tj-auth:
+#    environment:
+#      - TJ_JWT_SECRET=X7jK9pL2mN4qR8sT1wW3yZ5aB6cD0eF7gH9iJ2kM4nO=

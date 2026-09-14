@@ -25,7 +25,6 @@
         <module name="tj-course" />
         <module name="tj-exam" />
         <module name="pay-api" />
-        <module name="message-service" />
         <module name="tj-search" />
         <module name="tj-learning" />
         <module name="tj-trade" />
@@ -35,6 +34,16 @@
         <module name="tj-promotion" />
         <module name="tj-media" />
         <module name="tj-data" />
+      </profile>
+      <profile name="Annotation profile for message-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="message-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

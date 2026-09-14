@@ -1,13 +1,13 @@
 server:
   port: 10010
+  shutdown: graceful
 
 spring:
   cloud:
-    # 网关是唯一消费 lb:// 的服务，需显式启用 Nacos 负载均衡器
-    # （ConditionalOnProperty 未设 matchIfMissing，不配置即不生效）
     loadbalancer:
       nacos:
         enabled: true
+
     gateway:
       server:
         webflux:
@@ -55,7 +55,10 @@ spring:
             - id: promotion
               uri: lb://promotion-service
               predicates: [ Path=/promotion/** ]
-          default-filters: [ StripPrefix=1 ]
+
+          default-filters:
+            - StripPrefix=1
+
           globalcors:
             add-to-simple-url-handler-mapping: true
             cors-configurations:
@@ -68,9 +71,10 @@ spring:
 
 knife4j:
   gateway:
-    enabled: true # 开启网关聚合稳定
-    strategy: discover # 使用服务发现自动聚合
+    enabled: true                          # 开启网关聚合模式
+    strategy: discover                     # 聚合策略：服务发现模式
     discover:
-      enabled: true # 开启服务发现模式
-      version: openapi3 # 使用OpenApi3规范
-      excluded-services: [ gateway-service  # 排除不需要聚合的服务(网关自己)
+      enabled: true                        # 启用服务发现（从 Nacos 拉取服务）
+      version: openapi3                    # 使用 OpenAPI 3 规范
+      excluded-services:                   # 排除不需要聚合的服务
+        - gateway-service                  # 网关自身无业务接口，排除
