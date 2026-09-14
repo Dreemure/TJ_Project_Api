@@ -1,6 +1,6 @@
-com.example.tj_project_apicommon.autoconfigure.mq.MqConfig
-com.example.tj_project_apicommon.autoconfigure.mvc.Fastjson2Config
-com.example.tj_project_apicommon.autoconfigure.mvc.MvcConfig
-com.example.tj_project_apicommon.autoconfigure.mvc.ParamCheckerConfig
-com.example.tj_project_apicommon.autoconfigure.mybatis.MybatisPlusConfig
-com.example.tj_project_apicommon.autoconfigure.swagger.Knife4jConfiguration
+com.example.tjcommon.autoconfigure.mq.MqConfig
+com.example.tjcommon.autoconfigure.mvc.Fastjson2Config
+com.example.tjcommon.autoconfigure.mvc.MvcConfig
+com.example.tjcommon.autoconfigure.mvc.ParamCheckerConfig
+com.example.tjcommon.autoconfigure.mybatis.MybatisPlusConfig
+com.example.tjcommon.autoconfigure.swagger.Knife4jConfiguration

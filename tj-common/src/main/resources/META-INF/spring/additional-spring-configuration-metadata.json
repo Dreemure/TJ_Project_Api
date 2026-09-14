@@ -2,8 +2,8 @@
   "groups": [
     {
       "name": "tj_Project.swagger",
-      "type": "com.example.tj_project_apicommon.autoconfigure.swagger.Knife4jConfiguration",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties"
+      "type": "com.example.tjcommon.autoconfigure.swagger.Knife4jConfiguration",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties"
     },
     {
       "name": "tj.mq"
@@ -16,8 +16,8 @@
     },
     {
       "name": "tj.powerjob",
-      "type": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobConfig",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties"
+      "type": "com.example.tjcommon.autoconfigure.powerjob.PowerJobConfig",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties"
     }
   ],
   "properties": [
@@ -25,63 +25,63 @@
       "name": "tj.swagger.enable",
       "type": "java.lang.Boolean",
       "description": "是否开启swagger功能，默认false",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": false
     },
     {
       "name": "tj.swagger.enableResponseWrap",
       "type": "java.lang.Boolean",
       "description": "是否开启响应结果包装功能，默认false",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": false
     },
     {
       "name": "tj.swagger.packagePath",
       "type": "java.lang.String",
       "description": "API接口扫描包",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
       "name": "tj.swagger.title",
       "type": "java.lang.String",
       "description": "API文档标题",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
       "name": "tj.swagger.description",
       "type": "java.lang.String",
       "description": "文档描述",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
       "name": "tj.swagger.contactName",
       "type": "java.lang.String",
       "description": "联系人姓名",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
       "name": "tj.swagger.contactUrl",
       "type": "java.lang.String",
       "description": "联系人主页地址",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
       "name": "tj.swagger.contactEmail",
       "type": "java.lang.String",
       "description": "联系人邮箱",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
       "name": "tj.swagger.version",
       "type": "java.lang.String",
       "description": "版本",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.swagger.SwaggerConfigProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.swagger.SwaggerConfigProperties",
       "defaultValue": ""
     },
     {
@@ -214,82 +214,82 @@
       "name": "tj.powerjob.enabled",
       "type": "java.lang.Boolean",
       "description": "是否启用PowerJob Worker",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": true
     },
     {
       "name": "tj.powerjob.worker.app-name",
       "type": "java.lang.String",
       "description": "应用名称，需在PowerJob控制台提前注册，用于分组隔离",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties"
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties"
     },
     {
       "name": "tj.powerjob.worker.server-address",
       "type": "java.lang.String",
       "description": "PowerJob Server地址，多个地址用逗号分隔，如127.0.0.1:7700,127.0.0.1:7701",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties"
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties"
     },
     {
       "name": "tj.powerjob.worker.port",
       "type": "java.lang.Integer",
       "description": "Worker监听端口，默认27777",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": 27777
     },
     {
       "name": "tj.powerjob.worker.protocol",
       "type": "java.lang.String",
       "description": "通讯协议，支持 HTTP 和 AKKA，推荐 HTTP",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": "HTTP"
     },
     {
       "name": "tj.powerjob.worker.store-strategy",
       "type": "java.lang.String",
       "description": "本地存储策略，disk(磁盘) 或 memory(内存)",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": "disk"
     },
     {
       "name": "tj.powerjob.worker.max-result-length",
       "type": "java.lang.Integer",
       "description": "任务返回结果最大长度，超过将被截断",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": 8192
     },
     {
       "name": "tj.powerjob.worker.max-appended-wf-context-length",
       "type": "java.lang.Integer",
       "description": "工作流上下文最大长度，超过将被丢弃",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": 8192
     },
     {
       "name": "tj.powerjob.worker.max-lightweight-task-num",
       "type": "java.lang.Integer",
       "description": "同时运行的轻量级任务数量上限",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": 1024
     },
     {
       "name": "tj.powerjob.worker.max-heavy-task-num",
       "type": "java.lang.Integer",
       "description": "同时运行的重量级任务数量上限",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": 64
     },
     {
       "name": "tj.powerjob.worker.health-report-interval",
       "type": "java.lang.Integer",
       "description": "Worker健康上报间隔（秒）",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": 10
     },
     {
       "name": "tj.powerjob.worker.enable-test-mode",
       "type": "java.lang.Boolean",
       "description": "是否开启测试模式（开发环境可开启，跳过Server连接校验）",
-      "sourceType": "com.example.tj_project_apicommon.autoconfigure.powerjob.PowerJobProperties",
+      "sourceType": "com.example.tjcommon.autoconfigure.powerjob.PowerJobProperties",
       "defaultValue": false
     }
   ],

@@ -51,11 +51,17 @@ springdoc:
 
 tj:
   auth:
-    jwt:
-      secret: ${TJ_JWT_SECRET:your-very-long-and-secure-256-bit-secret-key-for-hs256-algorithm}
+    jwt: # 部署使用 Docker Compose挂载密钥
+      # 私钥路径（classpath 或绝对路径）
+      private-key-path: classpath:keys/private_key.pem
+      # 公钥路径（可选，从私钥推导也行）
+      public-key-path: classpath:keys/public_key.pem
+      # 算法（RS256）
+      algorithm: RS256
+      # 签发者
+      issuer: tj-auth
       token-ttl: 30m
       refresh-ttl: 7d
-      issuer: tj-auth
     headers:
       authorization: Authorization
       refresh: Refresh

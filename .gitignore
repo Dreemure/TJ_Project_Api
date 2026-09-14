@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# 密钥文件
+**/keys/*.pem
+*.pem
+!*.pem.sample

@@ -1,8 +1,0 @@
-package com.example.tj_project_apicommon.Utils;
-
-/**
- * 对原对象进行计算，设置到目标对象中
- **/
-public interface Convert<R,T>{
-    public void convert(R origin, T target);
-}

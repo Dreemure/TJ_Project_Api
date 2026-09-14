@@ -1,4 +1,5 @@
-com.example.tj_project_apimicroservice.Config.RequestIdRelayConfiguration
-com.example.tj_project_apimicroservice.Config.RoleCacheConfig
-com.example.tj_project_apimicroservice.Config.CategoryCacheConfig
-com.example.tj_project_apimicroservice.autoconfigure.LearningGrpcAutoConfiguration
+com.example.tjmicroservice.Config.RequestIdRelayConfiguration
+com.example.tjmicroservice.Config.RoleCacheConfig
+com.example.tjmicroservice.Config.CategoryCacheConfig
+com.example.tjmicroservice.autoconfigure.LearningGrpcAutoConfiguration
+com.example.tjmicroservice.Autoconfigure.UserContextAutoConfiguration

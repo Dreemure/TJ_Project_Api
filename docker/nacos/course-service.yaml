@@ -36,3 +36,9 @@ powerjob:
     enabled: true
     app-name: course-service
     server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+
+#tj:
+#  auth: # 如有专属白名单则配置
+#    exclude-path:
+#      - /courses/public/**
+#      - /categories/**
