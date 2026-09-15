@@ -7,7 +7,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.1.1</version>
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>com.tjxt</groupId>
 	<artifactId>TJ_Project_Api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TJ_Project_Api</name>

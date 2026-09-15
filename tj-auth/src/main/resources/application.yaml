@@ -21,11 +21,33 @@ spring:
       discovery: { namespace: public, group: DEFAULT_GROUP }
       config: { namespace: public, group: DEFAULT_GROUP, file-extension: yaml }
 
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  cloud:
-    nacos:
-      server-addr: tj-nacos:8848
+# ==================== 认证配置 ====================
+# 说明：Nacos 中的 auth-service.yaml 会覆盖此处同名配置，这里只提供本地可运行的默认值
+# 详细说明（认证/鉴权流程、白名单与路由前缀、权限表、排查手册）见 docs/authentication.md
+tj:
+  auth:
+    # 免认证白名单（ant 风格路径）：登录、刷新 token、公钥端点、文档与健康检查
+    exclude-path:
+      - /error/**
+      - /jwks
+      - /accounts/login
+      - /accounts/admin/login
+      - /accounts/refresh
+      - /accounts/admin/refresh
+      - /doc.html
+      - /webjars/**
+      - /v3/api-docs/**
+      - /swagger-ui/**
+      - /swagger-resources/**
+      - /actuator/**
+      - /favicon.ico
+    jwt:
+      # 签发者：网关、下游服务校验 token 时会比对（网关留空即不校验）
+      issuer: tj-auth
+      # 密钥位置（PKCS#8 私钥 / X.509 公钥）；与 docker/nacos/auth-service.yaml 保持一致
+      private-key-path: classpath:keys/private_key.pem
+      public-key-path: classpath:keys/public_key.pem
+      # 有效期
+      token-ttl: 30m
+      refresh-ttl: 7d
+      remember-me-ttl: 7d

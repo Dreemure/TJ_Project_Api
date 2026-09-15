@@ -2,6 +2,11 @@ server:
   port: 10021
 
 spring:
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_SEARCH_PORT:11021}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_search?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
@@ -9,3 +14,6 @@ spring:
     password: ${TJ_MYSQL_PASSWORD:root}
   elasticsearch:
     uris: ${TJ_ELASTICSEARCH_URIS:http://127.0.0.1:9200}
+tj:
+  swagger:
+    package-path: com.tjxt.tjsearch           # 本服务 Controller 所在包（文档按包分组扫描）

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.example</groupId>
+        <groupId>com.tjxt</groupId>
         <artifactId>TJ_Project_Api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -31,9 +31,20 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.example</groupId>
+            <groupId>com.tjxt</groupId>
             <artifactId>tj-microservice-sdk</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <!-- media 不需要 Redis：排除 tj-common 传递来的 redis / redisson，避免无意启用 Redis 自动配置 -->
+                <exclusion>
+                    <groupId>org.springframework.data</groupId>
+                    <artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.redisson</groupId>
+                    <artifactId>redisson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -86,12 +97,12 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>2025.1.0.0</version>
+            <version>${spring-cloud-alibaba.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <version>2025.1.0.0</version>
+            <version>${spring-cloud-alibaba.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

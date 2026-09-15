@@ -2,7 +2,20 @@ server:
   port: 10022
 
 spring:
+  datasource:                              # 本服务的业务库（与其他服务一致，走 tj-mysql 容器）
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_remark?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${TJ_MYSQL_USERNAME:root}
+    password: ${TJ_MYSQL_PASSWORD:root}
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_REMARK_PORT:11022}
+
   cloud:
     stream:
       bindings:
         likeRecord-out-0: { destination: like.record.topic, producer: { routing-key-expression: "'NOTE.times.changed'" } }
+tj:
+  swagger:
+    package-path: com.tjxt.tjremark           # 本服务 Controller 所在包（文档按包分组扫描）

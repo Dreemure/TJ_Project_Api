@@ -78,3 +78,40 @@ knife4j:
       version: openapi3                    # 使用 OpenAPI 3 规范
       excluded-services:                   # 排除不需要聚合的服务
         - gateway-service                  # 网关自身无业务接口，排除
+
+# ==================== 网关鉴权（响应式 Spring Security + JWT 验签） ====================
+# 详细说明（认证/鉴权流程、白名单与路由前缀、权限表匹配规则、排查手册）见 docs/authentication.md
+tj:
+  auth:
+    # 免认证白名单，支持 /path 与 METHOD:/path 两种写法（ant 风格）。
+    # 注意：这里写“经过网关的原始请求路径”；本项目路由带前缀且 StripPrefix=1，
+    #       所以 auth 服务的 /accounts/login 在网关侧是 /auth/accounts/login
+    exclude-path:
+      - /error/**
+      # ---------------- auth 服务公开接口 ----------------
+      - /auth/jwks
+      - /auth/accounts/login
+      - /auth/accounts/admin/login
+      - /auth/accounts/refresh
+      - /auth/accounts/admin/refresh
+      - /auth/accounts/logout
+      # ---------------- 文档与健康检查 ----------------
+      - /doc.html
+      - /webjars/**
+      - /v3/api-docs/**
+      - /swagger-ui/**
+      - /swagger-resources/**
+      - /actuator/**
+      - /favicon.ico
+    jwt:
+      # 校验 token 的 issuer，需与 auth-service.yaml 的 tj.auth.jwt.issuer 一致；留空表示不校验
+      issuer: tj-auth
+      # 可选：网关直接用本地公钥验签（不访问 auth 服务），例如 classpath:keys/public_key.pem
+      # public-key-path: classpath:keys/public_key.pem
+    jwks:
+      # 公钥来源：默认通过服务发现拉取 auth-service 的 /jwks；也可直连指定 uri
+      service-name: auth-service
+      # uri: http://auth-service:10011/jwks
+      # 公钥刷新间隔（支持 auth 服务密钥轮换）
+      refresh-interval: 10m
+      timeout: 5s

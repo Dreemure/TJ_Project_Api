@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.example</groupId>
+        <groupId>com.tjxt</groupId>
         <artifactId>TJ_Project_Api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -20,18 +20,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.example</groupId>
+            <groupId>com.tjxt</groupId>
             <artifactId>tj-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--
+            注意：本模块是 Servlet（WebMVC）应用，不要依赖 tj-gateway。
+            tj-gateway 会把它自身的响应式网关依赖（webflux / gateway-server-webflux / sentinel-gateway）
+            带进来，既污染 classpath，也可能让 Spring Cloud Gateway 的自动配置在 Servlet 应用里生效。
+            auth 与网关之间共享的协议常量（请求头、JWT 声明名）已下沉到 tj-common 的 AuthConstants。
+        -->
         <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>tj-gateway</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
+            <groupId>com.tjxt</groupId>
             <artifactId>tj-microservice-sdk</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
@@ -91,6 +91,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- Nacos shared-redis.yaml 配置了 lettuce.pool.*，需要 commons-pool2 连接池才会生效（否则静默不池化） -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.redisson</groupId>

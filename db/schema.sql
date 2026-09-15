@@ -2566,3 +2566,261 @@ INSERT INTO `user_detail` (`id`, `type`, `name`, `gender`, `icon`, `email`, `qq`
 	(1628197519970271234, 2, '暗影之月', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, '2023-02-22 08:58:37', '2023-02-22 09:04:49', NULL, 0, 0),
 	(1628197520280649730, 2, '月亮公主', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, '2023-02-22 08:58:37', '2023-02-22 09:04:43', NULL, 0, 0),
 	(1630092739039825922, 1, '老墨', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 0, '2023-02-27 14:29:29', '2023-02-27 14:29:29', 1, 1, 0);
+
+
+-- =============================================================================
+-- 补充：本项目共 13 个服务需要数据库，原导出文件只含前 9 个库，以下 4 个库为本次补齐
+--   tj_learning（9 张表）/ tj_promotion（4 张表）/ tj_remark（1 张表）/ tj_data（空库）
+--   表结构依据老项目（tianji/）实体类反向重建，字段长度/索引/非空约束可能与官方 DDL 有差异，
+--   且不含种子数据；拿到官方 DDL 可直接替换这一段。下表头有详细说明。
+-- =============================================================================
+
+-- =============================================================================
+-- 缺失数据库补充 DDL：tj_learning / tj_promotion / tj_remark / tj_data
+--
+-- 说明：
+--   1. 本文件中的表结构不是官方导出文件，而是根据 OLD 项目（tianji/，包名 com.tianji.*）
+--      中各微服务 domain/po 目录下的 MyBatis-Plus 实体类（@TableName / @TableId /
+--      @TableField / 字段 JavaDoc）反向重建出来的，因为工作区中找不到这 3 个库的原始 DDL。
+--   2. 字段名由实体字段名 camelCase → snake_case 得到；字段注释取自实体字段 JavaDoc；
+--      表注释取自实体类级 JavaDoc。仅生成 PRIMARY KEY，未添加任何额外索引，未添加任何
+--      INSERT 初始化数据。
+--   3. 由于是反向重建，字段类型/长度/是否允许 NULL 等细节可能与官方 DDL 存在差异
+--      （实体类无法表达列长度、NULL 约束、字符集、索引等信息）。一旦拿到官方 DDL，
+--      请直接用它替换本文件的对应部分。
+--   4. 为保持安全，本文件未包含 schema.sql 中每个库前面的 DROP DATABASE IF EXISTS 语句，
+--      只保留 CREATE DATABASE IF NOT EXISTS / USE / DROP TABLE IF EXISTS。
+--   5. tj_data 对应旧项目 tj-data 服务（纯 Redis，无 @TableName 实体），因此只建空库、不建表。
+-- =============================================================================
+
+-- 导出 tj_learning 的数据库结构（根据旧项目实体类重建）
+CREATE DATABASE IF NOT EXISTS `tj_learning` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `tj_learning`;
+
+-- 导出  表 tj_learning.interaction_question 结构
+DROP TABLE IF EXISTS `interaction_question`;
+CREATE TABLE IF NOT EXISTS `interaction_question` (
+  `id` bigint NOT NULL COMMENT '主键，互动问题的id',
+  `title` varchar(255) DEFAULT NULL COMMENT '互动问题的标题',
+  `description` text COMMENT '问题描述信息',
+  `course_id` bigint DEFAULT NULL COMMENT '所属课程id',
+  `chapter_id` bigint DEFAULT NULL COMMENT '所属课程章id',
+  `section_id` bigint DEFAULT NULL COMMENT '所属课程节id',
+  `user_id` bigint DEFAULT NULL COMMENT '提问学员id',
+  `latest_answer_id` bigint DEFAULT NULL COMMENT '最新的一个回答的id',
+  `answer_times` int DEFAULT NULL COMMENT '问题下的回答数量',
+  `anonymity` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否匿名，默认false',
+  `hidden` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否被隐藏，默认false',
+  `status` tinyint DEFAULT NULL COMMENT '管理端问题状态：0-未查看，1-已查看',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '提问时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='互动提问的问题表';
+
+-- 导出  表 tj_learning.interaction_reply 结构
+DROP TABLE IF EXISTS `interaction_reply`;
+CREATE TABLE IF NOT EXISTS `interaction_reply` (
+  `id` bigint NOT NULL COMMENT '互动问题的回答id',
+  `question_id` bigint DEFAULT NULL COMMENT '互动问题问题id',
+  `answer_id` bigint DEFAULT NULL COMMENT '回复的上级回答id',
+  `user_id` bigint DEFAULT NULL COMMENT '回答者id',
+  `content` text COMMENT '回答内容',
+  `target_user_id` bigint DEFAULT NULL COMMENT '回复的目标用户id',
+  `target_reply_id` bigint DEFAULT NULL COMMENT '回复的目标回复id',
+  `reply_times` int DEFAULT NULL COMMENT '评论数量',
+  `liked_times` int DEFAULT NULL COMMENT '点赞数量',
+  `hidden` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否被隐藏，默认false',
+  `anonymity` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否匿名，默认false',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='互动问题的回答或评论';
+
+-- 导出  表 tj_learning.learning_lesson 结构
+DROP TABLE IF EXISTS `learning_lesson`;
+CREATE TABLE IF NOT EXISTS `learning_lesson` (
+  `id` bigint NOT NULL COMMENT '主键',
+  `user_id` bigint DEFAULT NULL COMMENT '学员id',
+  `course_id` bigint DEFAULT NULL COMMENT '课程id',
+  `status` tinyint DEFAULT NULL COMMENT '课程状态，0-未学习，1-学习中，2-已学完，3-已失效',
+  `week_freq` int DEFAULT NULL COMMENT '每周学习频率，每周3天，每天2节，则频率为6',
+  `plan_status` tinyint DEFAULT NULL COMMENT '学习计划状态，0-没有计划，1-计划进行中',
+  `learned_sections` int DEFAULT NULL COMMENT '已学习小节数量',
+  `latest_section_id` bigint DEFAULT NULL COMMENT '最近一次学习的小节id',
+  `latest_learn_time` datetime DEFAULT NULL COMMENT '最近一次学习的时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `expire_time` datetime DEFAULT NULL COMMENT '过期时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学生课程表';
+
+-- 导出  表 tj_learning.learning_record 结构
+DROP TABLE IF EXISTS `learning_record`;
+CREATE TABLE IF NOT EXISTS `learning_record` (
+  `id` bigint NOT NULL COMMENT '学习记录的id',
+  `lesson_id` bigint DEFAULT NULL COMMENT '对应课表的id',
+  `section_id` bigint DEFAULT NULL COMMENT '对应小节的id',
+  `user_id` bigint DEFAULT NULL COMMENT '用户id',
+  `moment` int DEFAULT NULL COMMENT '视频的当前观看时间点，单位秒',
+  `finished` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否完成学习，默认false',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '第一次观看时间',
+  `finish_time` datetime DEFAULT NULL COMMENT '完成学习的时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间（最近一次观看时间）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学习记录表';
+
+-- 导出  表 tj_learning.note 结构
+DROP TABLE IF EXISTS `note`;
+CREATE TABLE IF NOT EXISTS `note` (
+  `id` bigint NOT NULL COMMENT '笔记id',
+  `user_id` bigint DEFAULT NULL COMMENT '用户id',
+  `course_id` bigint DEFAULT NULL COMMENT '课程id',
+  `chapter_id` bigint DEFAULT NULL COMMENT '章id',
+  `section_id` bigint DEFAULT NULL COMMENT '小节id',
+  `note_moment` int DEFAULT NULL COMMENT '记录笔记时的视频播放时间，单位秒',
+  `content` text COMMENT '笔记内容',
+  `is_private` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否是隐私笔记，默认false',
+  `hidden` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否被折叠（隐藏）默认false',
+  `hidden_reason` varchar(255) DEFAULT NULL COMMENT '被隐藏的原因',
+  `author_id` bigint DEFAULT NULL COMMENT '笔记作者id',
+  `gathered_note_id` bigint DEFAULT NULL COMMENT '被采集笔记的id',
+  `is_gathered` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否是采集他人的笔记，默认false',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='笔记表';
+
+-- 导出  表 tj_learning.note_user 结构
+DROP TABLE IF EXISTS `note_user`;
+CREATE TABLE IF NOT EXISTS `note_user` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `note_id` bigint DEFAULT NULL COMMENT '引用的笔记id',
+  `user_id` bigint DEFAULT NULL COMMENT '引用者id',
+  `is_gathered` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否是采集他人的笔记，默认false',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='笔记采集关系表（谁采集了哪篇笔记）';
+
+-- 导出  表 tj_learning.points_board 结构
+DROP TABLE IF EXISTS `points_board`;
+CREATE TABLE IF NOT EXISTS `points_board` (
+  `id` bigint NOT NULL COMMENT '榜单id',
+  `user_id` bigint DEFAULT NULL COMMENT '学生id',
+  `points` int DEFAULT NULL COMMENT '积分值',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学霸天梯榜';
+
+-- 导出  表 tj_learning.points_board_season 结构
+DROP TABLE IF EXISTS `points_board_season`;
+CREATE TABLE IF NOT EXISTS `points_board_season` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '自增长id，season标示',
+  `name` varchar(64) DEFAULT NULL COMMENT '赛季名称，例如：第1赛季',
+  `begin_time` date DEFAULT NULL COMMENT '赛季开始时间',
+  `end_time` date DEFAULT NULL COMMENT '赛季结束时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学霸天梯榜赛季表';
+
+-- 导出  表 tj_learning.points_record 结构
+DROP TABLE IF EXISTS `points_record`;
+CREATE TABLE IF NOT EXISTS `points_record` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '积分记录表id',
+  `user_id` bigint DEFAULT NULL COMMENT '用户id',
+  `type` tinyint DEFAULT NULL COMMENT '积分方式：1-课程学习，2-每日签到，3-课程问答， 4-课程笔记，5-课程评价',
+  `points` int DEFAULT NULL COMMENT '积分值',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学习积分记录，每个月底清零';
+
+-- 导出 tj_promotion 的数据库结构（根据旧项目实体类重建）
+CREATE DATABASE IF NOT EXISTS `tj_promotion` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `tj_promotion`;
+
+-- 导出  表 tj_promotion.coupon 结构
+DROP TABLE IF EXISTS `coupon`;
+CREATE TABLE IF NOT EXISTS `coupon` (
+  `id` bigint NOT NULL COMMENT '优惠券id',
+  `name` varchar(64) DEFAULT NULL COMMENT '优惠券名称，可以和活动名称保持一致',
+  `type` int DEFAULT NULL COMMENT '优惠券类型，1：普通券。目前就一种，保留字段',
+  `discount_type` tinyint DEFAULT NULL COMMENT '折扣类型，1：满减，2：每满减，3：折扣，4：无门槛',
+  `specific` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否限定作用范围，false：不限定，true：限定。默认false',
+  `discount_value` int DEFAULT NULL COMMENT '折扣值，如果是满减则存满减金额，如果是折扣，则存折扣率，8折就是存80',
+  `threshold_amount` int DEFAULT NULL COMMENT '使用门槛，0：表示无门槛，其他值：最低消费金额',
+  `max_discount_amount` int DEFAULT NULL COMMENT '最高优惠金额，满减最大，0：表示没有限制，不为0，则表示该券有金额的限制',
+  `obtain_way` tinyint DEFAULT NULL COMMENT '获取方式：1：手动领取，2：兑换码',
+  `issue_begin_time` datetime DEFAULT NULL COMMENT '开始发放时间',
+  `issue_end_time` datetime DEFAULT NULL COMMENT '结束发放时间',
+  `term_days` int DEFAULT NULL COMMENT '优惠券有效期天数，0：表示有效期是指定有效期的',
+  `term_begin_time` datetime DEFAULT NULL COMMENT '优惠券有效期开始时间',
+  `term_end_time` datetime DEFAULT NULL COMMENT '优惠券有效期结束时间',
+  `status` tinyint DEFAULT NULL COMMENT '优惠券配置状态，1：待发放，2：未开始   3：进行中，4：已结束，5：暂停',
+  `total_num` int DEFAULT NULL COMMENT '总数量，不超过5000',
+  `issue_num` int DEFAULT NULL COMMENT '已发行数量，用于判断是否超发',
+  `used_num` int DEFAULT NULL COMMENT '已使用数量',
+  `user_limit` int DEFAULT NULL COMMENT '每个人限领的数量，默认1',
+  `ext_param` varchar(255) DEFAULT NULL COMMENT '拓展参数字段，保留字段',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creater` bigint DEFAULT NULL COMMENT '创建人',
+  `updater` bigint DEFAULT NULL COMMENT '更新人',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='优惠券的规则信息';
+
+-- 导出  表 tj_promotion.coupon_scope 结构
+DROP TABLE IF EXISTS `coupon_scope`;
+CREATE TABLE IF NOT EXISTS `coupon_scope` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `type` int DEFAULT NULL COMMENT '范围限定类型：1-分类，2-课程，等等',
+  `coupon_id` bigint DEFAULT NULL COMMENT '优惠券id',
+  `biz_id` bigint DEFAULT NULL COMMENT '优惠券作用范围的业务id，例如分类id、课程id',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='优惠券作用范围信息';
+
+-- 导出  表 tj_promotion.exchange_code 结构
+DROP TABLE IF EXISTS `exchange_code`;
+CREATE TABLE IF NOT EXISTS `exchange_code` (
+  `id` int NOT NULL COMMENT '兑换码id',
+  `code` varchar(64) DEFAULT NULL COMMENT '兑换码',
+  `status` tinyint DEFAULT NULL COMMENT '兑换码状态， 1：待兑换，2：已兑换，3：兑换活动已结束',
+  `user_id` bigint DEFAULT NULL COMMENT '兑换人',
+  `type` int DEFAULT NULL COMMENT '兑换类型，1：优惠券，以后再添加其它类型',
+  `exchange_target_id` bigint DEFAULT NULL COMMENT '兑换码目标id，例如兑换优惠券，该id则是优惠券的配置id',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `expired_time` datetime DEFAULT NULL COMMENT '兑换码过期时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='兑换码';
+
+-- 导出  表 tj_promotion.user_coupon 结构
+DROP TABLE IF EXISTS `user_coupon`;
+CREATE TABLE IF NOT EXISTS `user_coupon` (
+  `id` bigint NOT NULL COMMENT '用户券id',
+  `user_id` bigint DEFAULT NULL COMMENT '优惠券的拥有者',
+  `coupon_id` bigint DEFAULT NULL COMMENT '优惠券模板id',
+  `term_begin_time` datetime DEFAULT NULL COMMENT '优惠券有效期开始时间',
+  `term_end_time` datetime DEFAULT NULL COMMENT '优惠券有效期结束时间',
+  `used_time` datetime DEFAULT NULL COMMENT '优惠券使用时间（核销时间）',
+  `status` tinyint DEFAULT NULL COMMENT '优惠券状态，1：未使用，2：已使用，3：已失效',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户领取优惠券的记录，是真正使用的优惠券信息';
+
+-- 导出 tj_remark 的数据库结构（根据旧项目实体类重建）
+CREATE DATABASE IF NOT EXISTS `tj_remark` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `tj_remark`;
+
+-- 导出  表 tj_remark.liked_record 结构
+DROP TABLE IF EXISTS `liked_record`;
+CREATE TABLE IF NOT EXISTS `liked_record` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `user_id` bigint DEFAULT NULL COMMENT '用户id',
+  `biz_id` bigint DEFAULT NULL COMMENT '点赞的业务id',
+  `biz_type` varchar(32) DEFAULT NULL COMMENT '点赞的业务类型',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='点赞记录表';
+
+-- 导出 tj_data 的数据库结构（旧项目 tj-data 服务为纯 Redis 实现，无 @TableName 实体，故只建空库、不建表）
+CREATE DATABASE IF NOT EXISTS `tj_data` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `tj_data`;

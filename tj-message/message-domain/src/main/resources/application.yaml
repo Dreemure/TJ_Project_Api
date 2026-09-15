@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: message-domain
-  threads:
-    virtual:
-      enabled: true

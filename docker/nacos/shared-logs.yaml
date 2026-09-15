@@ -1,7 +1,7 @@
 logging:
   level:
     root: info
-    com.example: debug
+    com.tjxt: debug
     org.springframework.cloud: info
     org.springframework.amqp: warn
     com.baomidou.mybatisplus: info

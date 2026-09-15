@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.example</groupId>
+        <groupId>com.tjxt</groupId>
         <artifactId>TJ_Project_Api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -33,10 +33,10 @@
     <properties>
         <java.version>25</java.version>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-    </dependencies>
+    <!--
+        注意：不在父 POM 声明 spring-boot-starter-security。
+        api/domain 是库模块，父 POM 的依赖会注入到所有子模块并随库传递给消费方
+        （message-api 被 user-service 依赖、pay-api 被 trade-service 依赖），
+        安全 starter 只应由可部署服务（message-service / pay-service）自己声明。
+    -->
 </project>

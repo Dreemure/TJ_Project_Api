@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.example</groupId>
+        <groupId>com.tjxt</groupId>
         <artifactId>TJ_Project_Api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -18,7 +18,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.example</groupId>
+            <groupId>com.tjxt</groupId>
             <artifactId>tj-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <exclusions> <!-- 排除依赖，这些依赖不会被当前pom引入  -->
@@ -55,6 +55,31 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!-- 网关鉴权：响应式 Spring Security（SecurityWebFilterChain 白名单 + 授权 + 401/403 JSON） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- JWT 验签：与 auth 服务保持一致（RS256 + java-jwt） -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${java-jwt.version}</version>
+        </dependency>
+        <!--
+            路径级鉴权：读取 auth 服务写入 Redis 的权限表（auth:privileges）。
+            刻意使用响应式客户端（spring-data-redis-reactive），避免在网关事件循环线程上阻塞。
+            若不需要网关鉴权（只认证），把 tj.auth.privilege.enabled 设为 false，本依赖可以保留不动。
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+        </dependency>
+        <!-- Lettuce 连接池：Nacos shared-redis.yaml 配置了 lettuce.pool.*，需要 commons-pool2 才生效 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

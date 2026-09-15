@@ -2,6 +2,11 @@ server:
   port: 10017
 
 spring:
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_MEDIA_PORT:11017}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_media?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
@@ -14,3 +19,5 @@ tj:
     access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:}
     access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:}
     bucket-name: ${ALIYUN_OSS_BUCKET_NAME:}
+  swagger:
+    package-path: com.tjxt.tjmedia           # 本服务 Controller 所在包（文档按包分组扫描）

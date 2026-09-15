@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.example</groupId>
+        <groupId>com.tjxt</groupId>
         <artifactId>tj-message</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -31,7 +31,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.example</groupId>
+            <groupId>com.tjxt</groupId>
             <artifactId>message-domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -52,5 +52,10 @@
             <artifactId>spring-cloud-stream-test-binder</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+        <!-- @SpringBootTest 脚手架测试所需的测试依赖（库模块原先缺失，导致 mvn test 编译失败） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>    </dependencies>
 </project>

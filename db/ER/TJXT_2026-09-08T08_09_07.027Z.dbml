@@ -355,24 +355,6 @@ Table media [headercolor: #175e7a] {
 	deleted tinyint [ not null, default: 0, note: '逻辑删除，默认0' ]
 }
 
-Table tj_message_template [headercolor: #175e7a] {
-	id bigint [ pk, increment, not null, note: '短信发送模板id' ]
-	name varchar(50) [ not null, note: '模板名称' ]
-	platform_code varchar(50) [ not null, note: '第三方短信平台代号' ]
-	sign_name varchar(50) [ not null, note: '签名' ]
-	third_template_code varchar(50) [ not null, note: '第三方短信模板code' ]
-	content varchar(255) [ not null, note: '第三方短信模板内容预览' ]
-	template_id bigint [ not null, note: '通知模板id' ]
-	status tinyint [ not null, default: 0, note: '模板状态:  0-禁用，1-启用' ]
-	creater bigint [ not null, note: '创建者' ]
-	updater bigint [ not null, note: '更新者' ]
-	create_time datetime [ not null, note: '创建时间' ]
-	update_time datetime [ not null, note: '更新时间' ]
-
-	indexes {
-		(template_id) [ name: 'idx_template_id' ]
-	}
-}
 
 Table notice_task [headercolor: #175e7a] {
 	id bigint [ pk, increment, not null, unique, note: '公告任务id' ]
@@ -622,6 +604,265 @@ Table refund_apply [headercolor: #175e7a] {
 }
 
 // ===================== 用户与权限 =====================
+// ===== 以下为本次补齐的表（与 db/schema.sql 保持一致，依据 DDL 生成） =====
+
+// tj_course / tj_exam / tj_trade：Seata 回滚日志（这几个库各有一张同名表，DBML 无"库"概念，这里只画一次）
+Table undo_log [headercolor: #175e7a] {
+	branch_id bigint [ not null, note: 'branch transaction id' ]
+	xid varchar(100) [ not null, note: 'global transaction id' ]
+	context varchar(128) [ not null, note: 'undo_log context,such as serialization' ]
+	rollback_info longblob [ not null, note: 'rollback info' ]
+	log_status int [ not null, note: '0:normal status,1:defense status' ]
+	log_created datetime(6) [ not null, note: 'create datetime' ]
+	log_modified datetime(6) [ not null, note: 'modify datetime' ]
+}
+
+// tj_course：课程草稿（目录 / 内容 / 老师）
+Table course_catalogue_draft [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '课程目录id' ]
+	name varchar(255) [ not null, note: '目录名称' ]
+	trailer tinyint [ not null, default: 0, note: '是否支持试看' ]
+	course_id bigint [ not null, note: '课程id' ]
+	type tinyint [ not null, note: '目录类型1：章节，2：小节，3：测试' ]
+	parent_catalogue_id bigint [ not null, default: 0, note: '所属章节id，只有小节和测试有该值，章节没有，章节默认为0' ]
+	media_id bigint [ not null, default: 0, note: '媒资id' ]
+	video_id bigint [ note: '视频id' ]
+	video_name varchar(255) [ not null, default: '""', note: '视频名称' ]
+	living_start_time datetime [ note: '直播开始时间' ]
+	living_end_time datetime [ note: '直播结束时间' ]
+	play_back tinyint [ not null, default: 0, note: '是否支持回放' ]
+	c_index int [ not null, default: 0, note: '用于章节排序' ]
+	media_duration int [ not null, default: 0, note: '以s为单位' ]
+	can_update tinyint [ not null, default: 1, note: '是否可以更新0：不可以更新，1：可以更新' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table course_content_draft [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '课程内容id' ]
+	course_introduce varchar(512) [ not null, note: '课程介绍' ]
+	use_people varchar(512) [ not null, note: '适用人群' ]
+	course_detail varchar(1024) [ not null, note: '课程详情' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+Table course_teacher_draft [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, note: '课程老师关系id' ]
+	course_id bigint [ not null, note: '课程id' ]
+	teacher_id bigint [ not null, note: '老师id' ]
+	is_show tinyint [ not null, default: 0, note: '用户端是否展示' ]
+	c_index int [ not null, note: '序号' ]
+	dep_id bigint [ not null, default: 0, note: '部门id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ not null, default: 0, note: '创建人' ]
+	updater bigint [ not null, default: 0, note: '更新人' ]
+	deleted tinyint [ not null, default: 0, note: '逻辑删除' ]
+}
+
+// tj_message：短信/通知模板
+Table message_template [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '短信发送模板id' ]
+	name varchar(50) [ not null, note: '模板名称' ]
+	platform_code varchar(50) [ not null, note: '第三方短信平台代号' ]
+	sign_name varchar(50) [ not null, note: '签名' ]
+	third_template_code varchar(50) [ not null, note: '第三方短信模板code' ]
+	content varchar(255) [ not null, note: '第三方短信模板内容预览' ]
+	template_id bigint [ not null, note: '通知模板id' ]
+	status tinyint [ not null, default: 0, note: '模板状态:  0-禁用，1-启用' ]
+	creater bigint [ not null, note: '创建者' ]
+	updater bigint [ not null, note: '更新者' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+// tj_learning：互动问答、学习记录、笔记、积分与天梯榜（共 9 张）
+Table interaction_question [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '主键，互动问题的id' ]
+	title varchar(255) [ note: '互动问题的标题' ]
+	description text [ note: '问题描述信息' ]
+	course_id bigint [ note: '所属课程id' ]
+	chapter_id bigint [ note: '所属课程章id' ]
+	section_id bigint [ note: '所属课程节id' ]
+	user_id bigint [ note: '提问学员id' ]
+	latest_answer_id bigint [ note: '最新的一个回答的id' ]
+	answer_times int [ note: '问题下的回答数量' ]
+	anonymity bit(1) [ not null, default: 0, note: '是否匿名，默认false' ]
+	hidden bit(1) [ not null, default: 0, note: '是否被隐藏，默认false' ]
+	status tinyint [ note: '管理端问题状态：0-未查看，1-已查看' ]
+	create_time datetime [ not null, note: '提问时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table interaction_reply [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '互动问题的回答id' ]
+	question_id bigint [ note: '互动问题问题id' ]
+	answer_id bigint [ note: '回复的上级回答id' ]
+	user_id bigint [ note: '回答者id' ]
+	content text [ note: '回答内容' ]
+	target_user_id bigint [ note: '回复的目标用户id' ]
+	target_reply_id bigint [ note: '回复的目标回复id' ]
+	reply_times int [ note: '评论数量' ]
+	liked_times int [ note: '点赞数量' ]
+	hidden bit(1) [ not null, default: 0, note: '是否被隐藏，默认false' ]
+	anonymity bit(1) [ not null, default: 0, note: '是否匿名，默认false' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table learning_lesson [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '主键' ]
+	user_id bigint [ note: '学员id' ]
+	course_id bigint [ note: '课程id' ]
+	status tinyint [ note: '课程状态，0-未学习，1-学习中，2-已学完，3-已失效' ]
+	week_freq int [ note: '每周学习频率，每周3天，每天2节，则频率为6' ]
+	plan_status tinyint [ note: '学习计划状态，0-没有计划，1-计划进行中' ]
+	learned_sections int [ note: '已学习小节数量' ]
+	latest_section_id bigint [ note: '最近一次学习的小节id' ]
+	latest_learn_time datetime [ note: '最近一次学习的时间' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	expire_time datetime [ note: '过期时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table learning_record [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '学习记录的id' ]
+	lesson_id bigint [ note: '对应课表的id' ]
+	section_id bigint [ note: '对应小节的id' ]
+	user_id bigint [ note: '用户id' ]
+	moment int [ note: '视频的当前观看时间点，单位秒' ]
+	finished bit(1) [ not null, default: 0, note: '是否完成学习，默认false' ]
+	create_time datetime [ not null, note: '第一次观看时间' ]
+	finish_time datetime [ note: '完成学习的时间' ]
+	update_time datetime [ not null, note: '更新时间（最近一次观看时间）' ]
+}
+
+Table note [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '笔记id' ]
+	user_id bigint [ note: '用户id' ]
+	course_id bigint [ note: '课程id' ]
+	chapter_id bigint [ note: '章id' ]
+	section_id bigint [ note: '小节id' ]
+	note_moment int [ note: '记录笔记时的视频播放时间，单位秒' ]
+	content text [ note: '笔记内容' ]
+	is_private bit(1) [ not null, default: 0, note: '是否是隐私笔记，默认false' ]
+	hidden bit(1) [ not null, default: 0, note: '是否被折叠（隐藏）默认false' ]
+	hidden_reason varchar(255) [ note: '被隐藏的原因' ]
+	author_id bigint [ note: '笔记作者id' ]
+	gathered_note_id bigint [ note: '被采集笔记的id' ]
+	is_gathered bit(1) [ not null, default: 0, note: '是否是采集他人的笔记，默认false' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table note_user [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, note: '主键' ]
+	note_id bigint [ note: '引用的笔记id' ]
+	user_id bigint [ note: '引用者id' ]
+	is_gathered bit(1) [ not null, default: 0, note: '是否是采集他人的笔记，默认false' ]
+	create_time datetime [ not null, note: '创建时间' ]
+}
+
+Table points_board [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '榜单id' ]
+	user_id bigint [ note: '学生id' ]
+	points int [ note: '积分值' ]
+}
+
+Table points_board_season [headercolor: #175e7a] {
+	id int [ pk, increment, not null, note: '自增长id，season标示' ]
+	name varchar(64) [ note: '赛季名称，例如：第1赛季' ]
+	begin_time date [ note: '赛季开始时间' ]
+	end_time date [ note: '赛季结束时间' ]
+}
+
+Table points_record [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, note: '积分记录表id' ]
+	user_id bigint [ note: '用户id' ]
+	type tinyint [ note: '积分方式：1-课程学习，2-每日签到，3-课程问答， 4-课程笔记，5-课程评价' ]
+	points int [ note: '积分值' ]
+	create_time datetime [ not null, note: '创建时间' ]
+}
+
+// tj_promotion：优惠券、兑换码（共 4 张）
+Table coupon [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '优惠券id' ]
+	name varchar(64) [ note: '优惠券名称，可以和活动名称保持一致' ]
+	type int [ note: '优惠券类型，1：普通券。目前就一种，保留字段' ]
+	discount_type tinyint [ note: '折扣类型，1：满减，2：每满减，3：折扣，4：无门槛' ]
+	specific bit(1) [ not null, default: 0, note: '是否限定作用范围，false：不限定，true：限定。默认false' ]
+	discount_value int [ note: '折扣值，如果是满减则存满减金额，如果是折扣，则存折扣率，8折就是存80' ]
+	threshold_amount int [ note: '使用门槛，0：表示无门槛，其他值：最低消费金额' ]
+	max_discount_amount int [ note: '最高优惠金额，满减最大，0：表示没有限制，不为0，则表示该券有金额的限制' ]
+	obtain_way tinyint [ note: '获取方式：1：手动领取，2：兑换码' ]
+	issue_begin_time datetime [ note: '开始发放时间' ]
+	issue_end_time datetime [ note: '结束发放时间' ]
+	term_days int [ note: '优惠券有效期天数，0：表示有效期是指定有效期的' ]
+	term_begin_time datetime [ note: '优惠券有效期开始时间' ]
+	term_end_time datetime [ note: '优惠券有效期结束时间' ]
+	status tinyint [ note: '优惠券配置状态，1：待发放，2：未开始   3：进行中，4：已结束，5：暂停' ]
+	total_num int [ note: '总数量，不超过5000' ]
+	issue_num int [ note: '已发行数量，用于判断是否超发' ]
+	used_num int [ note: '已使用数量' ]
+	user_limit int [ note: '每个人限领的数量，默认1' ]
+	ext_param varchar(255) [ note: '拓展参数字段，保留字段' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+	creater bigint [ note: '创建人' ]
+	updater bigint [ note: '更新人' ]
+}
+
+Table coupon_scope [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, note: '主键' ]
+	type int [ note: '范围限定类型：1-分类，2-课程，等等' ]
+	coupon_id bigint [ note: '优惠券id' ]
+	biz_id bigint [ note: '优惠券作用范围的业务id，例如分类id、课程id' ]
+}
+
+Table exchange_code [headercolor: #175e7a] {
+	id int [ pk, not null, note: '兑换码id' ]
+	code varchar(64) [ note: '兑换码' ]
+	status tinyint [ note: '兑换码状态， 1：待兑换，2：已兑换，3：兑换活动已结束' ]
+	user_id bigint [ note: '兑换人' ]
+	type int [ note: '兑换类型，1：优惠券，以后再添加其它类型' ]
+	exchange_target_id bigint [ note: '兑换码目标id，例如兑换优惠券，该id则是优惠券的配置id' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	expired_time datetime [ note: '兑换码过期时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+Table user_coupon [headercolor: #175e7a] {
+	id bigint [ pk, not null, note: '用户券id' ]
+	user_id bigint [ note: '优惠券的拥有者' ]
+	coupon_id bigint [ note: '优惠券模板id' ]
+	term_begin_time datetime [ note: '优惠券有效期开始时间' ]
+	term_end_time datetime [ note: '优惠券有效期结束时间' ]
+	used_time datetime [ note: '优惠券使用时间（核销时间）' ]
+	status tinyint [ note: '优惠券状态，1：未使用，2：已使用，3：已失效' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+// tj_remark：点赞记录（1 张）
+Table liked_record [headercolor: #175e7a] {
+	id bigint [ pk, increment, not null, note: '主键id' ]
+	user_id bigint [ note: '用户id' ]
+	biz_id bigint [ note: '点赞的业务id' ]
+	biz_type varchar(32) [ note: '点赞的业务类型' ]
+	create_time datetime [ not null, note: '创建时间' ]
+	update_time datetime [ not null, note: '更新时间' ]
+}
+
+
 Ref "用户详情扩展用户" {
   user_detail.id - user.id
 }
@@ -775,7 +1016,7 @@ Ref "业务题目关联-题目" {
 }
 
 Ref "短信模板-通知模板" {
-  tj_message_template.template_id > notice_template.id
+  message_template.template_id > notice_template.id
 }
 
 Ref "通知任务-通知模板" {
@@ -868,4 +1109,72 @@ Ref "购物车-课程" {
 
 Ref "用户兴趣-用户" {
   interests.id - user.id
+}
+
+Ref "学习记录-学生课表" {
+  learning_record.lesson_id > learning_lesson.id
+}
+
+Ref "学习记录-用户" {
+  learning_record.user_id > user.id
+}
+
+Ref "学生课表-用户" {
+  learning_lesson.user_id > user.id
+}
+
+Ref "学生课表-课程" {
+  learning_lesson.course_id > course.id
+}
+
+Ref "笔记-用户" {
+  note.user_id > user.id
+}
+
+Ref "笔记-课程" {
+  note.course_id > course.id
+}
+
+Ref "笔记采集-笔记" {
+  note_user.note_id > note.id
+}
+
+Ref "互动问题-课程" {
+  interaction_question.course_id > course.id
+}
+
+Ref "互动问题-学员" {
+  interaction_question.user_id > user.id
+}
+
+Ref "互动回答-问题" {
+  interaction_reply.question_id > interaction_question.id
+}
+
+Ref "互动回答-回答者" {
+  interaction_reply.user_id > user.id
+}
+
+Ref "积分记录-用户" {
+  points_record.user_id > user.id
+}
+
+Ref "天梯榜-学生" {
+  points_board.user_id > user.id
+}
+
+Ref "点赞记录-用户" {
+  liked_record.user_id > user.id
+}
+
+Ref "优惠券范围-优惠券" {
+  coupon_scope.coupon_id > coupon.id
+}
+
+Ref "用户券-优惠券" {
+  user_coupon.coupon_id > coupon.id
+}
+
+Ref "用户券-用户" {
+  user_coupon.user_id > user.id
 }

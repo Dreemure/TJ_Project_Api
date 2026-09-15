@@ -1,6 +1,9 @@
-com.example.tjcommon.autoconfigure.mq.MqConfig
-com.example.tjcommon.autoconfigure.mvc.Fastjson2Config
-com.example.tjcommon.autoconfigure.mvc.MvcConfig
-com.example.tjcommon.autoconfigure.mvc.ParamCheckerConfig
-com.example.tjcommon.autoconfigure.mybatis.MybatisPlusConfig
-com.example.tjcommon.autoconfigure.swagger.Knife4jConfiguration
+com.tjxt.tjcommon.Autoconfigure.Mvc.Fastjson2Config
+com.tjxt.tjcommon.Autoconfigure.Mvc.MvcConfig
+com.tjxt.tjcommon.Autoconfigure.Mvc.ParamCheckerConfig
+com.tjxt.tjcommon.Autoconfigure.Mybatis.MybatisPlusConfig
+com.tjxt.tjcommon.Autoconfigure.Swagger.Knife4jConfiguration
+com.tjxt.tjcommon.Autoconfigure.Mq.MqConfig
+com.tjxt.tjcommon.Autoconfigure.Redisson.RedissonConfig
+com.tjxt.tjcommon.Autoconfigure.VirtualThread.VirtualThreadConfig
+com.tjxt.tjcommon.Autoconfigure.PowerJob.PowerJobConfig

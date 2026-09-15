@@ -2,6 +2,11 @@ server:
   port: 10020
 
 spring:
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_TRADE_PORT:11020}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_trade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
@@ -21,4 +26,8 @@ powerjob:
   worker:
     enabled: true
     app-name: trade-service
-    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+    allow-lazy-connect-server: true   # Server 未就绪也能启动（老项目 xxl-job 同样容忍）
+tj:
+  swagger:
+    package-path: com.tjxt.tjtrade           # 本服务 Controller 所在包（文档按包分组扫描）

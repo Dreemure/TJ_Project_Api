@@ -2,8 +2,16 @@ server:
   port: 10012
 
 spring:
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_USER_PORT:11012}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: ${TJ_MYSQL_USERNAME:root}
     password: ${TJ_MYSQL_PASSWORD:root}
+tj:
+  swagger:
+    package-path: com.tjxt.tjuser           # 本服务 Controller 所在包（文档按包分组扫描）

@@ -1,5 +1,7 @@
-com.example.tjmicroservice.Config.RequestIdRelayConfiguration
-com.example.tjmicroservice.Config.RoleCacheConfig
-com.example.tjmicroservice.Config.CategoryCacheConfig
-com.example.tjmicroservice.autoconfigure.LearningGrpcAutoConfiguration
-com.example.tjmicroservice.Autoconfigure.UserContextAutoConfiguration
+com.tjxt.tjmicroservice.Config.RequestIdRelayConfiguration
+com.tjxt.tjmicroservice.Config.RoleCacheConfig
+com.tjxt.tjmicroservice.Config.CategoryCacheConfig
+com.tjxt.tjmicroservice.AutoConfiguration.GrpcClientRegistrationAutoConfiguration
+com.tjxt.tjmicroservice.AutoConfiguration.GrpcClientAutoConfiguration
+com.tjxt.tjmicroservice.AutoConfiguration.GrpcRelayAutoConfiguration
+com.tjxt.tjmicroservice.AutoConfiguration.UserContextAutoConfiguration

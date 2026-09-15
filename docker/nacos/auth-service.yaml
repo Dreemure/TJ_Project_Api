@@ -3,11 +3,22 @@ server:
   shutdown: graceful
 
 spring:
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_AUTH_PORT:11011}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_auth?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: ${TJ_MYSQL_USERNAME:root}
     password: ${TJ_MYSQL_PASSWORD:root}
+    #  environment:   部署时添加环境变量示例，每一个${}引入都需要添加
+    #    TJ_MYSQL_HOST: tj-mysql
+    #    TJ_MYSQL_PORT: "3306"
+    #    TJ_MYSQL_USERNAME: root
+    #    TJ_MYSQL_PASSWORD: root
+    #    TJ_GRPC_AUTH_PORT: "11011"
     hikari:
       pool-name: AuthHikariPool
       minimum-idle: 5
@@ -24,7 +35,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
-  type-aliases-package: com.example.tjauth.Entity
+  type-aliases-package: com.tjxt.tjauth.Entity
   global-config:
     banner: false
     db-config:
@@ -34,6 +45,12 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+# ==================== API 文档（有意为之的配置） ====================
+# auth 服务只对外提供 /v3/api-docs（供网关聚合文档使用），不开放 Knife4j/Swagger UI 界面：
+#   - knife4j.enable: false        → 不启用 /doc.html 增强界面（接口涉及登录/权限，不对外开放 UI）
+#   - springdoc.swagger-ui: false  → 不启用 Swagger UI
+#   - springdoc.api-docs: true     → 保留 api-docs（网关 knife4j.gateway 聚合需要它，路径已在 tj.auth.exclude-path 放行）
+# 如果需要在前端直接访问 auth 文档界面，把上面两个 false 改为 true 即可。
 knife4j:
   enable: false
 
@@ -45,14 +62,15 @@ springdoc:
     enabled: false
 
 tj:
+  # 认证/鉴权详细说明见 docs/authentication.md
+  # 注意：下面的 exclude-path 是 auth 服务自身的白名单，写"后端路径"（不带网关的 /auth 前缀）
   auth:
     jwt: # 部署使用 Docker Compose挂载密钥
       # 私钥路径（classpath 或绝对路径）
       private-key-path: classpath:keys/private_key.pem
       # 公钥路径（可选，从私钥推导也行）
       public-key-path: classpath:keys/public_key.pem
-      # 算法（RS256）
-      algorithm: RS256
+      # 签名算法固定为 RS256（auth 服务 JwtIssuer 与网关验签均使用 java-jwt 的 RSA256，不通过配置切换）
       # 签发者
       issuer: tj-auth
       token-ttl: 30m
@@ -88,3 +106,5 @@ tj:
 #volumes:
 #  - ./keys/private_key.pem:/app/keys/private_key.pem:ro
 #  - ./keys/public_key.pem:/app/keys/public_key.pem:ro
+  swagger:
+    package-path: com.tjxt.tjauth           # 本服务 Controller 所在包（文档按包分组扫描）

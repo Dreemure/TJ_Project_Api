@@ -2,6 +2,10 @@ spring:
   application:
     name: gateway-service
 
+  main:
+    # 网关是响应式应用：显式声明，避免 classpath 上出现 servlet 依赖时被误判为 WebMVC
+    web-application-type: reactive
+
   threads:
     virtual:
       enabled: true
@@ -9,6 +13,8 @@ spring:
   config:
     import:
       - optional:nacos:shared-spring.yaml
+      # 路径级鉴权需要读取 auth 服务写入 Redis 的权限表（auth:privileges），因此引入 redis 公共配置
+      - optional:nacos:shared-redis.yaml
       - optional:nacos:shared-logs.yaml
       - optional:nacos:${spring.application.name}.yaml
 
@@ -20,8 +26,51 @@ spring:
       discovery: { namespace: public, group: DEFAULT_GROUP }
       config: { namespace: public, group: DEFAULT_GROUP, file-extension: yaml }
 
----
-spring:
-  config:
-    activate: { on-profile: local }
-  cloud: { nacos: { server-addr: tj-nacos:8848 } }
+# ==================== 网关鉴权配置 ====================
+# 说明：Nacos 中的 gateway-service.yaml 会覆盖此处同名配置，这里只提供本地可运行的默认值
+# 详细说明（认证/鉴权流程、白名单与路由前缀、权限表、排查手册）见 docs/authentication.md
+tj:
+  auth:
+    # 免认证白名单，支持两种写法（ant 风格）：
+    #   1. 纯路径（不限制方法）：/jwks、/error/**
+    #   2. 方法:路径：POST:/auth/accounts/login
+    # 注意：这里写的是“经过网关的原始请求路径”。本项目的路由前缀为 /auth/**（StripPrefix=1），
+    #       因此 auth 服务的 /accounts/login 在网关侧是 /auth/accounts/login
+    exclude-path:
+      - /error/**
+      # ---------------- auth 服务（公开接口） ----------------
+      - /auth/jwks
+      - /auth/accounts/login
+      - /auth/accounts/admin/login
+      - /auth/accounts/refresh
+      - /auth/accounts/admin/refresh
+      - /auth/accounts/logout
+      # ---------------- 文档与健康检查（开发期） ----------------
+      - /doc.html
+      - /webjars/**
+      - /v3/api-docs/**
+      - /swagger-ui/**
+      - /swagger-resources/**
+      - /actuator/**
+      - /favicon.ico
+    jwt:
+      # 填写则校验 token 的 issuer，需与 auth 服务 tj.auth.jwt.issuer 一致；留空表示不校验
+      issuer: tj-auth
+      # 可选：网关直接使用本地公钥 PEM 验签（配置后不再访问 auth 服务，适合单机调试）
+      # public-key-path: classpath:keys/public_key.pem
+    jwks:
+      # 可选：直连 auth 服务 JWK 地址；留空则通过服务发现定位 auth-service 实例
+      # uri: http://127.0.0.1:10011/jwks
+      service-name: auth-service
+      # 公钥刷新间隔（支持 auth 服务密钥轮换）
+      refresh-interval: 10m
+      timeout: 5s
+    privilege:
+      # 路径级鉴权：读取 Redis 的 auth:privileges（auth 服务维护），
+      # 非白名单请求要求"已登录 + 角色在允许集合内"；未配置权限的路径登录即可访问。
+      # 关闭后网关只做认证，角色校验交给下游服务（SDK + @PreAuthorize）
+      enabled: true
+      # 权限缓存刷新间隔（先比对版本号，版本未变不重复读取数据）
+      refresh-interval: 20s
+      # 读取 Redis 超时：超时或失败时保留上一次快照（首次为空 → 只认证不鉴权，并打告警）
+      timeout: 3s

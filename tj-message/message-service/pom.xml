@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.example</groupId>
+        <groupId>com.tjxt</groupId>
         <artifactId>tj-message</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <version>3.2.3</version>
+            <version>${caffeine.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -117,5 +117,13 @@
             <artifactId>alibabacloud-dysmsapi20170525</artifactId>
             <version>${aliyun.dysmsap-version}</version>
         </dependency>
-    </dependencies>
+        <!-- Lettuce 连接池：Nacos shared-redis.yaml 配置了 lettuce.pool.*，缺 commons-pool2 会静默不池化 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>        <!-- 安全 starter 由可部署服务自行声明（父 POM 不再注入给 api/domain 库模块） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>    </dependencies>
 </project>

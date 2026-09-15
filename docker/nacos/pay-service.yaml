@@ -2,6 +2,11 @@ server:
   port: 10019
 
 spring:
+  grpc:
+    # 本服务 gRPC 服务端端口（约定 = HTTP 端口 + 1000，可被 TJ_GRPC_<服务>_PORT 覆盖）
+    server:
+      port: ${TJ_GRPC_PAY_PORT:11019}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${TJ_MYSQL_HOST:127.0.0.1}:${TJ_MYSQL_PORT:3306}/tj_pay?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
@@ -19,8 +24,11 @@ tj:
     wechat-app-id: ${WECHAT_PAY_APP_ID:}
     wechat-mch-id: ${WECHAT_PAY_MCH_ID:}
 
+  swagger:
+    package-path: com.tjxt.payservice           # 本服务 Controller 所在包（文档按包分组扫描）
 powerjob:
   worker:
     enabled: true
     app-name: pay-service
-    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+    allow-lazy-connect-server: true   # Server 未就绪也能启动（老项目 xxl-job 同样容忍）

@@ -1,8 +1,59 @@
+# 所有服务共享的配置（Nacos: shared-spring.yaml）
+
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
   main:
     banner-mode: off
 
+  # ==================== gRPC 客户端通道 ====================
+  # 说明：
+  #   - 通道名 = 目标服务名（SDK 的 GrpcClientRegistrationAutoConfiguration 用 @ImportGrpcClients(target=...) 显式绑定）
+  #   - 目标服务需在各自 *-service.yaml 配 spring.grpc.server.port，本项目的约定是「HTTP 端口 + 1000」
+  #   - 服务默认跑在宿主机（127.0.0.1）；如果放进 Docker，用环境变量覆盖成容器名即可
+  #     （例如 TJ_GRPC_USER_TARGET=static://tj-user:11012）
+  #   - 未配置的通道会退回 static://localhost:9090，启动日志会告警（GrpcChannelHealthLogger）
+  grpc:
+    client:
+      channel:
+        auth-service:
+          target: ${TJ_GRPC_AUTH_TARGET:static://127.0.0.1:11011}
+        user-service:
+          target: ${TJ_GRPC_USER_TARGET:static://127.0.0.1:11012}
+        course-service:
+          target: ${TJ_GRPC_COURSE_TARGET:static://127.0.0.1:11013}
+        learning-service:
+          target: ${TJ_GRPC_LEARNING_TARGET:static://127.0.0.1:11016}
+        exam-service:
+          target: ${TJ_GRPC_EXAM_TARGET:static://127.0.0.1:11015}
+        promotion-service:
+          target: ${TJ_GRPC_PROMOTION_TARGET:static://127.0.0.1:11023}
+        remark-service:
+          target: ${TJ_GRPC_REMARK_TARGET:static://127.0.0.1:11022}
+        trade-service:
+          target: ${TJ_GRPC_TRADE_TARGET:static://127.0.0.1:11020}
+
 server:
   shutdown: graceful
+
+# ==================== API 文档（Knife4j / springdoc） ====================
+# 说明：
+#   - tj.swagger.* 由 tj-common 的 Knife4jConfiguration 使用（文档信息、按包分组、R<T> 响应包装插件）
+#   - 老项目每个服务的 bootstrap.yml 都有 tj.swagger.enable: true，新项目统一放在公共配置里，
+#     各服务只需在自己的 *-service.yaml 覆盖 package-path（Controller 所在包）
+#   - 网关是响应式应用，Knife4jConfiguration 有 @ConditionalOnWebApplication(SERVLET) 守卫，
+#     不会在网关生效（网关文档由 knife4j.gateway 聚合，见 gateway-service.yaml）
+tj:
+  swagger:
+    enable: true                # 开启文档装配
+    enable-response-wrap: true  # 接口返回值统一按 R<T> 展示
+    title: TJ_Project_Api 接口文档
+    description: 天机学堂（TJ_Project_Api）微服务接口文档
+    version: 0.0.1
+    contact-name: tjxt
+    contact-url: https://github.com/
+    contact-email: dev@tjxt.local
+
+# Knife4j 增强 UI（/doc.html）；auth-service.yaml 中显式关闭，只保留 /v3/api-docs 供网关聚合
+knife4j:
+  enable: true
