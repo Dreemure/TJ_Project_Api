@@ -1,6 +1,7 @@
 package com.example.tjcommon.Utils;
 
 import com.example.tjcommon.Constants.Constant;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -207,5 +208,24 @@ public class WebUtils {
      */
     public static CookieBuilder cookieBuilder(){
         return new CookieBuilder(getRequest(), getResponse());
+    }
+
+    /**
+     * 从当前请求的 Cookie 中读取指定名称的值。
+     *
+     * @param name Cookie 名称
+     * @return Cookie 值；不存在返回 null
+     */
+    public static String getCookie(String name) {
+        HttpServletRequest request = getRequest();
+        if (request == null || request.getCookies() == null) {
+            return null;
+        }
+        for (Cookie cookie : request.getCookies()) {
+            if (name.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }

@@ -10,6 +10,9 @@ public class LoginUserDTO {
     @Schema(description = "用户ID")
     private Long userId;
 
+    @Schema(description = "用户类型：1-员工, 2-普通学员, 3-老师")
+    private Integer type;
+
     @Schema(description = "角色ID")
     private Long roleId;
 

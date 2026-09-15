@@ -17,10 +17,6 @@ spring:
       connection-timeout: 30000
       connection-test-query: SELECT 1
 
-  grpc:
-    server:
-      port: 9090
-
   cloud:
     loadbalancer:
       nacos:
@@ -47,7 +43,6 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     enabled: false
-  packages-to-scan: com.example.tjauth.Controller
 
 tj:
   auth:
@@ -62,6 +57,7 @@ tj:
       issuer: tj-auth
       token-ttl: 30m
       refresh-ttl: 7d
+      remember-me-ttl: 7d
     headers:
       authorization: Authorization
       refresh: Refresh
@@ -69,12 +65,26 @@ tj:
       - /error/**
       - /accounts/login
       - /accounts/admin/login
+      - /accounts/logout
       - /accounts/refresh
+      - /accounts/admin/refresh
       - /jwks
       - /v3/api-docs/**
+      - /doc.html
+      - /swagger-ui/**
+      - /favicon.ico
+      - /actuator/**
 
-#部署时docker compose内： (关联secret)
+#部署时
+#  tj:
+#    auth:
+#      jwt:
+#        private-key-path: ${TJ_JWT_PRIVATE_KEY:file:/app/keys/private_key.pem}
+#        public-key-path: ${TJ_JWT_PUBLIC_KEY:file:/app/keys/public_key.pem}
+#
+#  docker compose内： (关联secret)
 # services:
 #  tj-auth:
-#    environment:
-#      - TJ_JWT_SECRET=X7jK9pL2mN4qR8sT1wW3yZ5aB6cD0eF7gH9iJ2kM4nO=
+#volumes:
+#  - ./keys/private_key.pem:/app/keys/private_key.pem:ro
+#  - ./keys/public_key.pem:/app/keys/public_key.pem:ro

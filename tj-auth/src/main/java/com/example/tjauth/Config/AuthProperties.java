@@ -43,6 +43,7 @@ public class AuthProperties {
         private Duration tokenTtl = Duration.ofMinutes(30);
         /** Refresh Token 有效期 */
         private Duration refreshTtl = Duration.ofDays(7);
+        private Duration rememberMeTtl = Duration.ofDays(7);
     }
 
     @Getter
