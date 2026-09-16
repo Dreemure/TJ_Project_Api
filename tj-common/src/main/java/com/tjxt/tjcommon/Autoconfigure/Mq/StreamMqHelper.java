@@ -1,7 +1,8 @@
 package com.tjxt.tjcommon.Autoconfigure.Mq;
 
+import com.tjxt.tjcommon.Utils.MarkedRunnable;
+import com.tjxt.tjcommon.Utils.RequestIdUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
@@ -20,6 +21,8 @@ import static com.tjxt.tjcommon.Constants.Constant.REQUEST_ID_HEADER;
  *   - 需配合 RabbitMQ 延迟插件使用，且配置 spring.cloud.stream.rabbit.binder.delayed-exchange=true
  *   - 本类不作为 @Component（库内包不在业务服务扫描范围），由 MqConfig 以 @Bean 注册
  *   - 执行器按名称注入（virtualThreadExecutor，见 VirtualThreadConfig），避免多个 Executor Bean 歧义
+ *   - 这里显式写 requestId 是「双保险」：即使 virtualThreadExecutor 被替换成裸执行器，
+ *     消息头的链路ID也不会丢（全局拦截器 TraceIdChannelInterceptor 是最后一道兜底）
  */
 @Slf4j
 public class StreamMqHelper {
@@ -42,7 +45,7 @@ public class StreamMqHelper {
     public <T> void send(String bindingName, T payload) {
         log.debug("准备发送消息，binding：{}， message：{}", bindingName, payload);
         Message<T> message = MessageBuilder.withPayload(payload)
-                .setHeader(REQUEST_ID_HEADER, MDC.get(REQUEST_ID_HEADER))
+                .setHeader(REQUEST_ID_HEADER, RequestIdUtil.getOrCreate())
                 .build();
         streamBridge.send(bindingName, message);
     }
@@ -58,7 +61,7 @@ public class StreamMqHelper {
     public <T> void sendDelayMessage(String bindingName, T payload, Duration delay) {
         log.debug("准备发送延迟消息，binding：{}， delay：{}ms， message：{}", bindingName, delay.toMillis(), payload);
         Message<T> message = MessageBuilder.withPayload(payload)
-                .setHeader(REQUEST_ID_HEADER, MDC.get(REQUEST_ID_HEADER))
+                .setHeader(REQUEST_ID_HEADER, RequestIdUtil.getOrCreate())
                 .setHeader("x-delay", delay.toMillis())
                 .build();
         streamBridge.send(bindingName, message);
@@ -73,10 +76,11 @@ public class StreamMqHelper {
      * @param <T>         消息类型
      */
     public <T> void sendAsync(String bindingName, T payload, Long delayMillis) {
-        String requestId = MDC.get(REQUEST_ID_HEADER);
-        CompletableFuture.runAsync(() -> {
+        // 关键：MDC 是 ThreadLocal，虚拟线程不会继承父线程的上下文，
+        // 所以必须在「提交任务的这一刻」用 MarkedRunnable 抓取快照，带到虚拟线程里恢复；
+        // 原来手工 MDC.put(MDC.get(...)) 的写法在 MDC 为空时会把 null 也 put 进去，且依赖执行器实现。
+        CompletableFuture.runAsync(MarkedRunnable.wrap(() -> {
             try {
-                MDC.put(REQUEST_ID_HEADER, requestId);
                 if (delayMillis != null && delayMillis > 0) {
                     sendDelayMessage(bindingName, payload, Duration.ofMillis(delayMillis));
                 } else {
@@ -85,7 +89,7 @@ public class StreamMqHelper {
             } catch (Exception e) {
                 log.error("异步发送消息异常，payload:{}", payload, e);
             }
-        }, executor);
+        }), executor);
     }
 
     /*

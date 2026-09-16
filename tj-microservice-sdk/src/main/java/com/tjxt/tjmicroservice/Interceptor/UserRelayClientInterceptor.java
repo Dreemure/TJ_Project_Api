@@ -38,7 +38,7 @@ public class UserRelayClientInterceptor implements ClientInterceptor {
 
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
-                // ✅ 从 UserContext 取用户信息（不再用 SecurityContextHolder）
+                // 从 UserContext 取用户信息
                 LoginUserDTO user = UserContext.get();
                 if (user != null) {
                     try {
