@@ -30,8 +30,19 @@ import static com.tjxt.tjcommon.Constants.Constant.REQUEST_ID_HEADER;
 public class MqConfig {
 
     /**
-     * 消费端拦截器：从消息头中提取 TraceId 并放入 MDC（日志链路追踪）。
-     * <p>与发送端 {@link TraceIdChannelInterceptor} 对称：一个"头 → MDC"，一个"MDC → 头"。
+     * 消费端拦截器：从消息头中提取 TraceId 并放入 MDC，用于日志链路追踪。
+     * <p>
+     * MDC（Mapped Diagnostic Context）是日志框架提供的线程本地容器，底层为 ThreadLocal<Map<String, String>>;，
+     * 它本身不是链路追踪，而是实现日志链路追踪的手段：把 traceId 放进当前线程的 MDC 后，
+     * 日志配置中的 %X{requestId} 就会自动输出该 traceId，从而让同一线程内的所有日志都带上链路标识。
+     * <p>
+     * 本拦截器与发送端 {@link TraceIdChannelInterceptor} 对称：发送端负责“MDC → 消息头”，
+     * 消费端负责“消息头 → MDC”。由于 MDC 是线程本地的，发送端和消费端通常不是同一个线程，
+     * 因此必须在消费端重新 put 一次，消费线程的日志才能与发送端日志通过同一个 traceId 关联起来。
+     * <p>
+     * 注意：消费线程通常来自线程池，会被复用。务必在业务消费方法中通过 try/finally 清理 MDC
+     * （例如 MDC.remove(REQUEST_ID_HEADER) 或 MDC.clear()），否则下一条消息复用该线程时，
+     * 日志会残留上一条消息的 traceId，导致链路串号。
      */
     @Bean
     @GlobalChannelInterceptor(patterns = "*")
@@ -43,8 +54,9 @@ public class MqConfig {
                 // REQUEST_ID_HEADER 的字符串值（如 "requestId"）会作为 key 使用
                 Object header = message.getHeaders().get(REQUEST_ID_HEADER);
 
-                // 如果消息头里有 traceId，就放进当前消费线程(jvm)的 MDC
-                // 注意：MDC 一定要在业务方法内清空（调用 clear 或 remove）
+                // 如果消息头里有 traceId，就放进当前消费线程的 MDC
+                // MDC 是线程本地的，不是 JVM 全局的，也不是跨服务共享的。
+                // 这里只是把消息头里的 traceId 复制到当前消费线程的 MDC 中
                 if (header != null) MDC.put(REQUEST_ID_HEADER, header.toString());
 
                 // 消息本身不变，仅做 MDC 设置

@@ -22,26 +22,43 @@ import java.util.List;
 public class WrapperResponseMessageConverter implements HttpMessageConverter<Object> {
     private final FastJsonHttpMessageConverter delegate;
 
+    /**
+     * 构造器：注入 FastJson 消息转换器作为实际执行序列化/反序列化的委托对象。
+     * <p>构造完成后，本实例会将所有实际的读写操作委托给传入的 FastJson 转换器。
+     * @param fastJsonHttpMessageConverter 实际执行序列化/反序列化的 FastJson 转换器，不能为 null
+     */
     public WrapperResponseMessageConverter(FastJsonHttpMessageConverter fastJsonHttpMessageConverter) {
         this.delegate = fastJsonHttpMessageConverter;
     }
 
+    /**
+     * 是否支持读取：固定返回 false，表示本转换器只负责写响应，不处理请求体读取。
+     */
     @Override
     public boolean canRead(@Nonnull Class<?> clazz, MediaType mediaType) {
         return false;  // 不支持读操作
     }
 
+    /**
+     * 是否支持写入：仅当当前是网关请求，且委托转换器也支持写入时，才返回 true。
+     */
     @Override
     public boolean canWrite(@Nonnull Class<?> clazz, MediaType mediaType) {
         return WebUtils.isGatewayRequest() && delegate.canWrite(clazz, mediaType);
     }
 
+    /**
+     * 获取支持的媒体类型：直接委托给 FastJsonHttpMessageConverter。
+     */
     @Override
     @Nonnull
     public List<MediaType> getSupportedMediaTypes() {
         return delegate.getSupportedMediaTypes();
     }
 
+    /**
+     * 读取请求体：虽然 canRead 返回 false，但这里仍委托给 FastJson 转换器实现。
+     */
     @Override
     @Nonnull
     public Object read(@Nonnull Class<?> clazz, @Nonnull HttpInputMessage inputMessage)
@@ -49,6 +66,9 @@ public class WrapperResponseMessageConverter implements HttpMessageConverter<Obj
         return delegate.read(clazz, inputMessage);
     }
 
+    /**
+     * 写入响应体：直接委托给 FastJson 转换器，将对象序列化并写入输出流。
+     */
     @Override
     public void write(@Nonnull Object o, MediaType contentType, @Nonnull HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {

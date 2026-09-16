@@ -20,12 +20,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * 行为：若返回类型已是 R 或 /v2/api-docs 路径，则直接放行；否则包装为 R.ok(body)，并设置 requestId。
  * 使用：通过 @RestControllerAdvice 全局生效，仅在 WebUtils.isGatewayRequest() 为 true 时触发。
  */
-@RestControllerAdvice
+
 /*
 @RestControllerAdvice 是 Spring MVC 提供的全局增强注解，它是 @ControllerAdvice 和 @ResponseBody 的组合
 它的核心作用是：
 
-统一异常处理：配合 @ExceptionHandler，为所有 Controller 提供全局异常拦截（如你的 CommonExceptionAdvice）。
+统一异常处理：配合 @ExceptionHandler，为所有 Controller 提供全局异常拦截（如的 CommonExceptionAdvice）。
 
 统一数据格式：配合 ResponseBodyAdvice，对 Controller 的返回值进行统一包装（如本类）。
 
@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 生效范围：默认作用于所有标注了 @RestController 的类，也可通过 basePackages、assignableTypes 等属性限定范围。
  */
+@RestControllerAdvice
 public class WrapperResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, @NonNull @org.jspecify.annotations.NonNull Class<? extends HttpMessageConverter<?>> converterType) {
@@ -44,15 +45,9 @@ public class WrapperResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             Object body, @NonNull @org.jspecify.annotations.NonNull MethodParameter returnType, @NonNull @org.jspecify.annotations.NonNull MediaType selectedContentType,
             @NonNull @org.jspecify.annotations.NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
             @NonNull ServerHttpRequest request, @NonNull @org.jspecify.annotations.NonNull ServerHttpResponse response) {
-        if (request.getURI().getPath().equals("/v2/api-docs")){
-            return body;
-        }
-        if (body == null) {
-            return R.ok().requestId(MDC.get(Constant.REQUEST_ID_HEADER));
-        }
-        if(body instanceof R){
-            return body;
-        }
+        if (request.getURI().getPath().equals("/v2/api-docs")) return body;
+        if (body == null) return R.ok().requestId(MDC.get(Constant.REQUEST_ID_HEADER));
+        if(body instanceof R) return body;
         return R.ok(body).requestId(MDC.get(Constant.REQUEST_ID_HEADER));
     }
 }
