@@ -35,7 +35,7 @@ public class StreamMqHelper {
     /**
      * 发送消息（普通，无延迟）
      *
-     * @param bindingName 绑定名称（对应 spring.cloud.stream.bindings.<bindingName>）
+     * @param bindingName 绑定名称，就是交换机（对应 spring.cloud.stream.bindings.<bindingName>）
      * @param payload     消息体
      * @param <T>         消息类型
      */

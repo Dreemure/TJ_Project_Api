@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  *   - 权限控制使用 Spring Security 的方法级注解 @PreAuthorize，权限标识形如 role:xxx
  */
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("/roles/v2")
 @Tag(name = "角色管理")
 @RequiredArgsConstructor
 public class RoleController {

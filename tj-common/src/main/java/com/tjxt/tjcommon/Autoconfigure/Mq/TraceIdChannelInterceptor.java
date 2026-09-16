@@ -23,14 +23,11 @@ public class TraceIdChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         // 1. 已有链路ID：保持原样，避免覆盖上游传下来的值
-        if (message.getHeaders().containsKey(REQUEST_ID_HEADER)) {
-            return message;
-        }
+        if (message.getHeaders().containsKey(REQUEST_ID_HEADER)) return message;
         // 2. 取 MDC 中的链路ID，没有则生成
         String traceId = MDC.get(REQUEST_ID_HEADER);
-        if (traceId == null) {
-            traceId = UUID.randomUUID().toString();
-        }
+        if (traceId == null) traceId = UUID.randomUUID().toString();
+
         // 3. Spring Messaging 的 Message 不可变，需要重新构建
         return MessageBuilder.fromMessage(message)
                 .setHeader(REQUEST_ID_HEADER, traceId)

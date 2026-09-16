@@ -29,12 +29,21 @@
         <module name="tj-search" />
         <module name="tj-learning" />
         <module name="tj-trade" />
-        <module name="tj-common" />
         <module name="tj-remark" />
         <module name="message-api" />
         <module name="tj-promotion" />
         <module name="tj-media" />
         <module name="tj-data" />
+      </profile>
+      <profile name="Annotation profile for tj-common" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="tj-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

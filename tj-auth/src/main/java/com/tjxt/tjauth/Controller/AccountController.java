@@ -24,7 +24,7 @@ import static org.yaml.snakeyaml.util.UriEncoder.decode;
  *   - refresh token 通过 HttpOnly Cookie 保存，前端无法通过 JS 读取（防 XSS）
  */
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/accounts/v2")
 @Tag(name = "账户管理")
 @RequiredArgsConstructor
 public class AccountController {

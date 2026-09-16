@@ -604,7 +604,6 @@ Table refund_apply [headercolor: #175e7a] {
 }
 
 // ===================== 用户与权限 =====================
-// ===== 以下为本次补齐的表（与 db/schema.sql 保持一致，依据 DDL 生成） =====
 
 // tj_course / tj_exam / tj_trade：Seata 回滚日志（这几个库各有一张同名表，DBML 无"库"概念，这里只画一次）
 Table undo_log [headercolor: #175e7a] {

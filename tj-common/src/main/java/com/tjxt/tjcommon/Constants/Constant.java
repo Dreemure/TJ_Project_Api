@@ -10,6 +10,9 @@ package com.tjxt.tjcommon.Constants;
  * 注意：接口中的字段隐式为 public static final，无需显式修饰符。
  */
 public interface Constant {
+
+    // 所有接口变量默认自带 public static final
+
     String REQUEST_ID_HEADER = "requestId";
     String REQUEST_FROM_HEADER = "x-request-from";
 

@@ -12,9 +12,9 @@ spring:
       server:
         webflux:
           routes:
-            - id: media
-              uri: lb://media-service
-              predicates: [ Path=/media/** ]
+            - id: media                        # 路由的唯一标识，随便起，不重复即可
+              uri: lb://media-service          # 目标地址。lb://服务名 表示通过负载均衡转发到注册中心里的对应服务
+              predicates: [ Path=/media/** ]   # 匹配条件。Path=/xxx/** 表示路径以 /xxx/ 开头才匹配
             - id: auth
               uri: lb://auth-service
               predicates: [ Path=/auth/** ]
