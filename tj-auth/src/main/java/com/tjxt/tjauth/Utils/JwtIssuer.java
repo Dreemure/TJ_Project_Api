@@ -68,10 +68,11 @@ public class JwtIssuer {
      * @return JWT 字符串
      */
     public String issueToken(LoginUserDTO user) {
-        Date expiresAt = new Date(System.currentTimeMillis()
-                + authProperties.getJwt().getTokenTtl().toMillis());
+        // 到期时间
+        Date expiresAt = new Date(System.currentTimeMillis() // 现在时间 +  authProperties配置的token生效时间
+                + authProperties.getJwt().getTokenTtl().toMillis()); // 把配置里的时间转换为实际的分钟
         return JWT.create()
-                .withIssuer(authProperties.getJwt().getIssuer())
+                .withIssuer(authProperties.getJwt().getIssuer()) // 签发者
                 .withClaim(AuthConstants.CLAIM_USER_ID, user.getUserId())
                 .withClaim(AuthConstants.CLAIM_ROLE_ID, user.getRoleId())
                 .withClaim(AuthConstants.CLAIM_ROLE_NAME, user.getRoleName())
@@ -84,7 +85,7 @@ public class JwtIssuer {
     }
 
     /**
-     * 签发 refresh token，同时把 JTI 存 Redis（用于登出、单点控制）。
+     * 签发 refresh token，同时把 JTI(UUID) 存 Redis（用于登出、单点控制）。
      *
      * @param user 登录用户信息（含 userId）
      * @return JWT 字符串
