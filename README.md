@@ -66,24 +66,24 @@
 
 ## 二、模块介绍
 
-| 模块 | 说明 |
-|---|---|
-| `tj-common` | 通用工程：统一响应 `R<T>`、全局异常、Fastjson2、MyBatis-Plus 插件与审计字段填充、Redisson/`@Lock`、MQ 助手、Knife4j、虚拟线程、认证协议常量（`AuthConstants`/`RoleUtils`） |
-| `tj-microservice-sdk` | 共享契约：9 个 `.proto` + 8 个 `*GrpcClient`、`UserContext`/`UserContextFilter`、gRPC 双端用户透传、`RoleCache`/`CategoryCache`、各服务 DTO |
-| `tj-gateway` | 网关：JWT 验签（JWKS）、白名单、**路径级鉴权**（权限表）、`user-info` 透传、401/403 统一 JSON、文档聚合 |
-| `tj-auth` | 认证服务：登录/刷新/登出（RS256 签发）、`/jwks` 公钥、角色-权限-菜单维护、权限表写 Redis |
-| `tj-user` | 用户服务（账号、用户信息） |
-| `tj-course` | 课程服务（分类、课程、目录、章节） |
-| `tj-learning` | 学习服务（课表、学习记录） |
-| `tj-exam` | 考试服务（题目、考试记录） |
-| `tj-search` | 搜索服务（ES 检索） |
-| `tj-trade` | 交易服务（下单、订单） |
-| `tj-pay` | 支付服务（IJPay：支付宝/微信） |
-| `tj-promotion` | 促销服务（优惠券） |
-| `tj-media` | 媒资服务（视频/文件，阿里云 OSS；腾讯云 COS/VOD 待引入） |
-| `tj-message` | 消息中心（短信、站内信） |
-| `tj-remark` | 评价/点赞服务 |
-| `tj-data` | 数据服务（统计） |
+| 模块 | 说明                                                                                                                                                                                                              |
+|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `tj-common` | 通用工程：统一响应 `R<T>`、全局异常、Fastjson2、MyBatis-Plus 插件与审计字段填充、Redisson/`@Lock`、MQ 助手、Knife4j、虚拟线程、认证协议常量（`AuthConstants`/`RoleUtils`）                                        |
+| `tj-microservice-sdk` | 共享契约：9 个 `.proto` + 8 个 `*GrpcClient`、`UserContext`/`UserContextFilter`、gRPC 双端用户透传、`RoleCache`/`CategoryCache`、各服务 DTO                                                                       |
+| `tj-gateway` | 网关：JWT 验签（JWKS）、白名单、**路径级鉴权**（权限表）、`user-info` 透传、401/403 统一 JSON、文档聚合。是所有外部请求的统一门卫：在请求进入微服务前验 Token、按路径做一次粗粒度角色拦截、清洗并注入可信用户信息 |
+| `tj-auth` | 认证服务：登录/刷新/登出（RS256 签发）、`/jwks` 公钥、角色-权限-菜单维护、权限表写 Redis。是身份与权限数据的权威中心：验证账号密码、签发/刷新/注销 Token、保管 RSA 私钥、提供公钥、维护“接口 → 可访问角色”的权限数据                                                                                                                        |
+| `tj-user` | 用户服务（账号、用户信息）                                                                                                                                                                                        |
+| `tj-course` | 课程服务（分类、课程、目录、章节）                                                                                                                                                                                |
+| `tj-learning` | 学习服务（课表、学习记录）                                                                                                                                                                                        |
+| `tj-exam` | 考试服务（题目、考试记录）                                                                                                                                                                                        |
+| `tj-search` | 搜索服务（ES 检索）                                                                                                                                                                                               |
+| `tj-trade` | 交易服务（下单、订单）                                                                                                                                                                                            |
+| `tj-pay` | 支付服务（IJPay：支付宝/微信）                                                                                                                                                                                    |
+| `tj-promotion` | 促销服务（优惠券）                                                                                                                                                                                                |
+| `tj-media` | 媒资服务（视频/文件，阿里云 OSS；腾讯云 COS/VOD 待引入）                                                                                                                                                          |
+| `tj-message` | 消息中心（短信、站内信）                                                                                                                                                                                          |
+| `tj-remark` | 评价/点赞服务                                                                                                                                                                                                     |
+| `tj-data` | 数据服务（统计）                                                                                                                                                                                                  |
 
 ---
 

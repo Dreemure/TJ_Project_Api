@@ -29,11 +29,11 @@ tj:
     # 免认证白名单（ant 风格路径）：登录、刷新 token、公钥端点、文档与健康检查
     exclude-path:
       - /error/**
-      - /jwks
-      - /accounts/login
-      - /accounts/admin/login
-      - /accounts/refresh
-      - /accounts/admin/refresh
+      - /v2/jwks
+      - /v2/accounts/login
+      - /v2/accounts/admin/login
+      - /v2/accounts/refresh
+      - /v2/accounts/admin/refresh
       - /doc.html
       - /webjars/**
       - /v3/api-docs/**
