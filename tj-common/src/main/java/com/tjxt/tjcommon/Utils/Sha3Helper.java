@@ -1,4 +1,4 @@
-package com.tjxt.tjauth.Utils;
+package com.tjxt.tjcommon.Utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

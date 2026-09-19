@@ -39,13 +39,12 @@ tj:
     exclude-path:
       - /error/**
       # ---------------- auth 服务（公开接口） ----------------
-      - /auth/v2/jwks
-      - /auth/v2/accounts/login
-      - /auth/v2/accounts/admin/login
-      - /auth/v2/accounts/refresh
-      - /auth/v2/accounts/admin/refresh
-      - /auth/v2/accounts/logout
-      - /auth/v2/key
+      - /auth/jwks
+      - /auth/accounts/login
+      - /auth/accounts/admin/login
+      - /auth/accounts/refresh
+      - /auth/accounts/admin/refresh
+      - /auth/accounts/logout
       # ---------------- 文档与健康检查（开发期） ----------------
       - /doc.html
       - /webjars/**

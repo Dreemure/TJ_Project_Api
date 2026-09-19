@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,9 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthUtils authUtils;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
+    protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    @NonNull FilterChain chain) throws ServletException, IOException {
+                                    FilterChain chain) throws ServletException, IOException {
         String token = resolveToken(request);
         if (StringUtils.hasText(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
             R<LoginUserDTO> result = authUtils.parseToken(token);

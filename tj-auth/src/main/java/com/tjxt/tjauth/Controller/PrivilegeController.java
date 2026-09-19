@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  *   - 权限控制使用 Spring Security 的方法级注解 @PreAuthorize，权限标识形如 privilege:xxx
  */
 @RestController
-@RequestMapping("/v2/privileges")
+@RequestMapping("/privileges/v2")
 @Tag(name = "权限管理接口")
 @RequiredArgsConstructor
 public class PrivilegeController {
