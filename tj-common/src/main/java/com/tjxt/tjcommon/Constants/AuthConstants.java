@@ -63,7 +63,7 @@ public final class AuthConstants {
     /** auth 服务名（服务发现用） */
     public static final String AUTH_SERVICE_NAME = "auth-service";
     /** auth 服务暴露 JWK 公钥的路径 */
-    public static final String JWKS_PATH = "/jwks/v2";
+    public static final String JWKS_PATH = "/v2/jwks";
     /** 默认 issuer，需与 auth 服务 tj.auth.jwt.issuer 保持一致 */
     public static final String DEFAULT_ISSUER = "tj-auth";
 }

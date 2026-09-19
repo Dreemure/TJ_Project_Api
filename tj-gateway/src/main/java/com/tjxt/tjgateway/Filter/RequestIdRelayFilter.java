@@ -40,14 +40,14 @@ public class RequestIdRelayFilter implements WebFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .headers(headers -> {
                     headers.set(REQUEST_ID_HEADER, requestId);
-                    if (!path.startsWith(NOTIFY_PATH_PREFIX)) {
-                        headers.set(REQUEST_FROM_HEADER, GATEWAY_ORIGIN_NAME);
+                    if (!path.startsWith(NOTIFY_PATH_PREFIX)) { // 如果是非网关内资源则不标记去处
+                        headers.set(REQUEST_FROM_HEADER, GATEWAY_ORIGIN_NAME); // 标记要转到哪个服务
                     }
                 })
                 .build();
 
         return chain.filter(exchange.mutate().request(request).build())
-                .doFinally(signal -> MDC.remove(REQUEST_ID_HEADER));
+                .doFinally(signal -> MDC.remove(REQUEST_ID_HEADER)); // 返回后移除MDC日志清空线程
     }
 
     @Override

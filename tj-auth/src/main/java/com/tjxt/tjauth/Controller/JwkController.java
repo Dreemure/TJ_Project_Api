@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Hidden  // 不在 Swagger 文档中显示
 @RestController
-@RequestMapping("/jwks/v2")
+@RequestMapping("/v2/jwks")
 @RequiredArgsConstructor
 public class JwkController {
 
