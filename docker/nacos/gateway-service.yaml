@@ -1,5 +1,5 @@
 server:
-  port: 10010
+  port: 10010 # 使用时直接请求网关即可，后缀路径以下方路由为例，比如: http://127.0.0.1:10010/media/api/....
   shutdown: graceful
 
 spring:
@@ -95,6 +95,7 @@ tj:
       - /auth/v2/accounts/refresh
       - /auth/v2/accounts/admin/refresh
       - /auth/v2/accounts/logout
+      - /auth/v2/key
       # ---------------- 文档与健康检查 ----------------
       - /doc.html
       - /webjars/**

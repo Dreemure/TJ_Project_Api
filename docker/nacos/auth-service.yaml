@@ -81,12 +81,16 @@ tj:
       refresh: Refresh
     exclude-path:
       - /error/**
-      - /accounts/login
-      - /accounts/admin/login
-      - /accounts/logout
-      - /accounts/refresh
-      - /accounts/admin/refresh
-      - /jwks
+      - /v2/accounts/login
+      - /v2/accounts/admin/login
+      - /v2/accounts/logout
+      - /v2/accounts/refresh
+      - /v2/accounts/admin/refresh
+      - /v2/jwks
+      - /v2/key/ecdsa/getkeyPair
+      - /v2/key/ecdsa/sign
+      - /v2/key/ecdsa/verify
+      - /v2/key/sha3/hash
       - /v3/api-docs/**
       - /doc.html
       - /swagger-ui/**

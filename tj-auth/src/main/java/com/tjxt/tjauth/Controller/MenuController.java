@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  *   - 当前用户菜单树仅依赖 SecurityContext 中的身份，无需额外参数
  */
 @RestController
-@RequestMapping("/menus/v2")
+@RequestMapping("/v2/menus")
 @Tag(name = "菜单管理")
 @RequiredArgsConstructor
 public class MenuController {
