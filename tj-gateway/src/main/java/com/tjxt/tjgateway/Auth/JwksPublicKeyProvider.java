@@ -7,6 +7,7 @@ import com.tjxt.tjcommon.Constants.AuthConstants;
 import com.tjxt.tjgateway.Config.AuthProperties;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
@@ -67,6 +68,13 @@ public class JwksPublicKeyProvider {
         return thread;
     });
 
+    /**
+     * -- GETTER --
+     *  获取当前验签公钥。
+     *
+     * @return RSA 公钥；尚未加载成功时返回 null
+     */
+    @Getter
     private volatile RSAPublicKey publicKey;
     private volatile long lastLoadedAt;
     private volatile long lastAttemptAt;
@@ -156,15 +164,6 @@ public class JwksPublicKeyProvider {
                 return false;
             }
         }
-    }
-
-    /**
-     * 获取当前验签公钥。
-     *
-     * @return RSA 公钥；尚未加载成功时返回 null
-     */
-    public RSAPublicKey getPublicKey() {
-        return publicKey;
     }
 
     // ==================== 公钥加载 ====================
@@ -260,7 +259,7 @@ public class JwksPublicKeyProvider {
         if (CollectionUtils.isEmpty(instances)) {
             return null;
         }
-        ServiceInstance instance = instances.get(0);
+        ServiceInstance instance = instances.getFirst();
         return "http://%s:%d%s".formatted(instance.getHost(), instance.getPort(), AuthConstants.JWKS_PATH);
     }
 
