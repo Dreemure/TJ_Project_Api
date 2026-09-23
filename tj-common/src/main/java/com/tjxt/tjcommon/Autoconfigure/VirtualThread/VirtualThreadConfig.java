@@ -20,23 +20,6 @@ import java.util.concurrent.Executors;
  *   2. 注册上下文传递装饰器 ThreadContextTaskDecorator —— @Async 的上下文传递靠它
  *   3. 兜底注册 @Async 用的 applicationTaskExecutor（仅当容器里没有同名 Bean 时）
  *
- * 【@Async 的执行器到底是谁提供的 —— 这里踩过坑，务必看清】
- *   自动配置的生效顺序是「Boot 自己的自动配置 → 第三方自动配置」，所以 Boot 的
- *   TaskExecutorConfigurations 会先于本类被处理。此时本类的 virtualThreadExecutor 还没注册，
- *   Boot 的 applicationTaskExecutor 判定条件（容器中没有 Executor Bean）成立，于是 Boot 正常创建它：
- *     - 各服务 application.yaml 里 spring.threads.virtual.enabled: true
- *       → Boot 创建的是虚拟线程版 SimpleAsyncTaskExecutor，@Async 本来就是虚拟线程
- *     - Boot 的构建器会收集容器里的 TaskDecorator Bean → 自动应用本类的 ThreadContextTaskDecorator
- *   结论：@Async 的执行器由 Boot 提供，本类只需要提供"装饰器"（数据），不要去抢这个名字。
- *
- *   ⚠ 如果本类也注册一个名叫 applicationTaskExecutor 的 Bean，就会与 Boot 的同名 Bean 冲突，
- *     启动直接抛 BeanDefinitionOverrideException（已由 tj-microservice-sdk 的用例实测暴露）。
- *     因此兜底 Bean 必须带 @ConditionalOnMissingBean(name = "applicationTaskExecutor")：
- *       - Boot 的 Bean 存在（正常情况）→ 本类退让，用 Boot 的执行器 + 本类的装饰器
- *       - Boot 的 Bean 不存在（例如某服务自己定义了 Executor Bean，把 Boot 的条件挡掉了）
- *         → 本类兜底提供「虚拟线程 + 上下文传递」的执行器，避免 @Async 退回 Spring 内部的
- *           平台线程 SimpleAsyncTaskExecutor（既非虚拟线程也不传递上下文）
- *
  * 使用：
  *   - 注入 Executor（@Qualifier("virtualThreadExecutor")）后 execute(...)，上下文自动传递
  *   - 或直接用 @Async（执行器已由 Boot 装配虚拟线程，并应用本类的上下文装饰器）

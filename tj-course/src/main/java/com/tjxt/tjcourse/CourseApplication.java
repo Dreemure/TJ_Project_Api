@@ -1,12 +1,11 @@
-package com.tjxt.tjauth;
+package com.tjxt.tjcourse;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -15,16 +14,17 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootApplication
-@EnableScheduling
 @Slf4j
+@EnableScheduling
+@EnableAspectJAutoProxy
+@SpringBootApplication
 @EnableDiscoveryClient
-public class AuthApplication {
+public class CourseApplication {
 
     private static final String SEPARATOR = "-".repeat(88);
 
-    public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = SpringApplication.run(AuthApplication.class, args);
+    public static void main(String[] args) throws UnknownHostException {
+        ConfigurableApplicationContext ctx = SpringApplication.run(CourseApplication.class, args);
         printStartupInfo(ctx.getEnvironment());
     }
 

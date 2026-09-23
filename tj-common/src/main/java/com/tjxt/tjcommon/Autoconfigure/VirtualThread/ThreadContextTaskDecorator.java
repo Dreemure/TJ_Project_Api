@@ -1,6 +1,7 @@
 package com.tjxt.tjcommon.Autoconfigure.VirtualThread;
 
 import com.tjxt.tjcommon.Utils.ThreadContextSnapshot;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.task.TaskDecorator;
 
 /*
@@ -19,7 +20,7 @@ import org.springframework.core.task.TaskDecorator;
 public class ThreadContextTaskDecorator implements TaskDecorator {
 
     @Override
-    public Runnable decorate(Runnable runnable) {
+    public @NonNull Runnable decorate(@NonNull Runnable runnable) {
         return ThreadContextSnapshot.wrap(runnable);
     }
 }

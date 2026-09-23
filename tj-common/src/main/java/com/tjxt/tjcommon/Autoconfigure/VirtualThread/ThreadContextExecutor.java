@@ -1,6 +1,7 @@
 package com.tjxt.tjcommon.Autoconfigure.VirtualThread;
 
 import com.tjxt.tjcommon.Utils.ThreadContextSnapshot;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -28,7 +29,7 @@ public class ThreadContextExecutor implements Executor, AutoCloseable {
     }
 
     @Override
-    public void execute(Runnable command) {
+    public void execute(@NonNull Runnable command) {
         delegate.execute(ThreadContextSnapshot.wrap(command));
     }
 
