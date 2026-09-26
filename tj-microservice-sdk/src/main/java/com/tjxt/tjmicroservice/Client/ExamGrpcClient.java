@@ -8,6 +8,7 @@ import com.tjxt.tjmicroservice.proto.QueryQuestionIdsByBizIdsRequest;
 import com.tjxt.tjmicroservice.proto.QueryQuestionScoresByBizIdsRequest;
 import com.tjxt.tjmicroservice.proto.QueryQuestionScoresRequest;
 import com.tjxt.tjmicroservice.proto.SaveQuestionBizInfoBatchRequest;
+import com.tjxt.tjmicroservice.proto.CountSubjectNumOfTeacherRequest;
 import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * 题目服务 gRPC 客户端封装。
@@ -129,10 +131,10 @@ public class ExamGrpcClient {
      * @param id 题目id
      * @return 题目分数；异常时返回空 Map
      */
-    public Map<Long, Integer> queryQuestionScores(Long id) {
+    public Map<Long, Integer> queryQuestionScores(Set<Long> id) {
         try {
             var request = QueryQuestionScoresRequest.newBuilder()
-                    .setId(id)
+                    .addAllId(id)
                     .build();
             var response = stub.queryQuestionScores(request);
             return response.getScoresMap();
@@ -142,11 +144,32 @@ public class ExamGrpcClient {
         }
     }
 
+    /**
+     * 根据创建人id列表查询题目数量（createrId → 题目数量）。
+     * <p>调用失败时降级返回空 Map。
+     *
+     * @param createrIds 创建人id列表
+     * @return createrId → 题目数量；异常时返回空 Map
+     */
+    public Map<Long, Integer> countSubjectNumOfTeacher(List<Long> createrIds) {
+        try {
+            var builder = CountSubjectNumOfTeacherRequest.newBuilder();
+            if (createrIds != null) {
+                builder.addAllCreaterIds(createrIds);
+            }
+            var response = stub.countSubjectNumOfTeacher(builder.build());
+            return response.getNumOfTeacherMap();
+        } catch (StatusRuntimeException e) {
+            log.error("查询题目服务异常：countSubjectNumOfTeacher, createrIds={}", createrIds, e);
+            return Collections.emptyMap();
+        }
+    }
+
     // ==================== proto → 业务 DTO 转换 ====================
 
     /**
      * 业务版 QuestionBizDTO → proto 版 QuestionBizDTO。
-     * <p>这是发送请求时使用，需要把业务对象转为 proto。
+     * <p>这是发送请求时使用，需要把业务对象转为 proto</p>。
      */
     private com.tjxt.tjmicroservice.proto.QuestionBizDTO convertToProtoQuestionBiz(
             QuestionBizDTO biz) {

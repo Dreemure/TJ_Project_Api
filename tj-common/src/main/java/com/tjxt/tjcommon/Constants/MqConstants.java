@@ -2,7 +2,7 @@ package com.tjxt.tjcommon.Constants;
 
 public interface MqConstants {
     /**
-     * 绑定名称（与 application.yml 中 spring.cloud.stream.bindings 的 key 对应）。
+     * 绑定名称，一个别名，通过它才能找到真正的 exchange + routingKey（与 application.yml 中 spring.cloud.stream.bindings 的 key 对应）。
      * 命名规范：<业务>-out-0 表示生产者，<业务>-in-0 表示消费者。
      */
     interface Binding {

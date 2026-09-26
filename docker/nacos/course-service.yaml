@@ -15,6 +15,7 @@ spring:
   cloud:
     stream:
       bindings:
+        # 课程新建：发到 course.topic(交换机)，routing key = course.new
         courseNew-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.new'" } }
         courseUp-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.up'" } }
         courseDown-out-0: { destination: course.topic, producer: { routing-key-expression: "'course.down'" } }
@@ -40,7 +41,8 @@ powerjob:
   worker:
     enabled: true
     app-name: course-service
-    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+    server-address: ${TJ_POWERJOB_HOST:127.0.0.1}:${TJ_POWERJOB_PORT:7700}
+
     allow-lazy-connect-server: true   # Server 未就绪也能启动（老项目 xxl-job 同样容忍）
 
 #tj:

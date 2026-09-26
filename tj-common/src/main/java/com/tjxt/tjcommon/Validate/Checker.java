@@ -13,5 +13,6 @@ public interface Checker<T> {
     }
 
     default void check(T data){
+
     }
 }

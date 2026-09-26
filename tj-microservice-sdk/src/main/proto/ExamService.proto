@@ -21,6 +21,8 @@ service ExamService {
   // 根据题目id列表查询题目详情
   rpc QueryQuestionByIds (QueryQuestionByIdsRequest) returns (QuestionList);
 
+  rpc CountSubjectNumOfTeacher (CountSubjectNumOfTeacherRequest) returns (CountSubjectNumOfTeacherResponse);
+
   // 查询题目分数（单条或多条，具体语义以业务为准）
   rpc QueryQuestionScores (QueryQuestionScoresRequest) returns (QueryQuestionScoresResponse);
 }
@@ -63,7 +65,11 @@ message QueryQuestionByIdsRequest {
 }
 
 message QueryQuestionScoresRequest {
-  int64 id = 1;
+  repeated int64 id = 1;
+}
+
+message CountSubjectNumOfTeacherRequest {
+  repeated int64 createrIds = 1;
 }
 
 // ==================== 响应体 ====================
@@ -81,4 +87,8 @@ message QuestionList {
 
 message QueryQuestionScoresResponse {
   map<int64, int32> scores = 1;   // id → 分数
+}
+
+message CountSubjectNumOfTeacherResponse {
+  map<int64,int32> numOfTeacher = 1;
 }

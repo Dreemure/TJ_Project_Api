@@ -1,0 +1,21 @@
+package com.tjxt.tjcourse.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tjxt.tjcourse.Entity.CourseSubject;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * <p>
+ * 课程题目关系列表 Mapper 接口
+ * </p>
+ */
+public interface CourseSubjectMapper extends BaseMapper<CourseSubject> {
+
+    @Insert("<script>insert into course_subject (course_id,subject_id) " +
+            "value <foreach collection='courseSubjects' item='cs' separator=','>(#{cs.courseId},#{cs.subjectId})</foreach></script>")
+    int batchInsert(@Param("courseSubjects") List<CourseSubject> courseSubjects);
+}
+

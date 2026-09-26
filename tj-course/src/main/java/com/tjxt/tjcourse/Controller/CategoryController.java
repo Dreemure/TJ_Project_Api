@@ -1,0 +1,109 @@
+package com.tjxt.tjcourse.Controller;
+
+import com.tjxt.tjcourse.Model.Dto.CategoryAddDTO;
+import com.tjxt.tjcourse.Model.Dto.CategoryDisableOrEnableDTO;
+import com.tjxt.tjcourse.Model.Dto.CategoryListDTO;
+import com.tjxt.tjcourse.Model.Dto.CategoryUpdateDTO;
+import com.tjxt.tjcourse.Model.Vo.CategoryInfoVO;
+import com.tjxt.tjcourse.Model.Vo.CategoryVO;
+import com.tjxt.tjcourse.Model.Vo.SimpleCategoryVO;
+import com.tjxt.tjcourse.Service.ICategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 课程分类
+ **/
+@RestController
+@Tag(name = "课程分类", description = "课程分类相关接口")
+@RequestMapping("categorys")
+@Slf4j
+@Validated
+public class CategoryController {
+
+    @Autowired
+    private ICategoryService categoryService;
+
+    @GetMapping("list")
+    @Operation(summary = "查询课程分类信息")
+    public List<CategoryVO> list(CategoryListDTO categoryListDTO) {
+        log.info("list categoryListDTO : {}", categoryListDTO);
+        return categoryService.list(categoryListDTO);
+    }
+
+    @GetMapping("{id}")
+    @Operation(summary = "获取课程分类信息")
+    public CategoryInfoVO get(
+            @Parameter(
+                    name = "id",
+                    description = "分类id",
+                    required = true,
+                    in = ParameterIn.PATH,
+                    example = "1"
+            )
+            @PathVariable("id") Long id) {
+        return categoryService.get(id);
+    }
+
+    @PostMapping("add")
+    @Operation(summary = "新增课程分类")
+    public void add(@Valid @RequestBody CategoryAddDTO categoryAddDTO) {
+        categoryService.add(categoryAddDTO);
+    }
+
+    @DeleteMapping("{id}")
+    @Operation(summary = "删除分类信息")
+    public void delete(
+            @Parameter(
+                    name = "id",
+                    description = "分类id",
+                    required = true,
+                    in = ParameterIn.PATH,
+                    example = "1"
+            )
+            @PathVariable("id") Long id) {
+        categoryService.delete(id);
+    }
+
+    @PutMapping("disableOrEnable")
+    @Operation(summary = "课程分类停用或启用")
+    public void disableOrEnable(
+            @Validated @RequestBody CategoryDisableOrEnableDTO categoryDisableOrEnableDTO) {
+        categoryService.disableOrEnable(categoryDisableOrEnableDTO);
+    }
+
+    @PutMapping("update")
+    @Operation(summary = "更新课程分类")
+    public void updateCategory(
+            @Validated @RequestBody CategoryUpdateDTO categoryUpdateDTO) {
+        categoryService.update(categoryUpdateDTO);
+    }
+
+    @GetMapping("all")
+    @Operation(summary = "获取所有的课程分类信息", description = "只包含id、名称、课程分类关系")
+    public List<SimpleCategoryVO> all(
+            @Parameter(
+                    name = "admin",
+                    description = "是否管理员视角",
+                    required = false,
+                    example = "false"
+            )
+            @RequestParam(value = "admin", required = false, defaultValue = "0") Boolean admin) {
+        return categoryService.all(admin);
+    }
+
+    @GetMapping("getAllOfOneLevel")
+    @Operation(summary = "获取所有的课程分类，不分层")
+    public List<CategoryVO> allOfOneLevel() {
+        return categoryService.allOfOneLevel();
+    }
+}

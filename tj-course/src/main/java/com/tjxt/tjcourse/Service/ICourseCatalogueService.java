@@ -1,0 +1,58 @@
+package com.tjxt.tjcourse.Service;
+
+import com.baomidou.mybatisplus.spring.service.IService;
+import com.tjxt.tjcourse.Entity.CourseCatalogue;
+import com.tjxt.tjcourse.Model.Vo.CataSimpleInfoVO;
+import com.tjxt.tjcourse.Model.Vo.CataVO;
+import com.tjxt.tjmicroservice.Model.Dto.Course.CatalogueDTO;
+import com.tjxt.tjmicroservice.Model.Dto.Course.MediaQuoteDTO;
+import com.tjxt.tjmicroservice.Model.Dto.Course.SectionInfoDTO;
+
+import java.util.List;
+
+/**
+ * <p>
+ * 目录草稿 服务类
+ * </p>
+ */
+public interface ICourseCatalogueService extends IService<CourseCatalogue> {
+
+    /**
+     * 查询线上课程目录
+     *
+     * @param courseId 课程id
+     * @return 课程目录
+     */
+    List<CatalogueDTO> queryCourseCatalogues(Long courseId, Boolean withPractice);
+
+    /**
+     * 批量统计媒资id引用次数
+     *
+     * @param mediaIds 媒资id
+     * @return 媒资引用次数
+     */
+    List<MediaQuoteDTO> countMediaUserInfo(List<Long> mediaIds);
+
+    /**
+     * 获取简单的小节信息，
+     *
+     * @param sectionId 小节id
+     * @return 课程id，媒资id，是否支持免费试看，免费试看时长
+     */
+    SectionInfoDTO getSimpleSectionInfo(Long sectionId);
+
+    /**
+     * 根据课程id获取课程的目录列表
+     *
+     * @param courseId 课程id
+     * @return 课程的目录列表
+     */
+    List<CataSimpleInfoVO> getCatasIndexList(Long courseId);
+
+    List<CataSimpleInfoVO> getManyCataSimpleInfo(List<Long> ids);
+
+    CataSimpleInfoVO querySectionInfoById(Long id);
+
+    List<CataVO> queryCourseCataloguesVO(Long courseId, Boolean withPractice);
+}
+
